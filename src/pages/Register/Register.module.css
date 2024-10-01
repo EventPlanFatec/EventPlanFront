@@ -1,0 +1,62 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 50px;
+    padding: 0 20px;
+}
+
+.register {
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+    width: 100%;
+    max-width: 400px;
+    margin: auto;
+}
+
+.title {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.error {
+    color: red;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.terms {
+    margin-top: 15px;
+    text-align: center;
+}
+
+.termsLink {
+    color: blue;
+}
+
+.accountPrompt {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.loginLink {
+    color: blue;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+@media (max-width: 500px) {
+    .register {
+        width: 90%;
+        padding: 15px;
+    }
+}
+
+@media (max-width: 768px) {
+    .register {
+        max-width: 95%;
+        padding: 20px;
+    }
+}
