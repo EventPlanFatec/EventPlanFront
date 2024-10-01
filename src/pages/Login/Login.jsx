@@ -6,6 +6,8 @@ import FacebookIcon from '@mui/icons-material/Facebook';
 import styles from './Login.module.css';
 import { userAuthentication } from '../../hooks/userAuthentication';
 
+const registeredEmails = ['test@example.com', 'user@domain.com'];
+
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -24,12 +26,18 @@ const Login = () => {
 
   const handleSocialLogin = async (provider) => {
     try {
+      let user;
       if (provider === 'Google') {
-        await googleSignIn();
+        user = await googleSignIn();
       } else if (provider === 'Facebook') {
-        await facebookSignIn();
+        user = await facebookSignIn();
       }
-      navigate('/home');
+
+      if (user && registeredEmails.includes(user.email)) {
+        navigate('/home');
+      } else {
+        console.error('Conta não encontrada. Por favor, registre-se.');
+      }
     } catch (err) {
       console.error(`Erro ao fazer login com ${provider}`, err);
     }
