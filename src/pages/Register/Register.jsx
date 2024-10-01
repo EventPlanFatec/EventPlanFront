@@ -11,6 +11,7 @@ import styles from './Register.module.css';
 const Register = () => {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
@@ -19,6 +20,24 @@ const Register = () => {
 
   const { createUser, error: authError, loading } = userAuthentication();
   const navigate = useNavigate();
+
+  const checkEmailExists = async (email) => {
+    try {
+      const response = await fetch('/api/check-email', {  // Substituir pela nossa URL
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+      return data.exists; // Supondo que a resposta tenha a propriedade "exists"
+    } catch (error) {
+      console.error('Erro ao verificar e-mail:', error);
+      return false;
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,6 +52,13 @@ const Register = () => {
     if (password !== confirmPassword) {
       setError('As senhas não conferem');
       toast.error('As senhas não conferem');
+      return;
+    }
+
+    // Verifica se o e-mail já está em uso
+    if (await checkEmailExists(email)) {
+      setError('Este e-mail já está em uso. Tente outro.');
+      toast.error('Este e-mail já está em uso.');
       return;
     }
 
@@ -79,6 +105,17 @@ const Register = () => {
             aria-label="Email"
           />
           <TextField
+            label="Telefone"
+            type="tel"
+            variant="outlined"
+            required
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            fullWidth
+            margin="normal"
+            aria-label="Telefone"
+          />
+          <TextField
             label="Senha"
             type={showPassword ? 'text' : 'password'}
             variant="outlined"
@@ -118,6 +155,9 @@ const Register = () => {
               ),
             }}
           />
+          <p className={styles.terms}>
+            Ao se cadastrar, você concorda com nossos <span className={styles.termsLink}>Termos, Política de Privacidade e Política de Cookies.</span>
+          </p>
           <Button type="submit" variant="contained" color="success" fullWidth disabled={loading}>
             {loading ? 'Carregando...' : 'REGISTRAR-SE'}
           </Button>
