@@ -17,9 +17,21 @@ const Login = () => {
 
   const { login, googleSignIn, facebookSignIn, error: authError, loading } = userAuthentication();
 
+  const validateEmail = (email) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+
+    if (!validateEmail(email)) {
+      setError('Email inválido');
+      toast.error('Email inválido');
+      return;
+    }
+
     const user = { email, password };
 
     try {
@@ -28,8 +40,8 @@ const Login = () => {
         toast.success('Login realizado com sucesso!');
       }
     } catch (err) {
-      setError(err.message || 'Erro ao fazer login');
-      toast.error(err.message || 'Erro ao fazer login');
+      setError('Erro ao fazer login. Por favor, tente novamente.');
+      toast.error('Erro ao fazer login. Por favor, tente novamente.');
     }
   };
 
@@ -39,15 +51,15 @@ const Login = () => {
       if (user) {
         toast.success(`Login com ${signInMethod.name} realizado com sucesso!`);
       }
-    } catch (err) {
-      toast.error(err.message || `Erro ao fazer login com ${signInMethod.name}`);
+    } catch {
+      toast.error(`Erro ao fazer login com ${signInMethod.name}.`);
     }
   };
 
   useEffect(() => {
     if (authError) {
-      setError(authError);
-      toast.error(authError);
+      setError('Erro de autenticação. Tente novamente.');
+      toast.error('Erro de autenticação. Tente novamente.');
     }
   }, [authError]);
 

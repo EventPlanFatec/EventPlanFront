@@ -17,22 +17,23 @@ const Register = () => {
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
   const { createUser, error: authError, loading } = userAuthentication();
   const navigate = useNavigate();
 
+  const validateEmail = (email) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  };
+
   const checkEmailExists = async (email) => {
     try {
-      const response = await fetch('/api/check-email', {  // Substituir pela nossa URL
+      const response = await fetch('/api/check-email', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
       });
-
       const data = await response.json();
-      return data.exists; // Supondo que a resposta tenha a propriedade "exists"
+      return data.exists;
     } catch (error) {
       console.error('Erro ao verificar e-mail:', error);
       return false;
@@ -42,6 +43,12 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+
+    if (!validateEmail(email)) {
+      setError('Email inválido');
+      toast.error('Email inválido');
+      return;
+    }
 
     if (password.length < 6) {
       setError('A senha deve ter no mínimo 6 caracteres');
@@ -55,7 +62,6 @@ const Register = () => {
       return;
     }
 
-    // Verifica se o e-mail já está em uso
     if (await checkEmailExists(email)) {
       setError('Este e-mail já está em uso. Tente outro.');
       toast.error('Este e-mail já está em uso.');
@@ -67,10 +73,10 @@ const Register = () => {
     try {
       await createUser(user);
       toast.success('Usuário criado com sucesso!');
-      navigate('/Home'); // Redireciona após o registro
+      navigate('/Home');
     } catch (err) {
-      setError(err.message || 'Erro ao criar usuário');
-      toast.error(err.message || 'Erro ao criar usuário');
+      setError('Erro ao criar usuário. Tente novamente.');
+      toast.error('Erro ao criar usuário. Tente novamente.');
     }
   };
 
@@ -91,7 +97,6 @@ const Register = () => {
             onChange={(e) => setFullName(e.target.value)}
             fullWidth
             margin="normal"
-            aria-label="Nome completo"
           />
           <TextField
             label="Email"
@@ -102,7 +107,6 @@ const Register = () => {
             onChange={(e) => setEmail(e.target.value)}
             fullWidth
             margin="normal"
-            aria-label="Email"
           />
           <TextField
             label="Telefone"
@@ -113,7 +117,6 @@ const Register = () => {
             onChange={(e) => setPhone(e.target.value)}
             fullWidth
             margin="normal"
-            aria-label="Telefone"
           />
           <TextField
             label="Senha"
@@ -124,12 +127,11 @@ const Register = () => {
             onChange={(e) => setPassword(e.target.value)}
             fullWidth
             margin="normal"
-            aria-label="Senha"
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
                   <IconButton onClick={togglePasswordVisibility}>
-                    <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} style={{ color: '#6b6b6b' }} />
+                    <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
                   </IconButton>
                 </InputAdornment>
               ),
@@ -144,12 +146,11 @@ const Register = () => {
             onChange={(e) => setConfirmPassword(e.target.value)}
             fullWidth
             margin="normal"
-            aria-label="Confirmar senha"
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
                   <IconButton onClick={toggleConfirmPasswordVisibility}>
-                    <FontAwesomeIcon icon={showConfirmPassword ? faEyeSlash : faEye} style={{ color: '#6b6b6b' }} />
+                    <FontAwesomeIcon icon={showConfirmPassword ? faEyeSlash : faEye} />
                   </IconButton>
                 </InputAdornment>
               ),
