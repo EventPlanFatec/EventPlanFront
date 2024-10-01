@@ -1,50 +1,63 @@
-import React, { useState } from 'react';
-import { TextField, Button } from '@mui/material';
-import { NavLink, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { TextField, Button, IconButton, InputAdornment } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import GoogleIcon from '@mui/icons-material/Google';
 import FacebookIcon from '@mui/icons-material/Facebook';
-import styles from './Login.module.css';
+import { NavLink } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
 import { userAuthentication } from '../../hooks/userAuthentication';
-
-const registeredEmails = ['test@example.com', 'user@domain.com'];
+import 'react-toastify/dist/ReactToastify.css';
+import styles from './Login.module.css';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigate = useNavigate();
-  const { login, googleSignIn, facebookSignIn } = userAuthentication();
+  const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+
+  const { login, googleSignIn, facebookSignIn, error: authError, loading } = userAuthentication();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+    const user = { email, password };
+
     try {
-      await login({ email, password });
-      navigate('/home');
+      const res = await login(user);
+      if (res) {
+        toast.success('Login realizado com sucesso!');
+      }
     } catch (err) {
-      console.error('Erro ao fazer login', err);
+      setError(err.message || 'Erro ao fazer login');
+      toast.error(err.message || 'Erro ao fazer login');
     }
   };
 
-  const handleSocialLogin = async (provider) => {
+  const handleSocialSignIn = async (signInMethod) => {
     try {
-      let user;
-      if (provider === 'Google') {
-        user = await googleSignIn();
-      } else if (provider === 'Facebook') {
-        user = await facebookSignIn();
-      }
-
-      if (user && registeredEmails.includes(user.email)) {
-        navigate('/home');
-      } else {
-        console.error('Conta não encontrada. Por favor, registre-se.');
+      const user = await signInMethod();
+      if (user) {
+        toast.success(`Login com ${signInMethod.name} realizado com sucesso!`);
       }
     } catch (err) {
-      console.error(`Erro ao fazer login com ${provider}`, err);
+      toast.error(err.message || `Erro ao fazer login com ${signInMethod.name}`);
     }
+  };
+
+  useEffect(() => {
+    if (authError) {
+      setError(authError);
+      toast.error(authError);
+    }
+  }, [authError]);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(prev => !prev);
   };
 
   return (
     <div className={styles.container}>
+      <ToastContainer />
       <div className={styles.login}>
         <h2 className={styles.title}>Entrar</h2>
         <form onSubmit={handleSubmit}>
@@ -56,25 +69,39 @@ const Login = () => {
             onChange={(e) => setEmail(e.target.value)}
             fullWidth
             margin="normal"
+            aria-label='Campo de email'
           />
           <TextField
             label="Senha"
-            type="password"
+            type={showPassword ? 'text' : 'password'}
             variant="outlined"
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             fullWidth
             margin="normal"
+            aria-label='Campo de senha'
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={togglePasswordVisibility}>
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
-          <Button type="submit" variant="contained" fullWidth>
-            ENTRAR
+          <NavLink to="../recoverpass" className={styles.terms}>
+            <span>Esqueceu a senha?</span>
+          </NavLink>
+          <Button type="submit" variant="contained" fullWidth disabled={loading} style={{ marginTop: '10px', backgroundColor: '#1976d2' }}>
+            {loading ? 'Carregando...' : 'ENTRAR'}
           </Button>
           <div className={styles.socialLogin}>
             <Button
               variant="outlined"
               color="error"
-              onClick={() => handleSocialLogin('Google')}
+              onClick={() => handleSocialSignIn(googleSignIn)}
               fullWidth
               startIcon={<GoogleIcon />}
               style={{ marginBottom: '5px' }}
@@ -84,7 +111,7 @@ const Login = () => {
             <Button
               variant="outlined"
               color="primary"
-              onClick={() => handleSocialLogin('Facebook')}
+              onClick={() => handleSocialSignIn(facebookSignIn)}
               fullWidth
               startIcon={<FacebookIcon />}
               style={{ marginBottom: '10px' }}
@@ -92,10 +119,12 @@ const Login = () => {
               Entrar com Facebook
             </Button>
           </div>
+          {error && <p className={styles.error}>{error}</p>}
+          <div className={styles.socialLogin}>
+            <p className={styles.ou}>OU</p>
+          </div>
           <NavLink to="../Register">
-            <Button variant="contained" fullWidth style={{ marginTop: '10px', backgroundColor: '#2e7d32' }}>
-              REGISTRAR-SE
-            </Button>
+            <Button variant="contained" fullWidth style={{ marginTop: '10px', backgroundColor: '#2e7d32' }}>REGISTRAR-SE</Button>
           </NavLink>
         </form>
       </div>
