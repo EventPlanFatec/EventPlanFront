@@ -1,14 +1,38 @@
 import React, { useState } from 'react';
 import { TextField, Button } from '@mui/material';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
+import GoogleIcon from '@mui/icons-material/Google';
+import FacebookIcon from '@mui/icons-material/Facebook';
 import styles from './Login.module.css';
+import { userAuthentication } from '../../hooks/userAuthentication';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
+  const { login, googleSignIn, facebookSignIn } = userAuthentication();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    try {
+      await login({ email, password });
+      navigate('/home');
+    } catch (err) {
+      console.error('Erro ao fazer login', err);
+    }
+  };
+
+  const handleSocialLogin = async (provider) => {
+    try {
+      if (provider === 'Google') {
+        await googleSignIn();
+      } else if (provider === 'Facebook') {
+        await facebookSignIn();
+      }
+      navigate('/home');
+    } catch (err) {
+      console.error(`Erro ao fazer login com ${provider}`, err);
+    }
   };
 
   return (
@@ -38,6 +62,28 @@ const Login = () => {
           <Button type="submit" variant="contained" fullWidth>
             ENTRAR
           </Button>
+          <div className={styles.socialLogin}>
+            <Button
+              variant="outlined"
+              color="error"
+              onClick={() => handleSocialLogin('Google')}
+              fullWidth
+              startIcon={<GoogleIcon />}
+              style={{ marginBottom: '5px' }}
+            >
+              Entrar com Google
+            </Button>
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={() => handleSocialLogin('Facebook')}
+              fullWidth
+              startIcon={<FacebookIcon />}
+              style={{ marginBottom: '10px' }}
+            >
+              Entrar com Facebook
+            </Button>
+          </div>
           <NavLink to="../Register">
             <Button variant="contained" fullWidth style={{ marginTop: '10px', backgroundColor: '#2e7d32' }}>
               REGISTRAR-SE
