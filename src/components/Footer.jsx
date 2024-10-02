@@ -3,68 +3,75 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFacebook, faInstagram, faWhatsapp } from "@fortawesome/free-brands-svg-icons";
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import Logo from "../assets/Logo.svg";
-import styles from "./Footer.module.css";
 import { NavLink } from "react-router-dom";
-import { Container, Row, Col } from "react-bootstrap";
+import { Container, Grid, Typography } from "@mui/material";
+import styles from "./Footer.module.css";
 
 const Footer = () => {
   const iconSize = "1.75rem";
 
   return (
     <footer className={styles.footerCustom}>
-      <Container fluid>
-        <Row>
-          <Col md="4" className={`d-flex align-items-center`}>
-            <ul>
+      <Container maxWidth="lg" className={styles.container}>
+        <Grid container spacing={4}>
+          <Grid item md={4} xs={12}>
+            <ul className={styles.list}>
               <li>
                 <NavLink to="/about" className={styles.link}>
-                  <h1 className={styles.sobre}>Sobre</h1>
+                  <Typography variant="h6" className={styles.title}>Sobre</Typography>
                 </NavLink>
               </li>
               <li>
-                <p className={styles.sobre1}>Nosso site EventPlan surgiu de um trabalho transdisciplinar, elaborado por estudantes da Fatec Luiz Marchesan.</p>
+                <Typography className={styles.description}>
+                  Nosso site EventPlan surgiu de um trabalho transdisciplinar, elaborado por estudantes da Fatec Luiz Marchesan.
+                </Typography>
               </li>
             </ul>
-          </Col>
-          <Col md="4" className={`d-flex justify-content-center text-center`}>
-            <ul>
+          </Grid>
+          <Grid item md={4} xs={12} className={styles.center}>
+            <ul className={styles.logoContainer}>
               <li>
-                <NavLink to="/home" className={`align-items-center ${styles.link}`}>
+                <NavLink to="/home">
                   <img src={Logo} alt="Logo" className={styles.logo} />
                 </NavLink>
               </li>
               <li>
-                <p className={styles.contato}>Contatos</p>
+                <Typography className={styles.contact}>Contatos</Typography>
               </li>
-              <li className={`align-items-center ${styles.icon}`}>
+              <li className={styles.icons}>
                 <NavLink to="/Facebook" className={styles.link}>
-                  <FontAwesomeIcon icon={faFacebook} style={{ fontSize: iconSize }} className={styles.icon} />
+                  <FontAwesomeIcon icon={faFacebook} style={{ fontSize: iconSize }} />
                 </NavLink>
                 <NavLink to="/Instagram" className={styles.link}>
-                  <FontAwesomeIcon icon={faInstagram} style={{ fontSize: iconSize }} className={styles.icon} />
+                  <FontAwesomeIcon icon={faInstagram} style={{ fontSize: iconSize }} />
                 </NavLink>
                 <NavLink to="/Whatsapp" className={styles.link}>
-                  <FontAwesomeIcon icon={faWhatsapp} style={{ fontSize: iconSize }} className={styles.icon} />
+                  <FontAwesomeIcon icon={faWhatsapp} style={{ fontSize: iconSize }} />
                 </NavLink>
                 <NavLink to="/Email" className={styles.link}>
-                  <FontAwesomeIcon icon="fa-regular fa-envelope" style={{ fontSize: iconSize }} className={styles.icon} />
+                  <FontAwesomeIcon icon={faEnvelope} style={{ fontSize: iconSize }} />
                 </NavLink>
               </li>
             </ul>
-          </Col>
-          <Col md="4" className={`d-flex justify-content-center align-items-center`}>
-            <ul>
+          </Grid>
+          <Grid item md={4} xs={12}>
+            <ul className={styles.list}>
               <li>
-                <NavLink to="/FAQ" className={styles.ajuda}>Ajuda</NavLink>
+                <NavLink to="/FAQ" className={styles.help}>
+                  Ajuda
+                </NavLink>
                 <li>
-                  <p href="#" className={styles.ajuda1}>Central de ajuda</p>
-                  <p href="#" className={styles.ajuda1}>Compradores e participantes</p>
-                  <p href="#" className={styles.ajuda1}>Produtores de eventos</p>
+                  <Typography className={styles.helpItem}>Central de ajuda</Typography>
+                  <Typography className={styles.helpItem}>Compradores e participantes</Typography>
+                  <Typography className={styles.helpItem}>Produtores de eventos</Typography>
                 </li>
               </li>
             </ul>
-          </Col>
-        </Row >
+          </Grid>
+        </Grid>
+        <Typography variant="body2" align="center" className={styles.copyRight}>
+          © {new Date().getFullYear()} EventPlan. Todos os direitos reservados.
+        </Typography>
       </Container>
     </footer>
   );

@@ -1,102 +1,41 @@
 .container {
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    padding: 20px;
-    background-color: #f5f5f5;
-    max-width: 1160px;
-    margin: 0 auto;
-}
-
-.imageContainer {
-    width: 100%;
-    overflow: hidden;
-    margin-top: 20px;
-}
-
-.eventImage {
-    width: 100%;
-    height: auto;
-    object-fit: cover;
-    max-width: 1160px;
-    max-height: 520px;
-    border-radius: 10px 10px 0 0;
-}
-
-.description,
-.dateVenue,
-.tickets {
-    background-color: #C2CAE8;
-    padding: 20px;
-    margin-bottom: 20px;
-    border: 2px solid #8380B6;
-    border-radius: 10px;
-    box-shadow: 0 4px 4px rgba(131, 128, 182, 0.25); 
-    filter: drop-shadow(0 0 1px rgba(131, 128, 182, 1)) drop-shadow(0 4px 4px rgba(131, 128, 182, 0.25));
-    box-sizing: border-box;
-}
-
-.cartIcon{
-    font-size: 30px;
-    color: #000;
-}  
-
-.description p,
-.dateVenue p,
-.tickets p {
-    margin: 0;
-}
-
-.cartIcon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #C2CAE8;
-    border-radius: 10px;
-    cursor: pointer;
-    height: 90px;
-    width: auto;
-    padding: 20px;
-    border: 2px solid #8380B6;
-    border-radius: 10px;
-    box-shadow: 0 4px 4px rgba(131, 128, 182, 0.25);
-    filter: drop-shadow(0 0 1px rgba(131, 128, 182, 1)) drop-shadow(0 4px 4px rgba(131, 128, 182, 0.25));
-    box-sizing: border-box;
-    transition: transform 0.2s ease; 
-}
-
-.cartIcon:hover {
-    transform: scale(1.1); 
-
-}
-
-.marginTop20 {
-    margin-top: 20px;
-}
-
-.btn {
-    width: 100%; 
-    max-width: 240px;
-    height: 60px;
-    background-color: white;
-    position: relative;
-    font-family: 'Inter', sans-serif;
-    font-size: 28px; 
-    font-weight: 600;
-    color: black;
-    text-align: center;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 2px solid #000;
-    border-radius: 10px;
-    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
-    filter: drop-shadow(0 0 1px rgba(0, 0, 0, 1)) drop-shadow(0 4px 4px rgba(0, 0, 0, 0.25));
-    box-sizing: border-box;
-    margin: 0 auto 40px; 
-    transition: transform 0.2s ease;
+    margin: 20px auto;
   }
   
-  .btn:hover {
-    transform: scale(1.1);
+  .card {
+    padding: 16px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   }
+  
+  .imageContainer {
+    text-align: center;
+  }
+  
+  .eventImage {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+  }
+  
+  .description {
+    margin: 20px 0;
+  }
+  
+  .dateVenue {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    color: #555;
+  }
+  
+  .cartIcon {
+    margin-left: 10px;
+  }
+  
+  @media (max-width: 768px) {
+    .description {
+      font-size: 1.2rem;
+    }
+  }
+  
