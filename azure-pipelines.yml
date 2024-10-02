@@ -21,14 +21,14 @@ jobs:
           versionSpec: '20.x'
       - task: CmdLine@2
         inputs:
-          script: 'npm install'
+          script: 'cd src/frontend && npm install'
       - task: CmdLine@2
         inputs:
-          script: 'npm run build'
+          script: 'cd src/frontend && npm run build'
           displayName: 'Gerando Artefato de Build'
 
       - task: PublishPipelineArtifact@1
         inputs:
-          targetPath: '$(Build.SourcesDirectory)/build'
+          targetPath: '$(Build.SourcesDirectory)/src/frontend/dist'
           artifact: 'react-EventPlan'
           publishLocation: 'pipeline-prod'
