@@ -4,7 +4,7 @@ import { getDocs, setDoc, doc, collection } from "firebase/firestore";
 import { useAuth } from "../../context/AuthContext";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import { Button, Typography, Box, List, ListItem, Tooltip } from "@mui/material";
 
 const FavoriteEvents = ({ userId, eventId, eventName }) => {
     const [favorites, setFavorites] = useState([]);
@@ -43,27 +43,24 @@ const FavoriteEvents = ({ userId, eventId, eventName }) => {
     };
 
     return (
-        <div>
-            <h3>Favoritos</h3>
-            <ul>
+        <Box sx={{ padding: '20px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+            <Typography variant="h5">Favoritos</Typography>
+            <List>
                 {favorites.map((favorite, index) => (
-                    <OverlayTrigger
-                        key={index}
-                        placement="top"
-                        overlay={<Tooltip id={`tooltip-favorite-${index}`}>{favorite.eventName}</Tooltip>}
-                    >
-                        <li>{favorite.eventName}</li>
-                    </OverlayTrigger>
+                    <Tooltip key={index} title={favorite.eventName} arrow>
+                        <ListItem>
+                            <Typography>{favorite.eventName}</Typography>
+                        </ListItem>
+                    </Tooltip>
                 ))}
-            </ul>
-            <OverlayTrigger
-                placement="top"
-                overlay={<Tooltip id="tooltip-add-favorite">Adicionar aos Favoritos</Tooltip>}
-            >
-                <button onClick={handleFavorite}>Adicionar aos Favoritos</button>
-            </OverlayTrigger>
+            </List>
+            <Tooltip title="Adicionar aos Favoritos" arrow>
+                <Button variant="contained" color="primary" onClick={handleFavorite}>
+                    Adicionar aos Favoritos
+                </Button>
+            </Tooltip>
             <ToastContainer />
-        </div>
+        </Box>
     );
 };
 

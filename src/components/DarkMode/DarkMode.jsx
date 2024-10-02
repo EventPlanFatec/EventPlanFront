@@ -1,19 +1,18 @@
 import React from 'react';
-import { Button } from 'react-bootstrap';
+import { IconButton, Tooltip } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleHalfStroke } from '@fortawesome/free-solid-svg-icons';
 import { useTheme } from '../../context/ThemeContext';
-import styles from './DarkMode.module.css';
 
 const DarkModeToggle = () => {
     const { darkMode, toggleDarkMode } = useTheme();
 
     return (
-        <div>
-            <Button onClick={toggleDarkMode}>
+        <Tooltip title="Toggle Dark Mode" arrow>
+            <IconButton onClick={toggleDarkMode} color="inherit">
                 <FontAwesomeIcon icon={faCircleHalfStroke} />
-            </Button>
-        </div>
+            </IconButton>
+        </Tooltip>
     );
 };
 

@@ -1,0 +1,7 @@
+.iconButton {
+    transition: color 0.3s;
+}
+
+.iconButton:hover {
+    color: #646cff;
+}

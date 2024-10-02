@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { getStorage, ref, uploadBytesResumable, getDownloadURL, listAll } from 'firebase/storage';
 import { storage } from '../../firebase/config';
 import { useParams } from 'react-router-dom';
-import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Button, Tooltip, IconButton, Typography, Box } from '@mui/material';
+import UploadIcon from '@mui/icons-material/Upload';
 
 const UploadImage = () => {
     const { id } = useParams(); 
@@ -51,24 +52,29 @@ const UploadImage = () => {
     };
 
     return (
-        <div>
-            <input type="file" onChange={handleChange} />
-            <OverlayTrigger
-                placement="top"
-                overlay={<Tooltip id="upload-tooltip">Upload Image</Tooltip>}
-            >
-                <button id="upload-button" onClick={handleUpload}>
-                    Upload
-                </button>
-            </OverlayTrigger>
-            <progress value={progress} max="100" />
-            {url && <img src={url} alt="Event" />}
-            <div>
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px' }}>
+            <input type="file" onChange={handleChange} style={{ marginBottom: '20px' }} />
+            <Tooltip title="Upload Image" arrow>
+                <IconButton 
+                    onClick={handleUpload} 
+                    color="primary" 
+                    disabled={!image}
+                    sx={{ marginBottom: '20px' }}
+                >
+                    <UploadIcon />
+                </IconButton>
+            </Tooltip>
+            <Typography variant="body2" sx={{ margin: '10px 0' }}>
+                Upload Progress: {Math.round(progress)}%
+            </Typography>
+            <progress value={progress} max="100" style={{ width: '100%', height: '10px' }} />
+            {url && <img src={url} alt="Event" style={{ width: '200px', marginTop: '20px' }} />}
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', marginTop: '20px' }}>
                 {uploadedImages.map((imgUrl, index) => (
-                    <img key={index} src={imgUrl} alt={`Event ${id}`} style={{ width: '100px', margin: '10px' }} />
+                    <img key={index} src={imgUrl} alt={`Event ${id}`} style={{ width: '100px', margin: '10px', borderRadius: '8px', boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)' }} />
                 ))}
-            </div>
-        </div>
+            </Box>
+        </Box>
     );
 };
 
