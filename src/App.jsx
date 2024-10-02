@@ -1,18 +1,17 @@
-import React, { useState } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
+import { useState } from 'react';
 import './App.css';
 import './fontawesome.jsx';
 import Home from './pages/Home/Home';
 import Login from './pages/Login/Login';
 import Register from './pages/Register/Register';
 import Event from './pages/Event/Event';
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
-import { CssBaseline } from '@mui/material';
 
 function App() {
+    const [count, setCount] = useState(0);
     return (
         <AuthProvider>
             <ThemeProvider>
@@ -22,26 +21,23 @@ function App() {
     );
 }
 
+
 function AppContent() {
     const { darkMode } = useTheme();
 
-    return (
-        <BrowserRouter>
-            <div className={darkMode ? 'dark-mode' : 'light-mode'}>
-                <CssBaseline />
-                <Navbar />
-                <div className="container-fluid">
-                    <Routes>
-                        <Route path="/" element={<Home />} />
-                        <Route path="/login" element={<Login />} />
-                        <Route path="/register" element={<Register />} />
-                        <Route path="/event/:id" element={<Event />} />
-                    </Routes>
-                </div>
-                <Footer />
-            </div>
-        </BrowserRouter>
-    );
+  return (
+    <Router>
+      <>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/event/:id" element={<Event />} />
+        </Routes>
+      </>
+    </Router>
+  );
 }
 
 export default App;
