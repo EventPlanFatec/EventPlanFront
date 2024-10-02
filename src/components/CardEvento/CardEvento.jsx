@@ -1,6 +1,6 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Card as BootstrapCard, Row, Col } from 'react-bootstrap';
+import { Card, CardContent, CardMedia, Typography, Grid } from '@mui/material';
 import { Link } from 'react-router-dom';
 import styles from './CardEvento.module.css';
 
@@ -9,28 +9,35 @@ const CardEvento = ({ event }) => {
 
   return (
     <Link to={`/event/${event.id}`} className={styles.cardLink}>
-      <BootstrapCard className={`${styles.card} mb-3`}>
-        <Row>
-          <Col xs={12} md={4} className={styles.cardLeft}>
-            <div className={styles.image}>
-              <img src={event.img} alt="Imagem do evento" />
-            </div>
-          </Col>
-          <Col xs={12} md={8} className={styles.cardRight}>
-            <BootstrapCard.Body>
-              <BootstrapCard.Title className="d-none d-md-block">{event.nome}</BootstrapCard.Title>
+      <Card className={styles.card}>
+        <Grid container>
+          <Grid item xs={12} md={4} className={styles.cardLeft}>
+            <CardMedia
+              component="img"
+              image={event.img}
+              alt="Imagem do evento"
+              className={styles.image}
+            />
+          </Grid>
+          <Grid item xs={12} md={8} className={styles.cardRight}>
+            <CardContent>
+              <Typography variant="h6" className="d-none d-md-block">
+                {event.nome}
+              </Typography>
               <div className={styles.cardInfo}>
-                <p>
-                  <FontAwesomeIcon icon="fa-regular fa-calendar" style={{ fontSize: iconSize, marginRight: '8px' }} /> {event.data} <br /> {event.horario}
-                </p>
-                <p>
-                  <FontAwesomeIcon icon="fa-regular fa-map" style={{ fontSize: iconSize, marginRight: '8px' }} /> {event.local}
-                </p>
+                <Typography variant="body2">
+                  <FontAwesomeIcon icon="fa-regular fa-calendar" style={{ fontSize: iconSize, marginRight: '8px' }} />
+                  {event.data} <br /> {event.horario}
+                </Typography>
+                <Typography variant="body2">
+                  <FontAwesomeIcon icon="fa-regular fa-map" style={{ fontSize: iconSize, marginRight: '8px' }} />
+                  {event.local}
+                </Typography>
               </div>
-            </BootstrapCard.Body>
-          </Col>
-        </Row>
-      </BootstrapCard>
+            </CardContent>
+          </Grid>
+        </Grid>
+      </Card>
     </Link>
   );
 }
