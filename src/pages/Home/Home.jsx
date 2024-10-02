@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Carousel } from 'react-responsive-carousel';
+import { Box } from '@mui/material';
 import { Link } from 'react-router-dom';
 import CardEvento from '../../components/CardEvento/CardEvento';
 import { db } from '../../firebase/config';
 import { collection, getDocs } from 'firebase/firestore';
 import styles from './Home.module.css';
+import { Carousel } from 'react-responsive-carousel';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // Importando o CSS do carousel
 
 const Home = () => {
@@ -21,7 +22,7 @@ const Home = () => {
   }, []);
 
   return (
-    <div>
+    <Box>
       <Carousel>
         <div>
           <img
@@ -53,7 +54,7 @@ const Home = () => {
       <div className={styles.verMaisContainer}>
         <Link to="/EventList" className={styles.btn} aria-label="Ver Mais">VER MAIS</Link>
       </div>
-    </div>
+    </Box>
   );
 };
 
