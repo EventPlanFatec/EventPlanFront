@@ -35,13 +35,11 @@
   transform: scale(1.1);
 }
 
-
 @media (max-width: 170px) {
   .btn {
     font-size: 1.25em; 
   }
 }
-
 
 @media (min-width: 1360px) {
   .carouselContainer img {
@@ -61,4 +59,14 @@
 .verMaisContainer {
   text-align: center;
   margin-top: 20px;
+}
+
+.videoContainer {
+  margin: 20px 0;
+  text-align: center;
+}
+
+.video {
+  max-width: 100%;
+  height: auto;
 }
