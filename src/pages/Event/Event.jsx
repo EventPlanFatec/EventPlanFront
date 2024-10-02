@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { doc, getDoc, collection, getDocs } from 'firebase/firestore';
-import { Container, Row, Col, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Container, Grid, Typography, IconButton, Button, Card } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Chat from '../../components/Chat/Chat';
 import EventRating from '../../components/Avaliacao/Avaliacao';
@@ -42,9 +42,7 @@ const Event = () => {
   }, [id]);
 
   const calculateAverageRating = (ratings) => {
-    if (ratings.length === 0) {
-      return 0;
-    }
+    if (ratings.length === 0) return 0;
 
     const totalRating = ratings.reduce((acc, rating) => {
       const validRating = typeof rating.rating === 'number' && !isNaN(rating.rating) ? rating.rating : 0;
@@ -58,71 +56,62 @@ const Event = () => {
 
   return (
     <Container className={styles.container}>
-      <Row>
-        <Col>
-          <div className={styles.imageContainer}>
-            <img src={eventData.imgBanner} alt={eventData.nome} className={styles.eventImage} />
-          </div>
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <div className={`${styles.description} ${styles.marginTop20}`}>
-            <p>{eventData.descricao}</p>
-          </div>
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <div className={styles.dateVenue}>
-            <p><FontAwesomeIcon icon={['far', 'calendar']} /> {eventData.data}</p>
-            <p><FontAwesomeIcon icon={['fas', 'map-marker-alt']} /> {eventData.local}</p>
-          </div>
-        </Col>
-      </Row>
-      <Row>
-        <Col md={10}>
-          <div className={styles.tickets}>
-            <p><strong>Ingressos:</strong></p>
-            <p>Ingressos a partir de R$ {eventData.valorMin}</p>
-          </div>
-        </Col>
-        <Col md={2}>
-          <div className={styles.cartIcon}>
-          <FontAwesomeIcon icon="fa-solid fa-cart-shopping" />
-          </div>
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <Chat eventId={id} />
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <EventRating eventId={id} />
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <OverlayTrigger
-            placement="top"
-            overlay={<Tooltip id="tooltip-favorite">Adicionar aos Favoritos</Tooltip>}
-          >
+      <Card className={styles.card}>
+        <Grid container spacing={3}>
+          <Grid item xs={12}>
+            <div className={styles.imageContainer}>
+              <img src={eventData.imgBanner} alt={eventData.nome} className={styles.eventImage} />
+            </div>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography variant="h5" className={styles.description}>
+              {eventData.descricao}
+            </Typography>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <div className={styles.dateVenue}>
+              <Typography variant="body1">
+                <FontAwesomeIcon icon={['far', 'calendar']} /> {eventData.data}
+              </Typography>
+              <Typography variant="body1">
+                <FontAwesomeIcon icon={['fas', 'map-marker-alt']} /> {eventData.local}
+              </Typography>
+            </div>
+          </Grid>
+          <Grid item xs={12} sm={6} container alignItems="center">
+            <Grid item xs>
+              <Typography variant="body1">
+                <strong>Ingressos:</strong> a partir de R$ {eventData.valorMin}
+              </Typography>
+            </Grid>
+            <Grid item>
+              <IconButton color="primary" className={styles.cartIcon}>
+                <FontAwesomeIcon icon="fa-solid fa-cart-shopping" />
+              </IconButton>
+            </Grid>
+          </Grid>
+          <Grid item xs={12}>
+            <Chat eventId={id} />
+          </Grid>
+          <Grid item xs={12}>
+            <EventRating eventId={id} />
+          </Grid>
+          <Grid item xs={12}>
             <FavoriteEvents userId="user-id" eventId={id} eventName={eventData.nome} />
-          </OverlayTrigger>
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <UploadImage />
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <ExportToCSV eventData={eventData} averageRating={averageRating} />
-        </Col>
-      </Row>
+          </Grid>
+          <Grid item xs={12}>
+            <UploadImage />
+          </Grid>
+          <Grid item xs={12}>
+            <ExportToCSV eventData={eventData} averageRating={averageRating} />
+          </Grid>
+          <Grid item xs={12} container justifyContent="flex-end">
+            <Button variant="contained" color="primary" startIcon={<FontAwesomeIcon icon="fa-solid fa-download" />}>
+              Exportar Dados
+            </Button>
+          </Grid>
+        </Grid>
+      </Card>
     </Container>
   );
 };
