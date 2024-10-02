@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import { db } from '../../firebase/config';
 import { collection, getDocs } from 'firebase/firestore';
-import styles from './Admin.module.css'
+import { Box, Typography, List, ListItem } from '@mui/material';
+import styles from './Admin.module.css';
 
 const Admin = () => {
-    const [event, setEvent] = useState('');
     const [list, setList] = useState([]);
 
     const userCollectionRef = collection(db, 'Eventos');
@@ -13,23 +13,24 @@ const Admin = () => {
         const getUsers = async () => {
             const data = await getDocs(userCollectionRef);
             setList(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-        }
+        };
         getUsers();
     }, []);
 
     return (
-        <div className={styles.main}>
-            <ul>
-                {list.map((item) => {
-                    return (
-                        <div key={item.id}>
-                            <li>{item.nome}</li>
-                        </div>
-                    )
-                })}
-            </ul>
-        </div>
-    )
-}
+        <Box className={styles.main}>
+            <Typography variant="h4" gutterBottom>
+                Lista de Eventos
+            </Typography>
+            <List>
+                {list.map((item) => (
+                    <ListItem key={item.id}>
+                        <Typography>{item.nome}</Typography>
+                    </ListItem>
+                ))}
+            </List>
+        </Box>
+    );
+};
 
-export default Admin
+export default Admin;

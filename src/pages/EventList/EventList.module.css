@@ -1,23 +1,22 @@
 .container {
-    padding: 1rem;
-  }
+  padding: 20px;
+  max-width: 800px;
+  margin: auto;
+}
 
-  .dropdown {
-    padding: 2rem;
-    padding-top: 4rem;
-  }
-  
-  .cardContainer {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 1rem;
-    padding: 1rem;
-  }
-  
-  .paginationContainer {
-    display: flex;
-    justify-content: center;
-    margin-top: 1rem;
-  }
-  
+.dropdown {
+  margin-bottom: 20px;
+  min-width: 200px;
+}
+
+.cardContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.paginationContainer {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+}
