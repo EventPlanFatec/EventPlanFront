@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import Carousel from 'react-bootstrap/Carousel';
+import { Carousel } from 'react-responsive-carousel';
 import { Link } from 'react-router-dom';
 import CardEvento from '../../components/CardEvento/CardEvento';
 import { db } from '../../firebase/config';
 import { collection, getDocs } from 'firebase/firestore';
 import styles from './Home.module.css';
+import "react-responsive-carousel/lib/styles/carousel.min.css"; // Importando o CSS do carousel
 
 const Home = () => {
   const [eventos, setEventos] = useState([]);
@@ -21,28 +22,28 @@ const Home = () => {
 
   return (
     <div>
-      <Carousel className={styles.carouselContainer}>
-        <Carousel.Item>
+      <Carousel>
+        <div>
           <img
-            className="d-block w-100"
+            className={styles.carouselImage}
             src="https://firebasestorage.googleapis.com/v0/b/eventplan-30036.appspot.com/o/Design01.svg?alt=media&token=e0cc518f-049b-4cbb-938e-dbeb7b877053"
             alt="First slide"
           />
-        </Carousel.Item>
-        <Carousel.Item>
+        </div>
+        <div>
           <img
-            className="d-block w-100"
+            className={styles.carouselImage}
             src="https://firebasestorage.googleapis.com/v0/b/eventplan-30036.appspot.com/o/Design2.svg?alt=media&token=7518c2e1-ad68-428b-82db-64e5f020e96c"
             alt="Second slide"
           />
-        </Carousel.Item>
-        <Carousel.Item>
+        </div>
+        <div>
           <img
-            className="d-block w-100"
+            className={styles.carouselImage}
             src="https://firebasestorage.googleapis.com/v0/b/eventplan-30036.appspot.com/o/Design3.svg?alt=media&token=c2da9f55-7348-46ba-8095-af8f5ce8657e"
             alt="Third slide"
           />
-        </Carousel.Item>
+        </div>
       </Carousel>
       <div className={styles.cardContainer}>
         {eventos.slice(0, 6).map(event => (
