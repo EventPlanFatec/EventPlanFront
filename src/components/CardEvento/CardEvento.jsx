@@ -9,7 +9,7 @@ const CardEvento = ({ event }) => {
 
   return (
     <Link to={`/event/${event.id}`} className={styles.cardLink}>
-      <Card className={styles.card}>
+      <Card className={`${styles.card} ${styles.hoverEffect}`}>
         <Grid container spacing={2}>
           <Grid item xs={12} md={4}>
             <div className={styles.image}>
