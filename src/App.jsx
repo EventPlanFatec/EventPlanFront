@@ -10,7 +10,6 @@ import Register from './pages/Register/Register';
 import Event from './pages/Event/Event';
 import About from './pages/About/About';
 import Navbar from './components/Navbar';
-import Footer from './components/Footer';
 import Profile from './pages/Profile/Profile';
 import RecoverPass from './pages/RecoverPass/RecoverPass';
 import FAQ from './pages/FAQ/FAQ';
@@ -51,7 +50,6 @@ function AppContent() {
                         <Route path="/admin" element={<Admin />} />
                     </Routes>
                 </Container>
-                <Footer />
             </div>
         </BrowserRouter>
     );
