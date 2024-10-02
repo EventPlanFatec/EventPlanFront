@@ -8,7 +8,7 @@ const DarkModeToggle = () => {
     const { darkMode, toggleDarkMode } = useTheme();
 
     return (
-        <Tooltip title="Toggle Dark Mode" arrow>
+        <Tooltip title="Alternar Modo Escuro" arrow>
             <IconButton onClick={toggleDarkMode} color="inherit">
                 <FontAwesomeIcon icon={faCircleHalfStroke} />
             </IconButton>
