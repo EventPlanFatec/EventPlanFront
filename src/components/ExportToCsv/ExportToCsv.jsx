@@ -1,5 +1,6 @@
 import React from 'react';
 import { CSVLink } from 'react-csv';
+import { Button } from '@mui/material';
 
 const ExportToCSV = ({ eventData, averageRating }) => {
   const headers = [
@@ -8,22 +9,23 @@ const ExportToCSV = ({ eventData, averageRating }) => {
     { label: "Description", key: "descricao" },
     { label: "Location", key: "local" },
     { label: "Banner", key: "imgBanner" },
-    { label: "Average Rating", key: "mediaAvaliacao" }, // Header for average rating
+    { label: "Average Rating", key: "mediaAvaliacao" },
   ];
 
-  // Prepare data for CSV export
   const data = [{
     nome: eventData.nome,
     data: eventData.data,
     descricao: eventData.descricao,
     local: eventData.local,
     imgBanner: eventData.imgBanner,
-    mediaAvaliacao: averageRating.toFixed(1), // Assuming averageRating is a number
+    mediaAvaliacao: averageRating.toFixed(1),
   }];
 
   return (
     <CSVLink data={data} headers={headers} filename={"eventos.csv"}>
-      Exportar para CSV
+      <Button variant="contained" color="primary">
+        Exportar para CSV
+      </Button>
     </CSVLink>
   );
 };

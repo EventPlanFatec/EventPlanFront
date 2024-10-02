@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { collection, addDoc, getDocs } from "firebase/firestore";
 import { db } from '../../firebase/config';
-import styles from '../../components/Avaliacao/Avaliacao.module.css';
+import { Box, Typography, TextField, Button } from '@mui/material';
 
 const EventRating = ({ eventId }) => {
     const [ratings, setRatings] = useState([]);
@@ -65,28 +65,38 @@ const EventRating = ({ eventId }) => {
     };
 
     return (
-        <div className={styles.container}>
-            <h3 className={styles.header}>Nota: {averageRating.toFixed(1)}</h3>
+        <Box>
+            <Typography variant="h5">Nota: {averageRating.toFixed(1)}</Typography>
             {ratings.map((rating, index) => (
-                <div key={index} className={styles.rating}>
-                    <p>{rating.rating} Estrelas</p>
-                    <p>{rating.comment}</p>
-                </div>
+                <Box key={index}>
+                    <Typography>{rating.rating} Estrelas</Typography>
+                    <Typography>{rating.comment}</Typography>
+                </Box>
             ))}
-            <input className={styles.avaliacao}
+            <TextField
                 type="number"
                 value={newRating}
                 onChange={(e) => setNewRating(Number(e.target.value))}
                 max="5"
                 min="0"
+                variant="outlined"
+                label="Avaliação (0 a 5)"
             />
-            <textarea className={styles.textarea}
+            <TextField
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
                 placeholder="Deixe seu comentário."
+                variant="outlined"
+                multiline
+                rows={4}
             />
-            <button onClick={handleRatingSubmit} className={styles.btn} aria-label="Enviar">ENVIAR</button>
-        </div>
+            <Button
+                onClick={handleRatingSubmit}
+                variant="contained"
+            >
+                ENVIAR
+            </Button>
+        </Box>
     );
 };
 
