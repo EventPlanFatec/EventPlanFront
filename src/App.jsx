@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
+import { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import './fontawesome.jsx';
@@ -18,7 +19,9 @@ import FAQ from './pages/FAQ/FAQ';
 import EventList from './pages/EventList/EventList.jsx';
 import Admin from './pages/Admin/Admin';
 
+
 function App() {
+    const [count, setCount] = useState(0);
     return (
         <AuthProvider>
             <ThemeProvider>
