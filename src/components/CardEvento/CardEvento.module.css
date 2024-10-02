@@ -1,9 +1,16 @@
 .cardLink {
   text-decoration: none;
+  display: flex;
+  justify-content: center;
 }
 
 .card {
+  width: 100%;
+  max-width: 350px;
+  margin: 8px;
   transition: transform 0.2s;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .card:hover {
@@ -12,18 +19,29 @@
 
 .image {
   overflow: hidden;
-  border-radius: 8px;
+  border-radius: 8px 8px 0 0;
 }
 
 .eventImage {
   width: 100%;
   height: auto;
+  object-fit: cover;
+  display: block;
 }
 
 .cardInfo {
   margin-top: 8px;
+  text-align: center;
 }
 
 .eventTitle {
-  margin-bottom: 8px;
+  margin-bottom: 4px;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.eventDetail {
+  margin: 4px 0;
+  font-size: 0.9rem;
+  color: #555;
 }

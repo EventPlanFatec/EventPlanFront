@@ -13,7 +13,7 @@ const CardEvento = ({ event }) => {
         <Grid container spacing={2}>
           <Grid item xs={12} md={4}>
             <div className={styles.image}>
-              <img src={event.img} alt="Imagem do evento" className={styles.eventImage} />
+              <img src={event.img} alt={event.nome} className={styles.eventImage} />
             </div>
           </Grid>
           <Grid item xs={12} md={8}>
@@ -22,11 +22,11 @@ const CardEvento = ({ event }) => {
                 {event.nome}
               </Typography>
               <div className={styles.cardInfo}>
-                <Typography variant="body2">
+                <Typography variant="body2" className={styles.eventDetail}>
                   <FontAwesomeIcon icon="fa-regular fa-calendar" style={{ fontSize: iconSize, marginRight: '8px' }} />
-                  {event.data} <br /> {event.horario}
+                  {event.data} - {event.horario}
                 </Typography>
-                <Typography variant="body2">
+                <Typography variant="body2" className={styles.eventDetail}>
                   <FontAwesomeIcon icon="fa-regular fa-map" style={{ fontSize: iconSize, marginRight: '8px' }} />
                   {event.local}
                 </Typography>
