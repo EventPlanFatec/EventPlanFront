@@ -6,7 +6,7 @@ import { db } from '../../firebase/config';
 import { collection, getDocs } from 'firebase/firestore';
 import styles from './Home.module.css';
 import { Carousel } from 'react-responsive-carousel';
-import "react-responsive-carousel/lib/styles/carousel.min.css"; // Importando o CSS do carousel
+import "react-responsive-carousel/lib/styles/carousel.min.css";
 
 const Home = () => {
   const [eventos, setEventos] = useState([]);
