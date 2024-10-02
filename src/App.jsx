@@ -2,7 +2,6 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import './fontawesome.jsx';
 import Home from './pages/Home/Home';
@@ -17,6 +16,7 @@ import RecoverPass from './pages/RecoverPass/RecoverPass';
 import FAQ from './pages/FAQ/FAQ';
 import EventList from './pages/EventList/EventList.jsx';
 import Admin from './pages/Admin/Admin';
+import { CssBaseline, Container } from '@mui/material';
 
 function App() {
     return (
@@ -33,9 +33,10 @@ function AppContent() {
 
     return (
         <BrowserRouter>
+            <CssBaseline />
             <div className={darkMode ? 'dark-mode' : 'light-mode'}>
                 <Navbar />
-                <div className="container-flui">
+                <Container maxWidth="lg" className="container-fluid">
                     <Routes>
                         <Route path="/" element={<Home />} />
                         <Route path="/login" element={<Login />} />
@@ -49,7 +50,7 @@ function AppContent() {
                         <Route path="/eventlist" element={<EventList />} />
                         <Route path="/admin" element={<Admin />} />
                     </Routes>
-                </div>
+                </Container>
                 <Footer />
             </div>
         </BrowserRouter>
