@@ -1,0 +1,78 @@
+/* Estilo geral da página de eventos */
+.eventos-page {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+}
+
+/* Título da página */
+.eventos-page h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* Container para a lista de eventos */
+.evento-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+/* Estilo de cada cartão de evento */
+.evento-card {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+/* Efeito ao passar o mouse sobre o cartão */
+.evento-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Estilo para a imagem do evento */
+.evento-card img {
+    width: 100%;
+    height: auto;
+}
+
+/* Estilo para o conteúdo do evento */
+.evento-card-content {
+    padding: 15px;
+}
+
+/* Título do evento */
+.evento-card-content h2 {
+    margin: 0;
+    font-size: 1.5em;
+    color: #007bff;
+}
+
+/* Detalhes do evento */
+.evento-card-content p {
+    margin: 10px 0;
+    color: #666;
+}
+
+/* Botão para mais detalhes do evento */
+.evento-card-content a {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 10px 15px;
+    border-radius: 4px;
+    background-color: #007bff;
+    color: #ffffff;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+/* Efeito ao passar o mouse sobre o botão */
+.evento-card-content a:hover {
+    background-color: #0056b3;
+}
