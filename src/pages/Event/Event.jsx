@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { doc, getDoc, collection, getDocs } from 'firebase/firestore';
-import { Container, Row, Col, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import axios from 'axios';
+import { Container, Row, Col, OverlayTrigger, Tooltip, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Chat from '../../components/Chat/Chat';
 import EventRating from '../../components/Avaliacao/Avaliacao';
 import FavoriteEvents from '../../components/Favoritos/Favoritos';
 import UploadImage from '../../components/UploadImage/UploadImage';
 import ExportToCSV from '../../components/ExportToCsv/ExportToCsv';
-import { db } from '../../firebase/config';
 import styles from './Event.module.css';
 
 const Event = () => {
@@ -16,23 +15,29 @@ const Event = () => {
   const [eventData, setEventData] = useState(null);
   const [ratings, setRatings] = useState([]);
   const [averageRating, setAverageRating] = useState(0);
+  const [isFull, setIsFull] = useState(false);
+  const [isOnWaitlist, setIsOnWaitlist] = useState(false);
+  const [feedbackMessage, setFeedbackMessage] = useState('');
+  const [isError, setIsError] = useState(false);
 
   useEffect(() => {
     const fetchEventAndRatings = async () => {
       try {
-        const eventRef = doc(db, 'Eventos', id);
-        const eventSnap = await getDoc(eventRef);
-        if (eventSnap.exists()) {
-          setEventData(eventSnap.data());
-        } else {
-          console.log('No such document!');
+        const eventResponse = await axios.get(`http://localhost:7151/api/events/${id}`);
+        setEventData(eventResponse.data);
+        if (eventResponse.data.ingressosVendidos >= eventResponse.data.lotacaoMaxima) {
+          setIsFull(true);
         }
-        const ratingsCollection = collection(db, `Eventos/${id}/ratings`);
-        const ratingsSnapshot = await getDocs(ratingsCollection);
-        const fetchedRatings = ratingsSnapshot.docs.map(doc => doc.data());
+
+        const ratingsResponse = await axios.get(`http://localhost:7151/api/events/${id}/ratings`);
+        const fetchedRatings = ratingsResponse.data;
         setRatings(fetchedRatings);
         const avgRating = calculateAverageRating(fetchedRatings);
         setAverageRating(avgRating);
+
+        // Verificar se o usuário está na lista de espera
+        const waitlistResponse = await axios.get(`http://localhost:7151/api/events/${id}/lista-espera/user-id`);
+        setIsOnWaitlist(!!waitlistResponse.data);
       } catch (error) {
         console.error('Error fetching event and ratings:', error);
       }
@@ -52,6 +57,34 @@ const Event = () => {
     }, 0);
 
     return totalRating / ratings.length;
+  };
+
+  const handleAddToWaitlist = async () => {
+    try {
+      await axios.post(`http://localhost:7151/api/events/${id}/lista-espera`, {
+        usuarioFinalId: 'user-id',
+      });
+      setIsOnWaitlist(true);
+      setFeedbackMessage('Você foi adicionado à lista de espera!');
+      setIsError(false);
+    } catch (error) {
+      console.error('Error adding to waitlist:', error);
+      setFeedbackMessage('Erro ao adicionar à lista de espera. Tente novamente.');
+      setIsError(true);
+    }
+  };
+
+  const handleRemoveFromWaitlist = async () => {
+    try {
+      await axios.delete(`http://localhost:7151/api/events/${id}/lista-espera/user-id`);
+      setIsOnWaitlist(false);
+      setFeedbackMessage('Você foi removido da lista de espera!');
+      setIsError(false);
+    } catch (error) {
+      console.error('Error removing from waitlist:', error);
+      setFeedbackMessage('Erro ao remover da lista de espera. Tente novamente.');
+      setIsError(true);
+    }
   };
 
   if (!eventData) return <div>Loading...</div>;
@@ -89,10 +122,37 @@ const Event = () => {
         </Col>
         <Col md={2}>
           <div className={styles.cartIcon}>
-          <FontAwesomeIcon icon="fa-solid fa-cart-shopping" />
+            <FontAwesomeIcon icon="fa-solid fa-cart-shopping" />
           </div>
         </Col>
       </Row>
+      {feedbackMessage && (
+        <Row>
+          <Col>
+            <div className={`alert ${isError ? 'alert-danger' : 'alert-success'}`} role="alert">
+              {feedbackMessage}
+            </div>
+          </Col>
+        </Row>
+      )}
+      {isFull && !isOnWaitlist && (
+        <Row>
+          <Col>
+            <Button onClick={handleAddToWaitlist} variant="warning">
+              Adicionar à Lista de Espera
+            </Button>
+          </Col>
+        </Row>
+      )}
+      {isFull && isOnWaitlist && (
+        <Row>
+          <Col>
+            <Button onClick={handleRemoveFromWaitlist} variant="danger">
+              Remover da Lista de Espera
+            </Button>
+          </Col>
+        </Row>
+      )}
       <Row>
         <Col>
           <Chat eventId={id} />
@@ -120,7 +180,7 @@ const Event = () => {
       </Row>
       <Row>
         <Col>
-          <ExportToCSV eventData={eventData} averageRating={averageRating} />
+          <ExportToCSV data={ratings} />
         </Col>
       </Row>
     </Container>
