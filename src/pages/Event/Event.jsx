@@ -17,6 +17,8 @@ const Event = () => {
   const [averageRating, setAverageRating] = useState(0);
   const [isFull, setIsFull] = useState(false);
   const [isOnWaitlist, setIsOnWaitlist] = useState(false);
+  const [feedbackMessage, setFeedbackMessage] = useState('');
+  const [isError, setIsError] = useState(false);
 
   useEffect(() => {
     const fetchEventAndRatings = async () => {
@@ -63,9 +65,12 @@ const Event = () => {
         usuarioFinalId: 'user-id',
       });
       setIsOnWaitlist(true);
-      alert('Você foi adicionado à lista de espera!');
+      setFeedbackMessage('Você foi adicionado à lista de espera!');
+      setIsError(false);
     } catch (error) {
       console.error('Error adding to waitlist:', error);
+      setFeedbackMessage('Erro ao adicionar à lista de espera. Tente novamente.');
+      setIsError(true);
     }
   };
 
@@ -73,9 +78,12 @@ const Event = () => {
     try {
       await axios.delete(`http://localhost:7151/api/events/${id}/lista-espera/user-id`);
       setIsOnWaitlist(false);
-      alert('Você foi removido da lista de espera!');
+      setFeedbackMessage('Você foi removido da lista de espera!');
+      setIsError(false);
     } catch (error) {
       console.error('Error removing from waitlist:', error);
+      setFeedbackMessage('Erro ao remover da lista de espera. Tente novamente.');
+      setIsError(true);
     }
   };
 
@@ -118,6 +126,15 @@ const Event = () => {
           </div>
         </Col>
       </Row>
+      {feedbackMessage && (
+        <Row>
+          <Col>
+            <div className={`alert ${isError ? 'alert-danger' : 'alert-success'}`} role="alert">
+              {feedbackMessage}
+            </div>
+          </Col>
+        </Row>
+      )}
       {isFull && !isOnWaitlist && (
         <Row>
           <Col>
