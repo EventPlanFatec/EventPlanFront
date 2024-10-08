@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import './CriarEvento.module.css'; // Importar estilos se necessário
+import { TextField, Button, Typography, Box, InputLabel } from '@mui/material'; // Importação do Material UI
 import { useNavigate } from 'react-router-dom';
-
+import './CriarEvento.module.css'; // Adicione os estilos aqui se necessário
 
 const CriarEvento = ({ onSave }) => {
     const [formData, setFormData] = useState({
@@ -15,7 +15,7 @@ const CriarEvento = ({ onSave }) => {
     });
 
     const [errors, setErrors] = useState({});
-    const navigate = useNavigate(); // Hook para navegar entre páginas
+    const navigate = useNavigate();
 
     useEffect(() => {
         const savedData = JSON.parse(localStorage.getItem('eventoFormData'));
@@ -39,7 +39,6 @@ const CriarEvento = ({ onSave }) => {
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         
-        // Validações de formato e tamanho da imagem
         if (file) {
             const validFormats = ['image/jpeg', 'image/png'];
             if (!validFormats.includes(file.type)) {
@@ -58,8 +57,7 @@ const CriarEvento = ({ onSave }) => {
             }
         }
 
-        setErrors((prevErrors) => ({ ...prevErrors, imagem: null })); // Limpa o erro se a imagem for válida
-
+        setErrors((prevErrors) => ({ ...prevErrors, imagem: null }));
         setFormData({
             ...formData,
             imagem: file,
@@ -77,19 +75,18 @@ const CriarEvento = ({ onSave }) => {
         if (!formData.imagem) newErrors.imagem = 'Imagem é obrigatória.';
 
         setErrors(newErrors);
-        return Object.keys(newErrors).length === 0; // Retorna true se não houver erros
+        return Object.keys(newErrors).length === 0;
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
         if (!validateForm()) {
-            return; // Se o formulário não for válido, não prosseguir
+            return;
         }
-        onSave(formData); // Chamar função de salvamento externa
+        onSave(formData);
         localStorage.removeItem('eventoFormData');
     };
 
-    // Função para cancelar e limpar o formulário
     const handleCancel = () => {
         setFormData({
             nomeEvento: '',
@@ -100,90 +97,97 @@ const CriarEvento = ({ onSave }) => {
             preco: '',
             imagem: null,
         });
-        localStorage.removeItem('eventoFormData'); // Limpar dados do localStorage
-        navigate('/eventos'); // Redirecionar para a página de eventos
+        localStorage.removeItem('eventoFormData');
+        navigate('/eventos');
     };
 
     return (
         <form onSubmit={handleSubmit}>
-            <div>
-                <label>Nome do Evento</label>
-                <input
-                    type="text"
+            <Box display="flex" flexDirection="column" gap={2}>
+                <TextField
+                    label="Nome do Evento"
                     name="nomeEvento"
                     value={formData.nomeEvento}
                     onChange={handleChange}
+                    error={!!errors.nomeEvento}
+                    helperText={errors.nomeEvento}
                     required
                 />
-                {errors.nomeEvento && <span>{errors.nomeEvento}</span>}
-            </div>
-            <div>
-                <label>Data</label>
-                <input
-                    type="date"
+                <TextField
+                    label="Data"
                     name="data"
+                    type="date"
+                    InputLabelProps={{ shrink: true }}
                     value={formData.data}
                     onChange={handleChange}
+                    error={!!errors.data}
+                    helperText={errors.data}
                     required
                 />
-                {errors.data && <span>{errors.data}</span>}
-            </div>
-            <div>
-                <label>Horário</label>
-                <input
-                    type="time"
+                <TextField
+                    label="Horário"
                     name="horario"
+                    type="time"
+                    InputLabelProps={{ shrink: true }}
                     value={formData.horario}
                     onChange={handleChange}
+                    error={!!errors.horario}
+                    helperText={errors.horario}
                     required
                 />
-                {errors.horario && <span>{errors.horario}</span>}
-            </div>
-            <div>
-                <label>Local</label>
-                <input
-                    type="text"
+                <TextField
+                    label="Local"
                     name="local"
                     value={formData.local}
                     onChange={handleChange}
+                    error={!!errors.local}
+                    helperText={errors.local}
                     required
                 />
-                {errors.local && <span>{errors.local}</span>}
-            </div>
-            <div>
-                <label>Descrição</label>
-                <textarea
+                <TextField
+                    label="Descrição"
                     name="descricao"
+                    multiline
+                    rows={4}
                     value={formData.descricao}
                     onChange={handleChange}
+                    error={!!errors.descricao}
+                    helperText={errors.descricao}
                     required
                 />
-                {errors.descricao && <span>{errors.descricao}</span>}
-            </div>
-            <div>
-                <label>Preço</label>
-                <input
-                    type="number"
+                <TextField
+                    label="Preço"
                     name="preco"
+                    type="number"
                     value={formData.preco}
                     onChange={handleChange}
+                    error={!!errors.preco}
+                    helperText={errors.preco}
                     required
                 />
-                {errors.preco && <span>{errors.preco}</span>}
-            </div>
-            <div>
-                <label>Imagem</label>
-                <input
-                    type="file"
-                    name="imagem"
-                    accept="image/jpeg,image/png"
-                    onChange={handleFileChange}
-                    required
-                />
-                {errors.imagem && <span>{errors.imagem}</span>}
-            </div>
-            <button type="submit">Salvar Evento</button>
-            <button type="button" onClick={handleCancel}>Cancelar</button> {/* Botão de Cancelar */}
+
+                <InputLabel shrink>Imagem</InputLabel>
+                <Button variant="contained" component="label">
+                    Escolher Imagem
+                    <input
+                        type="file"
+                        name="imagem"
+                        accept="image/jpeg,image/png"
+                        onChange={handleFileChange}
+                        hidden
+                    />
+                </Button>
+                {errors.imagem && <Typography color="error">{errors.imagem}</Typography>}
+
+                <Box display="flex" gap={2}>
+                    <Button type="submit" variant="contained" color="primary">
+                        Salvar Evento
+                    </Button>
+                    <Button type="button" variant="outlined" color="secondary" onClick={handleCancel}>
+                        Cancelar
+                    </Button>
+                </Box>
+            </Box>
         </form>
     );
 };
