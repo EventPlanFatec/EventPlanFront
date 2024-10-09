@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Button, Typography, Box, InputLabel } from '@mui/material'; // Importação do Material UI
+import { TextField, Button, Typography, Box, InputLabel } from '@mui/material'; 
 import { useNavigate } from 'react-router-dom';
-import './CriarEvento.module.css'; // Adicione os estilos aqui se necessário
+import './CriarEvento.module.css'; 
 
 const CriarEvento = ({ onSave }) => {
     const [formData, setFormData] = useState({
@@ -12,6 +12,7 @@ const CriarEvento = ({ onSave }) => {
         descricao: '',
         preco: '',
         imagem: null,
+        emailsConvidados: '', 
     });
 
     const [errors, setErrors] = useState({});
@@ -48,7 +49,7 @@ const CriarEvento = ({ onSave }) => {
                 }));
                 return;
             }
-            if (file.size > 5 * 1024 * 1024) { // Limite de 5MB
+            if (file.size > 5 * 1024 * 1024) { 
                 setErrors((prevErrors) => ({
                     ...prevErrors,
                     imagem: 'A imagem deve ter no máximo 5MB.',
@@ -73,7 +74,7 @@ const CriarEvento = ({ onSave }) => {
         if (!formData.descricao) newErrors.descricao = 'Descrição é obrigatória.';
         if (!formData.preco) newErrors.preco = 'Preço é obrigatório.';
         if (!formData.imagem) newErrors.imagem = 'Imagem é obrigatória.';
-
+    
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -96,6 +97,7 @@ const CriarEvento = ({ onSave }) => {
             descricao: '',
             preco: '',
             imagem: null,
+            emailsConvidados: '', 
         });
         localStorage.removeItem('eventoFormData');
         navigate('/eventos');
@@ -178,6 +180,15 @@ const CriarEvento = ({ onSave }) => {
                     />
                 </Button>
                 {errors.imagem && <Typography color="error">{errors.imagem}</Typography>}
+
+                <TextField
+                    label="E-mails dos Convidados (separados por vírgula)"
+                    name="emailsConvidados"
+                    value={formData.emailsConvidados}
+                    onChange={handleChange}
+                    error={!!errors.emailsConvidados}
+                    helperText={errors.emailsConvidados}
+                />
 
                 <Box display="flex" gap={2}>
                     <Button type="submit" variant="contained" color="primary">
