@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Dropdown, DropdownButton, Pagination } from 'react-bootstrap';
+import { Button, Menu, MenuItem, Pagination, Box } from '@mui/material';
 import { db } from '../../firebase/config';
 import { collection, getDocs } from 'firebase/firestore';
 import CardEvento from '../../components/CardEvento/CardEvento';
@@ -10,6 +10,7 @@ const EventList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [eventsPerPage] = useState(5);
   const [filter, setFilter] = useState('todos');
+  const [anchorEl, setAnchorEl] = useState(null);
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -22,40 +23,50 @@ const EventList = () => {
   }, []);
 
   const filteredEvents = filter === 'todos' ? events : events.filter(event => event.tipo === filter);
-
   const indexOfLastEvent = currentPage * eventsPerPage;
   const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
   const currentEvents = filteredEvents.slice(indexOfFirstEvent, indexOfLastEvent);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
-  const handleSelect = (e) => {
-    setFilter(e);
+  const handleSelect = (event) => {
+    setFilter(event);
     setCurrentPage(1);
+    setAnchorEl(null);
   };
 
   return (
-    <div className={styles.container}>
-      <DropdownButton id="dropdown-basic-button" title={`Filtro:${filter}`} onSelect={handleSelect} className={styles.dropdown}>
-        <Dropdown.Item eventKey="todos">Todos</Dropdown.Item>
-        <Dropdown.Item eventKey="show">Show e Musica</Dropdown.Item>
-        <Dropdown.Item eventKey="games">Games e Tecnologia</Dropdown.Item>
-        <Dropdown.Item eventKey="comedia">Comedia e StandUp</Dropdown.Item>
-        <Dropdown.Item eventKey="curso">Art</Dropdown.Item>
-      </DropdownButton>
+    <Box className={styles.container}>
+      <Button 
+        variant="contained" 
+        onClick={(e) => setAnchorEl(e.currentTarget)} 
+        className={styles.dropdown}
+        size="small" // Set button size to small
+      >
+        Filtro: {filter}
+      </Button>
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={() => setAnchorEl(null)}
+      >
+        {['todos', 'show', 'games', 'comedia', 'curso'].map(tipo => (
+          <MenuItem key={tipo} onClick={() => handleSelect(tipo)}>
+            {tipo.charAt(0).toUpperCase() + tipo.slice(1)}
+          </MenuItem>
+        ))}
+      </Menu>
       <div className={styles.cardContainer}>
         {currentEvents.map(event => (
           <CardEvento key={event.id} event={event} />
         ))}
       </div>
-      <Pagination className={styles.paginationContainer}>
-        {Array.from({ length: Math.ceil(filteredEvents.length / eventsPerPage) }, (_, i) => (
-          <Pagination.Item key={i} active={i + 1 === currentPage} onClick={() => paginate(i + 1)}>
-            {i + 1}
-          </Pagination.Item>
-        ))}
-      </Pagination>
-    </div>
+      <Pagination 
+        count={Math.ceil(filteredEvents.length / eventsPerPage)} 
+        page={currentPage} 
+        onChange={(e, page) => paginate(page)} 
+        className={styles.paginationContainer}
+      />
+    </Box>
   );
 };
 

@@ -74,7 +74,7 @@ const Login = () => {
         <h2 className={styles.title}>Entrar</h2>
         <form onSubmit={handleSubmit}>
           <TextField
-            label="Email"
+            label="E-mail"
             variant="outlined"
             required
             value={email}
