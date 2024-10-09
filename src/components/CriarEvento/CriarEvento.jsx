@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Button, Typography, Box, InputLabel, Checkbox, FormControlLabel } from '@mui/material'; 
+import { TextField, Button, Typography, Box, InputLabel, Checkbox, FormControlLabel } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import './CriarEvento.module.css'; 
+import './CriarEvento.module.css';
 
 const CriarEvento = ({ onSave }) => {
     const [formData, setFormData] = useState({
@@ -13,10 +13,10 @@ const CriarEvento = ({ onSave }) => {
         preco: '',
         imagem: null,
         emailsConvidados: '',
-        senha: '', // Adicionando o campo de senha
+        senha: '',
     });
 
-    const [isEventoPrivado, setIsEventoPrivado] = useState(false); // Estado para controle do evento privado
+    const [isEventoPrivado, setIsEventoPrivado] = useState(false);
     const [errors, setErrors] = useState({});
     const navigate = useNavigate();
 
@@ -51,7 +51,7 @@ const CriarEvento = ({ onSave }) => {
                 }));
                 return;
             }
-            if (file.size > 5 * 1024 * 1024) { 
+            if (file.size > 5 * 1024 * 1024) {
                 setErrors((prevErrors) => ({
                     ...prevErrors,
                     imagem: 'A imagem deve ter no máximo 5MB.',
@@ -101,7 +101,7 @@ const CriarEvento = ({ onSave }) => {
             preco: '',
             imagem: null,
             emailsConvidados: '',
-            senha: '', // Limpa o campo de senha ao cancelar
+            senha: '',
         });
         localStorage.removeItem('eventoFormData');
         navigate('/eventos');
@@ -171,7 +171,6 @@ const CriarEvento = ({ onSave }) => {
                     helperText={errors.preco}
                     required
                 />
-
                 <InputLabel shrink>Imagem</InputLabel>
                 <Button variant="contained" component="label">
                     Escolher Imagem
@@ -184,7 +183,6 @@ const CriarEvento = ({ onSave }) => {
                     />
                 </Button>
                 {errors.imagem && <Typography color="error">{errors.imagem}</Typography>}
-
                 <FormControlLabel
                     control={
                         <Checkbox
@@ -194,9 +192,8 @@ const CriarEvento = ({ onSave }) => {
                         />
                     }
                     label="Evento Privado"
-                    sx={{ marginBottom: 1 }} // Reduzindo o espaço ocupado pelo checkbox
+                    sx={{ marginBottom: 1 }}
                 />
-
                 {isEventoPrivado && (
                     <TextField
                         label="Senha do Evento"
@@ -206,10 +203,9 @@ const CriarEvento = ({ onSave }) => {
                         onChange={handleChange}
                         error={!!errors.senha}
                         helperText={errors.senha}
-                        required={isEventoPrivado} // Torna obrigatório se o evento for privado
+                        required
                     />
                 )}
-
                 <TextField
                     label="E-mails dos Convidados (separados por vírgula)"
                     name="emailsConvidados"
@@ -218,7 +214,6 @@ const CriarEvento = ({ onSave }) => {
                     error={!!errors.emailsConvidados}
                     helperText={errors.emailsConvidados}
                 />
-
                 <Box display="flex" gap={2}>
                     <Button type="submit" variant="contained" color="primary">
                         Salvar Evento
