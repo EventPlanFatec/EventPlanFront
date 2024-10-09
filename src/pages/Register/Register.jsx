@@ -99,7 +99,7 @@ const Register = () => {
             margin="normal"
           />
           <TextField
-            label="Email"
+            label="E-mail"
             type="email"
             variant="outlined"
             required

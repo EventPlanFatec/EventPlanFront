@@ -5,3 +5,17 @@
 .MuiFormControlLabel-label {
     font-size: 0.9rem; 
 }
+
+@media (max-width: 600px) {
+    .MuiFormControlLabel-label {
+        font-size: 0.8rem;
+    }
+
+    .MuiTextField-root {
+        width: 100%;
+    }
+    
+    .MuiButton-root {
+        width: 100%;
+    }
+}
