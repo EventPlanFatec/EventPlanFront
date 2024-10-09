@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { TextField, Button, Typography, Box, InputLabel, Checkbox, FormControlLabel } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
-import './CriarEvento.module.css';
+import './EditarEvento.module.css';
 
-const CriarEvento = ({ onSave, eventoAtual }) => {
+const EditarEvento = ({ eventoAtual, onSave }) => {
     const [formData, setFormData] = useState({
         nomeEvento: '',
         data: '',
@@ -28,17 +28,6 @@ const CriarEvento = ({ onSave, eventoAtual }) => {
         }
     }, [eventoAtual]);
 
-    useEffect(() => {
-        const savedData = JSON.parse(localStorage.getItem('eventoFormData'));
-        if (savedData) {
-            setFormData(savedData);
-        }
-    }, []);
-
-    useEffect(() => {
-        localStorage.setItem('eventoFormData', JSON.stringify(formData));
-    }, [formData]);
-
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({
@@ -49,24 +38,6 @@ const CriarEvento = ({ onSave, eventoAtual }) => {
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
-        if (file) {
-            const validFormats = ['image/jpeg', 'image/png'];
-            if (!validFormats.includes(file.type)) {
-                setErrors((prevErrors) => ({
-                    ...prevErrors,
-                    imagem: 'A imagem deve ser JPEG ou PNG.',
-                }));
-                return;
-            }
-            if (file.size > 5 * 1024 * 1024) {
-                setErrors((prevErrors) => ({
-                    ...prevErrors,
-                    imagem: 'A imagem deve ter no máximo 5MB.',
-                }));
-                return;
-            }
-        }
-        setErrors((prevErrors) => ({ ...prevErrors, imagem: null }));
         setFormData({
             ...formData,
             imagem: file,
@@ -93,28 +64,11 @@ const CriarEvento = ({ onSave, eventoAtual }) => {
         if (!validateForm()) {
             return;
         }
-        if (eventoAtual) {
-            await onSave({ ...formData, id });
-        } else {
-            await onSave(formData);
-        }
-        localStorage.removeItem('eventoFormData');
-        navigate('/eventos'); 
+        await onSave({ ...formData, id });
+        navigate('/eventos');
     };
 
     const handleCancel = () => {
-        setFormData({
-            nomeEvento: '',
-            data: '',
-            horario: '',
-            local: '',
-            descricao: '',
-            preco: '',
-            imagem: null,
-            emailsConvidados: '',
-            senha: '',
-        });
-        localStorage.removeItem('eventoFormData');
         navigate('/eventos');
     };
 
@@ -193,10 +147,6 @@ const CriarEvento = ({ onSave, eventoAtual }) => {
                         hidden
                     />
                 </Button>
-                {errors.imagem && <Typography color="error">{errors.imagem}</Typography>}
-                {eventoAtual && eventoAtual.imagem && (
-                    <Typography>Imagem atual: {eventoAtual.imagem}</Typography>
-                )}
                 <FormControlLabel
                     control={
                         <Checkbox
@@ -230,7 +180,7 @@ const CriarEvento = ({ onSave, eventoAtual }) => {
                 />
                 <Box display="flex" gap={2}>
                     <Button type="submit" variant="contained" color="primary">
-                        {eventoAtual ? 'Atualizar Evento' : 'Salvar Evento'}
+                        Atualizar Evento
                     </Button>
                     <Button type="button" variant="outlined" color="secondary" onClick={handleCancel}>
                         Cancelar
@@ -241,4 +191,4 @@ const CriarEvento = ({ onSave, eventoAtual }) => {
     );
 };
 
-export default CriarEvento;
+export default EditarEvento;

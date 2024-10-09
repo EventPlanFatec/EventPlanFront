@@ -7,9 +7,15 @@ import Register from './pages/Register/Register';
 import EventosPage from './pages/EventosPage/EventosPage';
 import EventList from './pages/EventList/EventList.jsx';
 import CriarEvento from './components/CriarEvento/CriarEvento';
+import EditarEvento from './pages/EditarEvento/EditarEvento';
 
 function App() {
   const [count, setCount] = useState(0);
+  const [eventos, setEventos] = useState([]); 
+
+  const buscarEventoPorId = (id) => {
+    return eventos.find(evento => evento.id === id); 
+  };
 
   return (
     <Router>
@@ -17,10 +23,11 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} /> 
+          <Route path="/register" element={<Register />} />
           <Route path="/eventos" element={<EventosPage />} />
           <Route path="/eventlist" element={<EventList />} />
           <Route path="/criar-evento" element={<CriarEvento />} />
+          <Route path="/editar-evento/:id" element={<EditarEvento eventoAtual={buscarEventoPorId} />} />
         </Routes>
       </>
     </Router>
