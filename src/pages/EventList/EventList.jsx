@@ -40,7 +40,7 @@ const EventList = () => {
         variant="contained" 
         onClick={(e) => setAnchorEl(e.currentTarget)} 
         className={styles.dropdown}
-        size="small" // Set button size to small
+        size="small" 
       >
         Filtro: {filter}
       </Button>
