@@ -1,11 +1,10 @@
 import React from 'react';
-import CriarEvento from '../../components/CriarEvento/CriarEvento'; // Importa o componente de criação de eventos
-import { salvarEvento } from '../../../src/services/eventosService'; // Requisição para API
+import CriarEvento from '../../components/CriarEvento/CriarEvento';
+import { salvarEvento } from '../../../src/services/eventosService';
 
 const EventosPage = () => {
   const handleSave = async (formData) => {
     try {
-      // Chama a função do service para salvar o evento no backend
       await salvarEvento(formData);
       alert('Evento criado com sucesso!');
     } catch (error) {
@@ -14,7 +13,7 @@ const EventosPage = () => {
   };
 
   return (
-    <div>
+    <div className="eventos-page">
       <h1>Criar Novo Evento</h1>
       <CriarEvento onSave={handleSave} />
     </div>

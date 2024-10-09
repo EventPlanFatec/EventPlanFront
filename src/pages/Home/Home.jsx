@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Box } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import { Link } from 'react-router-dom';
 import CardEvento from '../../components/CardEvento/CardEvento';
 import { db } from '../../firebase/config';
 import { collection, getDocs } from 'firebase/firestore';
 import styles from './Home.module.css';
-import { Carousel } from 'react-responsive-carousel';
-import "react-responsive-carousel/lib/styles/carousel.min.css";
+import SwipeableViews from 'react-swipeable-views';
+import { useTheme } from '@mui/material/styles';
+import { Paper, Typography } from '@mui/material';
 
 const Home = () => {
   const [eventos, setEventos] = useState([]);
+  const theme = useTheme();
 
   useEffect(() => {
     const fetchEventos = async () => {
@@ -21,31 +23,37 @@ const Home = () => {
     fetchEventos();
   }, []);
 
+  const slides = [
+    {
+      img: "https://firebasestorage.googleapis.com/v0/b/eventplan-30036.appspot.com/o/Design01.svg?alt=media&token=e0cc518f-049b-4cbb-938e-dbeb7b877053",
+      alt: "Primeiro slide"
+    },
+    {
+      img: "https://firebasestorage.googleapis.com/v0/b/eventplan-30036.appspot.com/o/Design2.svg?alt=media&token=7518c2e1-ad68-428b-82db-64e5f020e96c",
+      alt: "Segundo slide"
+    },
+    {
+      img: "https://firebasestorage.googleapis.com/v0/b/eventplan-30036.appspot.com/o/Design3.svg?alt=media&token=c2da9f55-7348-46ba-8095-af8f5ce8657e",
+      alt: "Terceiro slide"
+    }
+  ];
+
   return (
     <Box>
-      <Carousel>
-        <div>
-          <img
-            className={styles.carouselImage}
-            src="https://firebasestorage.googleapis.com/v0/b/eventplan-30036.appspot.com/o/Design01.svg?alt=media&token=e0cc518f-049b-4cbb-938e-dbeb7b877053"
-            alt="First slide"
-          />
-        </div>
-        <div>
-          <img
-            className={styles.carouselImage}
-            src="https://firebasestorage.googleapis.com/v0/b/eventplan-30036.appspot.com/o/Design2.svg?alt=media&token=7518c2e1-ad68-428b-82db-64e5f020e96c"
-            alt="Second slide"
-          />
-        </div>
-        <div>
-          <img
-            className={styles.carouselImage}
-            src="https://firebasestorage.googleapis.com/v0/b/eventplan-30036.appspot.com/o/Design3.svg?alt=media&token=c2da9f55-7348-46ba-8095-af8f5ce8657e"
-            alt="Third slide"
-          />
-        </div>
-      </Carousel>
+      <Paper square elevation={0} className={styles.carouselContainer}>
+        <SwipeableViews>
+          {slides.map((slide, index) => (
+            <div key={index}>
+              <img
+                className={styles.carouselImage}
+                src={slide.img}
+                alt={slide.alt}
+                style={{ width: '100%', height: 'auto' }}
+              />
+            </div>
+          ))}
+        </SwipeableViews>
+      </Paper>
       <Box className={styles.videoContainer}>
         <iframe
           className={styles.video}
@@ -57,15 +65,23 @@ const Home = () => {
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
         ></iframe>
-      </Box>  
-      <div className={styles.cardContainer}>
+      </Box>
+      <Box className={styles.cardContainer}>
         {eventos.slice(0, 6).map(event => (
           <CardEvento key={event.id} event={event} />
         ))}
-      </div>
-      <div className={styles.verMaisContainer}>
-        <Link to="/EventList" className={styles.btn} aria-label="Ver Mais">VER MAIS</Link>
-      </div>
+      </Box>
+      <Box className={styles.verMaisContainer}>
+        <Link to="/EventList" style={{ textDecoration: 'none' }}>
+          <Button 
+            variant="contained" 
+            className={styles.btn} 
+            aria-label="Ver Mais" 
+          >
+            VER MAIS
+          </Button>
+        </Link>
+      </Box>
     </Box>
   );
 };

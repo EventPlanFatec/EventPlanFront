@@ -35,7 +35,6 @@ const Event = () => {
         const avgRating = calculateAverageRating(fetchedRatings);
         setAverageRating(avgRating);
 
-        // Verificar se o usuário está na lista de espera
         const waitlistResponse = await axios.get(`http://localhost:7151/api/events/${id}/lista-espera/user-id`);
         setIsOnWaitlist(!!waitlistResponse.data);
       } catch (error) {
