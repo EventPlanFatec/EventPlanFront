@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { getStorage, ref, uploadBytesResumable, getDownloadURL, listAll } from 'firebase/storage';
 import { storage } from '../../firebase/config';
 import { useParams } from 'react-router-dom';
-import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Button, CircularProgress, Typography, Box } from '@mui/material';
 
 const UploadImage = () => {
     const { id } = useParams(); 
@@ -51,24 +51,30 @@ const UploadImage = () => {
     };
 
     return (
-        <div>
+        <Box sx={{ p: 2 }}>
             <input type="file" onChange={handleChange} />
-            <OverlayTrigger
-                placement="top"
-                overlay={<Tooltip id="upload-tooltip">Upload Image</Tooltip>}
+            <Button 
+                variant="contained" 
+                color="primary" 
+                onClick={handleUpload}
+                disabled={!image}
+                sx={{ mt: 2 }}
             >
-                <button id="upload-button" onClick={handleUpload}>
-                    Upload
-                </button>
-            </OverlayTrigger>
-            <progress value={progress} max="100" />
-            {url && <img src={url} alt="Event" />}
-            <div>
+                Upload
+            </Button>
+            {progress > 0 && (
+                <Box sx={{ mt: 2 }}>
+                    <CircularProgress variant="determinate" value={progress} />
+                    <Typography variant="body2">{`${Math.round(progress)}%`}</Typography>
+                </Box>
+            )}
+            {url && <img src={url} alt="Event" style={{ width: '100%', marginTop: '16px' }} />}
+            <div style={{ marginTop: '16px' }}>
                 {uploadedImages.map((imgUrl, index) => (
                     <img key={index} src={imgUrl} alt={`Event ${id}`} style={{ width: '100px', margin: '10px' }} />
                 ))}
             </div>
-        </div>
+        </Box>
     );
 };
 

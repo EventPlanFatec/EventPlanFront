@@ -1,35 +1,58 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { useState } from 'react';
+import React from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import { ThemeProvider, useTheme } from './context/ThemeContext';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
+import './fontawesome.jsx';
 import Home from './pages/Home/Home';
 import Login from './pages/Login/Login';
 import Register from './pages/Register/Register';
-import EventosPage from './pages/EventosPage/EventosPage';
+import Event from './pages/Event/Event';
+import About from './pages/About/About';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
+import Profile from './pages/Profile/Profile';
+import RecoverPass from './pages/RecoverPass/RecoverPass';
+import FAQ from './pages/FAQ/FAQ';
 import EventList from './pages/EventList/EventList.jsx';
-import EditarEvento from './pages/EditarEvento/EditarEvento';
-import CriarEvento from './components/CriarEvento/CriarEvento';
+import Admin from './pages/Admin/Admin';
 
 function App() {
-  const [eventos, setEventos] = useState([]); 
+  return (
+    <AuthProvider>
+      <ThemeProvider>
+        <AppContent />
+      </ThemeProvider>
+    </AuthProvider>
+  );
+}
 
-  const buscarEventoPorId = (id) => {
-    return eventos.find(evento => evento.id === id); 
-  };
+function AppContent() {
+  const { darkMode } = useTheme();
 
   return (
-    <Router>
-      <>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/eventos" element={<EventosPage eventos={eventos} setEventos={setEventos} />} />
-          <Route path="/eventlist" element={<EventList />} />
-          <Route path="/editar-evento/:id" element={<EditarEvento eventoAtual={buscarEventoPorId} />} />
-          <Route path="/criar-evento" element={<CriarEvento />} />
-        </Routes>
-      </>
-    </Router>
+    <BrowserRouter>
+      <div className={darkMode ? 'dark-mode' : 'light-mode'}>
+        <Navbar />
+        <div className="container-flui">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/event/:id" element={<Event />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="*" element={<Navigate to="/" />} />
+            <Route path="/recoverpass" element={<RecoverPass />} />
+            <Route path="/FAQ" element={<FAQ />} />
+            <Route path="/eventlist" element={<EventList />} />
+            <Route path="/admin" element={<Admin />} />
+          </Routes>
+        </div>
+      </div>
+      <Footer />
+    </BrowserRouter>
   );
 }
 

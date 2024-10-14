@@ -5,7 +5,6 @@ import { getAuth } from "firebase/auth";
 import { getDatabase } from "firebase/database";
 import { getStorage } from 'firebase/storage';
 
-
 const firebaseConfig = {
     apiKey: "AIzaSyClGugLkcn6bk80puyY-hVTBsOH2i5cbTU",
     authDomain: "eventplan-30036.firebaseapp.com",

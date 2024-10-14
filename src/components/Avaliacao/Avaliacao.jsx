@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { collection, addDoc, getDocs } from "firebase/firestore";
 import { db } from '../../firebase/config';
-import styles from '../../components/Avaliacao/Avaliacao.module.css';
+import { Container, Typography, TextField, Button, Box } from '@mui/material';
 
 const EventRating = ({ eventId }) => {
     const [ratings, setRatings] = useState([]);
@@ -65,28 +65,36 @@ const EventRating = ({ eventId }) => {
     };
 
     return (
-        <div className={styles.container}>
-            <h3 className={styles.header}>Nota: {averageRating.toFixed(1)}</h3>
+        <Container>
+            <Typography variant="h5">Nota: {averageRating.toFixed(1)}</Typography>
             {ratings.map((rating, index) => (
-                <div key={index} className={styles.rating}>
-                    <p>{rating.rating} Estrelas</p>
-                    <p>{rating.comment}</p>
-                </div>
+                <Box key={index} mb={2}>
+                    <Typography>{rating.rating} Estrelas</Typography>
+                    <Typography>{rating.comment}</Typography>
+                </Box>
             ))}
-            <input className={styles.avaliacao}
+            <TextField
                 type="number"
                 value={newRating}
                 onChange={(e) => setNewRating(Number(e.target.value))}
-                max="5"
-                min="0"
+                inputProps={{ max: 5, min: 0 }}
+                label="Avaliação"
+                variant="outlined"
+                fullWidth
+                margin="normal"
             />
-            <textarea className={styles.textarea}
+            <TextField
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
                 placeholder="Deixe seu comentário."
+                variant="outlined"
+                multiline
+                rows={4}
+                fullWidth
+                margin="normal"
             />
-            <button onClick={handleRatingSubmit} className={styles.btn} aria-label="Enviar">ENVIAR</button>
-        </div>
+            <Button onClick={handleRatingSubmit} variant="contained" color="primary">ENVIAR</Button>
+        </Container>
     );
 };
 

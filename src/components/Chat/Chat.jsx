@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { ref, push, onValue, off, set } from 'firebase/database';
 import { database } from '../../firebase/config';
-import styles from './Chat.module.css';
+import { Container, Card, CardHeader, CardContent, TextField, Button, Box, Typography } from '@mui/material';
 
 const Chat = ({ eventId }) => {
   const [messages, setMessages] = useState([]);
@@ -49,38 +49,32 @@ const Chat = ({ eventId }) => {
   };
 
   return (
-    <div className={`container ${styles.container}`}>
-      <div className={`card ${styles.chatCard}`}>
-        <div className={`card-header ${styles.cardHeader}`}>
-          <h2>Chat em Tempo Real</h2>
-        </div>
-        <div className={`card-body ${styles.cardBody}`}>
-          <div className={styles.messages} style={{ maxHeight: '400px', overflowY: 'auto' }}>
+    <Container>
+      <Card>
+        <CardHeader title={<Typography variant="h6">Chat em Tempo Real</Typography>} />
+        <CardContent>
+          <Box sx={{ maxHeight: 400, overflowY: 'auto', mb: 2 }}>
             {messages.map((message, index) => (
-              <div key={index} className={styles.message}>
+              <Typography key={index} variant="body1" sx={{ mb: 1 }}>
                 {message.text}
-              </div>
+              </Typography>
             ))}
-          </div>
+          </Box>
           <form onSubmit={handleSendMessage}>
-            <div className="input-group">
-              <input
-                type="text"
-                className={`form-control ${styles.input}`}
+            <Box display="flex" gap={1}>
+              <TextField
+                variant="outlined"
+                fullWidth
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
                 placeholder="Digite sua mensagem..."
               />
-              <div className="input-group-append">
-                <button type="submit" className={styles.btn} aria-label="Enviar">
-                  ENVIAR
-                </button>
-              </div>
-            </div>
+              <Button type="submit" variant="contained" color="primary">ENVIAR</Button>
+            </Box>
           </form>
-        </div>
-      </div>
-    </div>
+        </CardContent>
+      </Card>
+    </Container>
   );
 };
 
