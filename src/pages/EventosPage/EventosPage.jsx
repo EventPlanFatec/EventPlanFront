@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import CriarEvento from '../../components/CriarEvento/CriarEvento';
-import { salvarEvento, listarEventos } from '../../../src/services/eventosService';
+import { salvarEvento, listarEventos, cancelarEvento } from '../../../src/services/eventosService';
+import { Container, Typography, Button, Card, CardContent } from '@mui/material';
+import styles from './EventosPage.module.css';
 
 const EventosPage = () => {
   const [eventos, setEventos] = useState([]);
@@ -27,7 +29,7 @@ const EventosPage = () => {
 
   const handleCancelEvent = async (id) => {
     try {
-      await cancelarEvento(id); 
+      await cancelarEvento(id);
       setEventos(eventos.filter(evento => evento.id !== id));
       alert('Evento cancelado com sucesso!');
     } catch (error) {
@@ -36,21 +38,31 @@ const EventosPage = () => {
   };
 
   return (
-    <div className="eventos-page">
-      <h1>Criar Novo Evento</h1>
+    <Container className={styles.container}>
+      <Typography variant="h4" gutterBottom>
+        Criar Novo Evento
+      </Typography>
       <CriarEvento onSave={handleSave} />
-      <h2>Eventos Criados</h2>
+      <Typography variant="h5" gutterBottom>
+        Eventos Criados
+      </Typography>
       {eventos.map(evento => (
-        <div key={evento.id}>
-          <h3>{evento.nome}</h3>
-          {isAdmin && (
-            <button onClick={() => handleCancelEvent(evento.id)}>
-              Cancelar Evento
-            </button>
-          )}
-        </div>
+        <Card key={evento.id} className={styles.card}>
+          <CardContent>
+            <Typography variant="h6">{evento.nome}</Typography>
+            {isAdmin && (
+              <Button 
+                variant="contained" 
+                color="secondary" 
+                onClick={() => handleCancelEvent(evento.id)}
+              >
+                Cancelar Evento
+              </Button>
+            )}
+          </CardContent>
+        </Card>
       ))}
-    </div>
+    </Container>
   );
 };
 

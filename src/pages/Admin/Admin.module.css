@@ -1,4 +1,24 @@
-.main{
-    padding-top: 15%;
-    padding-bottom: 5%;
+.main {
+    margin: 0 auto;
+    max-width: 600px;
+    padding: 16px;
+}
+
+.eventCard {
+    padding: 16px;
+    text-align: center;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+    margin-bottom: 16px;
+}
+
+.eventCard:hover {
+    transform: translateY(-5px);
+}
+
+@media (max-width: 600px) {
+    .main {
+        padding: 8px;
+    }
 }

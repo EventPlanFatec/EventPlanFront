@@ -1,7 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { Container, Row, Col, OverlayTrigger, Tooltip, Button } from 'react-bootstrap';
+import {
+  Container,
+  Grid,
+  Typography,
+  Button,
+  Snackbar,
+  Alert,
+  Card,
+  CardMedia,
+  CardContent,
+} from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Chat from '../../components/Chat/Chat';
 import EventRating from '../../components/Avaliacao/Avaliacao';
@@ -49,12 +59,10 @@ const Event = () => {
     if (ratings.length === 0) {
       return 0;
     }
-
     const totalRating = ratings.reduce((acc, rating) => {
       const validRating = typeof rating.rating === 'number' && !isNaN(rating.rating) ? rating.rating : 0;
       return acc + validRating;
     }, 0);
-
     return totalRating / ratings.length;
   };
 
@@ -90,98 +98,71 @@ const Event = () => {
 
   return (
     <Container className={styles.container}>
-      <Row>
-        <Col>
-          <div className={styles.imageContainer}>
-            <img src={eventData.imgBanner} alt={eventData.nome} className={styles.eventImage} />
-          </div>
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <div className={`${styles.description} ${styles.marginTop20}`}>
-            <p>{eventData.descricao}</p>
-          </div>
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <div className={styles.dateVenue}>
-            <p><FontAwesomeIcon icon={['far', 'calendar']} /> {eventData.data}</p>
-            <p><FontAwesomeIcon icon={['fas', 'map-marker-alt']} /> {eventData.local}</p>
-          </div>
-        </Col>
-      </Row>
-      <Row>
-        <Col md={10}>
-          <div className={styles.tickets}>
-            <p><strong>Ingressos:</strong></p>
-            <p>Ingressos a partir de R$ {eventData.valorMin}</p>
-          </div>
-        </Col>
-        <Col md={2}>
-          <div className={styles.cartIcon}>
-            <FontAwesomeIcon icon="fa-solid fa-cart-shopping" />
-          </div>
-        </Col>
-      </Row>
-      {feedbackMessage && (
-        <Row>
-          <Col>
-            <div className={`alert ${isError ? 'alert-danger' : 'alert-success'}`} role="alert">
-              {feedbackMessage}
-            </div>
-          </Col>
-        </Row>
-      )}
-      {isFull && !isOnWaitlist && (
-        <Row>
-          <Col>
-            <Button onClick={handleAddToWaitlist} variant="warning">
+      <Grid container spacing={2}>
+        <Grid item xs={12}>
+          <Card>
+            <CardMedia
+              component="img"
+              image={eventData.imgBanner}
+              alt={eventData.nome}
+            />
+            <CardContent>
+              <Typography variant="h5">{eventData.nome}</Typography>
+              <Typography variant="body1">{eventData.descricao}</Typography>
+              <Typography variant="subtitle1">
+                <FontAwesomeIcon icon={['far', 'calendar']} /> {eventData.data}
+              </Typography>
+              <Typography variant="subtitle1">
+                <FontAwesomeIcon icon={['fas', 'map-marker-alt']} /> {eventData.local}
+              </Typography>
+              <Typography variant="body2">
+                <strong>Ingressos:</strong> Ingressos a partir de R$ {eventData.valorMin}
+              </Typography>
+              <Button variant="contained" color="primary" onClick={() => {}}>
+                Comprar Ingresso
+              </Button>
+            </CardContent>
+          </Card>
+        </Grid>
+        {feedbackMessage && (
+          <Grid item xs={12}>
+            <Snackbar open={true} autoHideDuration={6000}>
+              <Alert severity={isError ? 'error' : 'success'}>
+                {feedbackMessage}
+              </Alert>
+            </Snackbar>
+          </Grid>
+        )}
+        {isFull && !isOnWaitlist && (
+          <Grid item xs={12}>
+            <Button onClick={handleAddToWaitlist} variant="outlined" color="warning">
               Adicionar à Lista de Espera
             </Button>
-          </Col>
-        </Row>
-      )}
-      {isFull && isOnWaitlist && (
-        <Row>
-          <Col>
-            <Button onClick={handleRemoveFromWaitlist} variant="danger">
+          </Grid>
+        )}
+        {isFull && isOnWaitlist && (
+          <Grid item xs={12}>
+            <Button onClick={handleRemoveFromWaitlist} variant="outlined" color="error">
               Remover da Lista de Espera
             </Button>
-          </Col>
-        </Row>
-      )}
-      <Row>
-        <Col>
+          </Grid>
+        )}
+        <Grid item xs={12}>
           <Chat eventId={id} />
-        </Col>
-      </Row>
-      <Row>
-        <Col>
+        </Grid>
+        <Grid item xs={12}>
           <EventRating eventId={id} />
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <OverlayTrigger
-            placement="top"
-            overlay={<Tooltip id="tooltip-favorite">Adicionar aos Favoritos</Tooltip>}
-          >
-            <FavoriteEvents userId="user-id" eventId={id} eventName={eventData.nome} />
-          </OverlayTrigger>
-        </Col>
-      </Row>
-      <Row>
-        <Col>
+        </Grid>
+        <Grid item xs={12}>
+          <FavoriteEvents userId="user-id" eventId={id} eventName={eventData.nome} />
+        </Grid>
+        <Grid item xs={12}>
           <UploadImage />
-        </Col>
-      </Row>
-      <Row>
-        <Col>
+        </Grid>
+        <Grid item xs={12}>
           <ExportToCSV data={ratings} />
-        </Col>
-      </Row>
+        </Grid>
+      </Grid>
     </Container>
   );
 };
