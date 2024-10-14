@@ -3,9 +3,8 @@
 }
 
 .dropdown {
-  padding: 0.5rem 1rem; 
-  margin-bottom: 1rem; 
-  font-size: 0.9rem; 
+  padding: 2rem;
+  padding-top: 4rem;
 }
 
 .cardContainer {
@@ -29,7 +28,6 @@
 
   .dropdown {
     width: 100%;
-    padding: 0.5rem; 
-    font-size: 1rem; 
+    padding: 1rem; 
   }
 }

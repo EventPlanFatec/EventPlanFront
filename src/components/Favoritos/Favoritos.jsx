@@ -4,7 +4,8 @@ import { getDocs, setDoc, doc, collection } from "firebase/firestore";
 import { useAuth } from "../../context/AuthContext";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import { IconButton, List, ListItem, ListItemText, Tooltip, Typography, Button } from "@mui/material";
+import FavoriteIcon from '@mui/icons-material/Favorite';
 
 const FavoriteEvents = ({ userId, eventId, eventName }) => {
     const [favorites, setFavorites] = useState([]);
@@ -44,24 +45,19 @@ const FavoriteEvents = ({ userId, eventId, eventName }) => {
 
     return (
         <div>
-            <h3>Favoritos</h3>
-            <ul>
+            <Typography variant="h5">Favoritos</Typography>
+            <List>
                 {favorites.map((favorite, index) => (
-                    <OverlayTrigger
-                        key={index}
-                        placement="top"
-                        overlay={<Tooltip id={`tooltip-favorite-${index}`}>{favorite.eventName}</Tooltip>}
-                    >
-                        <li>{favorite.eventName}</li>
-                    </OverlayTrigger>
+                    <ListItem key={index}>
+                        <ListItemText primary={favorite.eventName} />
+                    </ListItem>
                 ))}
-            </ul>
-            <OverlayTrigger
-                placement="top"
-                overlay={<Tooltip id="tooltip-add-favorite">Adicionar aos Favoritos</Tooltip>}
-            >
-                <button onClick={handleFavorite}>Adicionar aos Favoritos</button>
-            </OverlayTrigger>
+            </List>
+            <Tooltip title="Adicionar aos Favoritos">
+                <IconButton onClick={handleFavorite} color="primary">
+                    <FavoriteIcon />
+                </IconButton>
+            </Tooltip>
             <ToastContainer />
         </div>
     );

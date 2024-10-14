@@ -1,6 +1,8 @@
 import React from 'react';
-import styles from "./Profile.module.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useNavigate, NavLink } from 'react-router-dom';
+import { Button, Typography, Box, Grid, Card, CardMedia } from '@mui/material';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useAuth } from '../../context/AuthContext'; 
 import PerfilImg from "../../assets/FotoPerfil.jpeg";
 import ArraiaGeraldoAzevedoImg from "../../assets/ArraiaGeraldoAzevedo.jpeg";
 import DilsinhoImg from "../../assets/Dilsinho.jpeg";
@@ -8,8 +10,6 @@ import RebeldeImg from "../../assets/Rebelde.jpeg";
 import AndreaBocelliImg from "../../assets/AndreaBocelli.jpeg";
 import FerrugemImg from "../../assets/Ferrugem.jpeg";
 import RobertaSaImg from "../../assets/RobertaSá.jpeg";
-import { NavLink, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext'; 
 
 const Profile = () => {
   const { user, logout } = useAuth();
@@ -25,65 +25,69 @@ const Profile = () => {
   };
 
   return (
-    <main>
-      <div className={styles.planofundo}>
-        <div className={styles.perfil}>
-          <img src={PerfilImg} alt="Imagem de Perfil" />
-          <span className={styles.username}>{user ? user.displayName : "Usuário"}</span>
-        </div>
-        <div className={styles.content}>
-          <div className={styles.content2}>
-            O EventPlan é um site de venda de ingressos para diferentes tipos de eventos realizados no Brasil. É possível comprar entradas para shows de artistas nacionais e internacionais, festivais de música, eventos esportivos, além de cinema, museu, apresentações de teatro, entre outros.
-          </div>
-          <div className={styles.sobreUsuario}>
-            <p>Sobre Usuário</p>
-            <div className={styles.iconelapis}>
-              <FontAwesomeIcon icon="fa-solid fa-pen" />
-            </div>
-          </div>
-          <NavLink to="../Profile">
-          <div className={styles.content3}>
-            MEUS EVENTOS
-          </div>
-          </NavLink>
-        </div>
+    <Box padding={3}>
+      <Box display="flex" alignItems="center" mb={2}>
+        <img
+          src={PerfilImg}
+          alt="Imagem de Perfil"
+          style={{ borderRadius: '50%', width: '80px', height: '80px', marginRight: '16px' }}
+        />
+        <Typography variant="h5">{user ? user.displayName : "Usuário"}</Typography>
+      </Box>
+      <Typography variant="body1" paragraph>
+        O EventPlan é um site de venda de ingressos para diferentes tipos de eventos realizados no Brasil. É possível comprar entradas para shows de artistas nacionais e internacionais, festivais de música, eventos esportivos, além de cinema, museu, apresentações de teatro, entre outros.
+      </Typography>
+      <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
+        <Typography variant="h6">Sobre Usuário</Typography>
+        <FontAwesomeIcon icon="fa-solid fa-pen" />
+      </Box>
+      <NavLink to="../Profile">
+        <Button variant="outlined" color="primary">
+          MEUS EVENTOS
+        </Button>
+      </NavLink>
 
-        <div className={styles.content4}>
-          <div className={styles.sobreUsuario}>
-            <p>Recomendações</p>
-            <div className={styles.galleryContainer}>
-              <div className={styles.gallery}>
-                <img src={ArraiaGeraldoAzevedoImg} alt="Arraia Geraldo Azevedo" />
-                <img src={DilsinhoImg} alt="Dilsinho" />
-                <img src={RebeldeImg} alt="Rebelde" />
-                <div></div>
-                <img src={AndreaBocelliImg} alt="Andrea Bocelli" />
-                <img src={FerrugemImg} alt="Ferrugem" />
-                <img src={RobertaSaImg} alt="Roberta Sá" />
-              </div>
-            </div>
-            <NavLink to="../Profile">
-            <div className={styles.content5}>
-              VER MAIS
-            </div>
-            </NavLink>
-          </div>
-        </div>
+      <Box mt={4}>
+        <Typography variant="h6">Recomendações</Typography>
+        <Grid container spacing={2}>
+          {[ArraiaGeraldoAzevedoImg, DilsinhoImg, RebeldeImg, AndreaBocelliImg, FerrugemImg, RobertaSaImg].map((img, index) => (
+            <Grid item xs={6} sm={4} md={2} key={index}>
+              <Card>
+                <CardMedia component="img" height="140" image={img} alt="Recomendação" />
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+        <NavLink to="../Profile">
+          <Button variant="text" color="primary" sx={{ mt: 2 }}>
+            VER MAIS
+          </Button>
+        </NavLink>
+      </Box>
+
+      <Box mt={4}>
         {user ? (
-          <button className={styles.content6} onClick={handleLogout}>
-            <FontAwesomeIcon icon="fa-solid fa-sign-out" className={styles.iconevoltar} />
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={handleLogout}
+            startIcon={<FontAwesomeIcon icon="fa-solid fa-sign-out" />}
+          >
             SAIR
-          </button>
+          </Button>
         ) : (
           <NavLink to="../Home">
-            <div className={styles.content6}>
-              <FontAwesomeIcon icon="fa-solid fa-right-to-bracket" className={styles.iconevoltar} />
+            <Button
+              variant="outlined"
+              color="primary"
+              startIcon={<FontAwesomeIcon icon="fa-solid fa-right-to-bracket" />}
+            >
               VOLTAR
-            </div>
+            </Button>
           </NavLink>
         )}
-      </div>
-    </main>
+      </Box>
+    </Box>
   );
 };
 
