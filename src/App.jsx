@@ -8,27 +8,27 @@ import EventosPage from './pages/EventosPage/EventosPage';
 import EventList from './pages/EventList/EventList.jsx';
 import EditarEvento from './pages/EditarEvento/EditarEvento';
 import CriarEvento from './components/CriarEvento/CriarEvento';
+import Navbar from './components/Navbar/Navbar';
 
 function App() {
-  const [eventos, setEventos] = useState([]); 
+  const [eventos, setEventos] = useState([]);
 
   const buscarEventoPorId = (id) => {
-    return eventos.find(evento => evento.id === id); 
+    return eventos.find(evento => evento.id === id);
   };
 
   return (
     <Router>
-      <>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/eventos" element={<EventosPage eventos={eventos} setEventos={setEventos} />} />
-          <Route path="/eventlist" element={<EventList />} />
-          <Route path="/editar-evento/:id" element={<EditarEvento eventoAtual={buscarEventoPorId} />} />
-          <Route path="/criar-evento" element={<CriarEvento />} />
-        </Routes>
-      </>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/eventos" element={<EventosPage eventos={eventos} setEventos={setEventos} />} />
+        <Route path="/eventlist" element={<EventList />} />
+        <Route path="/editar-evento/:id" element={<EditarEvento eventoAtual={buscarEventoPorId} />} />
+        <Route path="/criar-evento" element={<CriarEvento />} />
+      </Routes>
     </Router>
   );
 }
