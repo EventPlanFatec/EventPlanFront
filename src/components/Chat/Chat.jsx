@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { ref, push, onValue, off, set } from 'firebase/database';
 import { database } from '../../firebase/config';
-import styles from './Chat.module.css';
+import { Card, CardHeader, CardContent, TextField, Button, Box, Typography } from '@mui/material';
 
 const Chat = ({ eventId }) => {
   const [messages, setMessages] = useState([]);
@@ -11,16 +11,16 @@ const Chat = ({ eventId }) => {
   useEffect(() => {
     if (eventId) {
       messagesRef.current = ref(database, `events/${eventId}/messages`);
-      
+
       const fetchMessages = () => {
         onValue(messagesRef.current, (snapshot) => {
           const data = snapshot.val();
           const messagesList = data ? Object.values(data) : [];
-          const limitedMessages = messagesList.slice(-6); 
+          const limitedMessages = messagesList.slice(-6);
           setMessages(limitedMessages);
         });
       };
-      
+
       fetchMessages();
 
       return () => {
@@ -44,43 +44,49 @@ const Chat = ({ eventId }) => {
     }).then(() => {
       setNewMessage('');
     }).catch((error) => {
-      console.error('Error sending message:', error);
+      console.error('Erro ao enviar a mensagem:', error);
     });
   };
 
   return (
-    <div className={`container ${styles.container}`}>
-      <div className={`card ${styles.chatCard}`}>
-        <div className={`card-header ${styles.cardHeader}`}>
-          <h2>Chat em Tempo Real</h2>
-        </div>
-        <div className={`card-body ${styles.cardBody}`}>
-          <div className={styles.messages} style={{ maxHeight: '400px', overflowY: 'auto' }}>
-            {messages.map((message, index) => (
-              <div key={index} className={styles.message}>
-                {message.text}
-              </div>
-            ))}
-          </div>
-          <form onSubmit={handleSendMessage}>
-            <div className="input-group">
-              <input
-                type="text"
-                className={`form-control ${styles.input}`}
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                placeholder="Digite sua mensagem..."
-              />
-              <div className="input-group-append">
-                <button type="submit" className={styles.btn} aria-label="Enviar">
-                  ENVIAR
-                </button>
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
+    <Card sx={{ backgroundColor: '#fff', borderRadius: 2, boxShadow: 3 }}>
+      <CardHeader title={<Typography variant="h5" sx={{ textAlign: 'center', fontWeight: 600, color: '#333' }}>Chat em Tempo Real</Typography>} />
+      <CardContent>
+        <Box sx={{ maxHeight: 300, overflowY: 'auto', marginBottom: 2 }}>
+          {messages.map((message, index) => (
+            <Box key={index} sx={{ padding: 1, backgroundColor: '#f0f0f0', marginBottom: 1, borderRadius: 1 }}>
+              <Typography sx={{ color: '#333' }}>{message.text}</Typography>
+            </Box>
+          ))}
+        </Box>
+        <form onSubmit={handleSendMessage}>
+          <Box display="flex" gap={1}>
+            <TextField
+              variant="outlined"
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              placeholder="Digite sua mensagem..."
+              sx={{ flexGrow: 1, borderRadius: 2 }}
+            />
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              sx={{
+                padding: '12px',
+                textTransform: 'none',
+                borderRadius: 1,
+                '&:hover': {
+                  backgroundColor: '#1565c0',
+                },
+              }}
+            >
+              ENVIAR
+            </Button>
+          </Box>
+        </form>
+      </CardContent>
+    </Card>
   );
 };
 
