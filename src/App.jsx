@@ -3,6 +3,7 @@ import { useState } from 'react';
 import './App.css';
 import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 import Home from './pages/Home/Home';
 import Login from './pages/Login/Login';
 import Register from './pages/Register/Register';
@@ -22,6 +23,7 @@ function App() {
     <AuthProvider>
       <Router>
         <Navbar />
+        <div className="container-flui">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
@@ -31,6 +33,8 @@ function App() {
           <Route path="/editar-evento/:id" element={<EditarEvento eventoAtual={buscarEventoPorId} />} />
           <Route path="/criar-evento" element={<CriarEvento />} />
         </Routes>
+        </div>
+        <Footer />
       </Router>
     </AuthProvider>
   );
