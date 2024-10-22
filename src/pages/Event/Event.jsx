@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
-import { Container, Row, Col, OverlayTrigger, Tooltip, Button } from 'react-bootstrap';
+import { doc, getDoc, collection, getDocs } from 'firebase/firestore';
+import { Container, Grid, Typography, Tooltip, Button, Box } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Chat from '../../components/Chat/Chat';
 import EventRating from '../../components/Avaliacao/Avaliacao';
 import FavoriteEvents from '../../components/Favoritos/Favoritos';
 import UploadImage from '../../components/UploadImage/UploadImage';
 import ExportToCSV from '../../components/ExportToCsv/ExportToCsv';
+import { db } from '../../firebase/config';
 import styles from './Event.module.css';
 
 const Event = () => {
@@ -15,28 +16,23 @@ const Event = () => {
   const [eventData, setEventData] = useState(null);
   const [ratings, setRatings] = useState([]);
   const [averageRating, setAverageRating] = useState(0);
-  const [isFull, setIsFull] = useState(false);
-  const [isOnWaitlist, setIsOnWaitlist] = useState(false);
-  const [feedbackMessage, setFeedbackMessage] = useState('');
-  const [isError, setIsError] = useState(false);
 
   useEffect(() => {
     const fetchEventAndRatings = async () => {
       try {
-        const eventResponse = await axios.get(`http://localhost:7151/api/events/${id}`);
-        setEventData(eventResponse.data);
-        if (eventResponse.data.ingressosVendidos >= eventResponse.data.lotacaoMaxima) {
-          setIsFull(true);
+        const eventRef = doc(db, 'Eventos', id);
+        const eventSnap = await getDoc(eventRef);
+        if (eventSnap.exists()) {
+          setEventData(eventSnap.data());
+        } else {
+          console.log('No such document!');
         }
-
-        const ratingsResponse = await axios.get(`http://localhost:7151/api/events/${id}/ratings`);
-        const fetchedRatings = ratingsResponse.data;
+        const ratingsCollection = collection(db, `Eventos/${id}/ratings`);
+        const ratingsSnapshot = await getDocs(ratingsCollection);
+        const fetchedRatings = ratingsSnapshot.docs.map(doc => doc.data());
         setRatings(fetchedRatings);
         const avgRating = calculateAverageRating(fetchedRatings);
         setAverageRating(avgRating);
-
-        const waitlistResponse = await axios.get(`http://localhost:7151/api/events/${id}/lista-espera/user-id`);
-        setIsOnWaitlist(!!waitlistResponse.data);
       } catch (error) {
         console.error('Error fetching event and ratings:', error);
       }
@@ -46,142 +42,87 @@ const Event = () => {
   }, [id]);
 
   const calculateAverageRating = (ratings) => {
-    if (ratings.length === 0) {
-      return 0;
-    }
-
+    if (ratings.length === 0) return 0;
     const totalRating = ratings.reduce((acc, rating) => {
       const validRating = typeof rating.rating === 'number' && !isNaN(rating.rating) ? rating.rating : 0;
       return acc + validRating;
     }, 0);
-
     return totalRating / ratings.length;
-  };
-
-  const handleAddToWaitlist = async () => {
-    try {
-      await axios.post(`http://localhost:7151/api/events/${id}/lista-espera`, {
-        usuarioFinalId: 'user-id',
-      });
-      setIsOnWaitlist(true);
-      setFeedbackMessage('Você foi adicionado à lista de espera!');
-      setIsError(false);
-    } catch (error) {
-      console.error('Error adding to waitlist:', error);
-      setFeedbackMessage('Erro ao adicionar à lista de espera. Tente novamente.');
-      setIsError(true);
-    }
-  };
-
-  const handleRemoveFromWaitlist = async () => {
-    try {
-      await axios.delete(`http://localhost:7151/api/events/${id}/lista-espera/user-id`);
-      setIsOnWaitlist(false);
-      setFeedbackMessage('Você foi removido da lista de espera!');
-      setIsError(false);
-    } catch (error) {
-      console.error('Error removing from waitlist:', error);
-      setFeedbackMessage('Erro ao remover da lista de espera. Tente novamente.');
-      setIsError(true);
-    }
   };
 
   if (!eventData) return <div>Loading...</div>;
 
   return (
     <Container className={styles.container}>
-      <Row>
-        <Col>
+      <Grid container spacing={2}>
+        <Grid item xs={12}>
           <div className={styles.imageContainer}>
             <img src={eventData.imgBanner} alt={eventData.nome} className={styles.eventImage} />
           </div>
-        </Col>
-      </Row>
-      <Row>
-        <Col>
+        </Grid>
+        <Grid item xs={12}>
           <div className={`${styles.description} ${styles.marginTop20}`}>
-            <p>{eventData.descricao}</p>
+            <Typography variant="body1">{eventData.descricao}</Typography>
           </div>
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <div className={styles.dateVenue}>
-            <p><FontAwesomeIcon icon={['far', 'calendar']} /> {eventData.data}</p>
-            <p><FontAwesomeIcon icon={['fas', 'map-marker-alt']} /> {eventData.local}</p>
-          </div>
-        </Col>
-      </Row>
-      <Row>
-        <Col md={10}>
-          <div className={styles.tickets}>
-            <p><strong>Ingressos:</strong></p>
-            <p>Ingressos a partir de R$ {eventData.valorMin}</p>
-          </div>
-        </Col>
-        <Col md={2}>
-          <div className={styles.cartIcon}>
-            <FontAwesomeIcon icon="fa-solid fa-cart-shopping" />
-          </div>
-        </Col>
-      </Row>
-      {feedbackMessage && (
-        <Row>
-          <Col>
-            <div className={`alert ${isError ? 'alert-danger' : 'alert-success'}`} role="alert">
-              {feedbackMessage}
+        </Grid>
+        <Grid item xs={12}>
+          <div className={styles.dateVenueContainer}>
+            <div className={styles.dateVenue}>
+              <Typography variant="body1">
+                <FontAwesomeIcon icon={['far', 'calendar']} /> {eventData.data}
+              </Typography>
+              <Typography variant="body1">
+                <FontAwesomeIcon icon={['fas', 'map-marker-alt']} /> {eventData.local}
+              </Typography>
             </div>
-          </Col>
-        </Row>
-      )}
-      {isFull && !isOnWaitlist && (
-        <Row>
-          <Col>
-            <Button onClick={handleAddToWaitlist} variant="warning">
-              Adicionar à Lista de Espera
-            </Button>
-          </Col>
-        </Row>
-      )}
-      {isFull && isOnWaitlist && (
-        <Row>
-          <Col>
-            <Button onClick={handleRemoveFromWaitlist} variant="danger">
-              Remover da Lista de Espera
-            </Button>
-          </Col>
-        </Row>
-      )}
-      <Row>
-        <Col>
-          <Chat eventId={id} />
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <EventRating eventId={id} />
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <OverlayTrigger
-            placement="top"
-            overlay={<Tooltip id="tooltip-favorite">Adicionar aos Favoritos</Tooltip>}
+          </div>
+        </Grid>
+        <Grid item xs={12} md={10}>
+          <div className={styles.ticketsContainer}>
+            <Box display="flex" alignItems="center" flexWrap="wrap">
+              <Typography variant="body1"><strong>Ingressos:</strong></Typography>
+              <Typography variant="body1" sx={{ color: 'orange', fontWeight: 'bold', marginLeft: 1 }}>
+                Ingressos a partir de R$ {eventData.valorMin}
+              </Typography>
+            </Box>
+          </div>
+        </Grid>
+        <Grid item xs={12} md={2}>
+          <Button 
+            variant="contained" 
+            color="primary" 
+            sx={{ width: '100%', height: '50px', marginTop: { xs: '10px', md: '18px' } }}
+            onClick={() => console.log('Comprar clicado!')}
           >
+            Comprar
+          </Button>
+        </Grid>
+        <Grid item xs={12}>
+          <Box sx={{ marginY: '1vh' }}>
+            <Chat eventId={id} />
+          </Box>
+        </Grid>
+        <Grid item xs={12}>
+          <Box sx={{ marginY: '1vh' }}>
+            <EventRating eventId={id} />
+          </Box>
+        </Grid>
+        <Grid item xs={12}>
+          <Box sx={{ marginY: '1vh' }}>
+            <UploadImage />
+          </Box>
+        </Grid>
+        <Grid item xs={12}>
+          <Box sx={{ marginY: '1vh' }}>
+            <ExportToCSV eventData={eventData} averageRating={averageRating} />
+          </Box>
+        </Grid>
+        <Grid item xs={12}>
+          <Tooltip title="Adicionar aos Favoritos" arrow>
             <FavoriteEvents userId="user-id" eventId={id} eventName={eventData.nome} />
-          </OverlayTrigger>
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <UploadImage />
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <ExportToCSV data={ratings} />
-        </Col>
-      </Row>
+          </Tooltip>
+        </Grid>
+      </Grid>
     </Container>
   );
 };

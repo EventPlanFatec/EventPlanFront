@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { collection, addDoc, getDocs } from "firebase/firestore";
 import { db } from '../../firebase/config';
-import styles from '../../components/Avaliacao/Avaliacao.module.css';
+import { Container, Typography, TextField, Button, Box, Card, CardContent } from '@mui/material';
 
 const EventRating = ({ eventId }) => {
     const [ratings, setRatings] = useState([]);
@@ -65,28 +65,65 @@ const EventRating = ({ eventId }) => {
     };
 
     return (
-        <div className={styles.container}>
-            <h3 className={styles.header}>Nota: {averageRating.toFixed(1)}</h3>
-            {ratings.map((rating, index) => (
-                <div key={index} className={styles.rating}>
-                    <p>{rating.rating} Estrelas</p>
-                    <p>{rating.comment}</p>
-                </div>
-            ))}
-            <input className={styles.avaliacao}
+        <Container maxWidth="sm" sx={{ backgroundColor: '#fff', padding: 4, borderRadius: 2, boxShadow: 3 }}>
+            <Typography variant="h5" sx={{ textAlign: 'center', marginBottom: 3, fontWeight: 600, color: '#333' }}>
+                Avaliações do Evento
+            </Typography>
+            <Box sx={{ backgroundColor: '#fff', padding: 3, borderRadius: 2, boxShadow: 1, marginBottom: 3 }}>
+                <Typography variant="body1" sx={{ textAlign: 'center', fontWeight: 600, color: '#333' }}>
+                    Média: {averageRating.toFixed(1)} Estrelas
+                </Typography>
+            </Box>
+            <Box sx={{ marginBottom: 3 }}>
+                {ratings.map((rating, index) => (
+                    <Card key={index} sx={{ marginBottom: 2, boxShadow: 2, borderRadius: 2 }}>
+                        <CardContent>
+                            <Typography sx={{ fontWeight: 600, color: '#ff9800' }}>{rating.rating} Estrelas</Typography>
+                            <Typography sx={{ color: '#333', marginTop: 1 }}>{rating.comment}</Typography>
+                        </CardContent>
+                    </Card>
+                ))}
+            </Box>
+            <TextField
                 type="number"
                 value={newRating}
                 onChange={(e) => setNewRating(Number(e.target.value))}
-                max="5"
-                min="0"
+                inputProps={{ max: 5, min: 0 }}
+                label="Avaliação"
+                variant="outlined"
+                fullWidth
+                margin="normal"
+                sx={{ marginBottom: 2 }}
             />
-            <textarea className={styles.textarea}
+            <TextField
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
                 placeholder="Deixe seu comentário."
+                variant="outlined"
+                multiline
+                rows={4}
+                fullWidth
+                margin="normal"
+                sx={{ marginBottom: 2 }}
             />
-            <button onClick={handleRatingSubmit} className={styles.btn} aria-label="Enviar">ENVIAR</button>
-        </div>
+            <Button
+                onClick={handleRatingSubmit}
+                variant="contained"
+                color="primary"
+                fullWidth
+                sx={{
+                    padding: '12px 20px',
+                    backgroundColor: '#1976d2',
+                    color: '#fff',
+                    borderRadius: 1, 
+                    '&:hover': {
+                        backgroundColor: '#1565c0',
+                    },
+                }}
+            >
+                ENVIAR
+            </Button>
+        </Container>
     );
 };
 

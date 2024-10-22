@@ -4,7 +4,8 @@ import { getDocs, setDoc, doc, collection } from "firebase/firestore";
 import { useAuth } from "../../context/AuthContext";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import { IconButton, List, ListItemText, Tooltip, Typography, Box, Card, CardContent } from "@mui/material";
+import FavoriteIcon from '@mui/icons-material/Favorite';
 
 const FavoriteEvents = ({ userId, eventId, eventName }) => {
     const [favorites, setFavorites] = useState([]);
@@ -43,27 +44,89 @@ const FavoriteEvents = ({ userId, eventId, eventName }) => {
     };
 
     return (
-        <div>
-            <h3>Favoritos</h3>
-            <ul>
-                {favorites.map((favorite, index) => (
-                    <OverlayTrigger
-                        key={index}
-                        placement="top"
-                        overlay={<Tooltip id={`tooltip-favorite-${index}`}>{favorite.eventName}</Tooltip>}
+        <Box
+            sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '100%',
+                maxWidth: 600,
+                margin: '0 auto',
+                padding: 3,
+                border: '1px solid #e0e0e0',
+                borderRadius: '12px',
+                backgroundColor: '#fff',
+            }}
+        >
+            <Typography variant="h5" sx={{ mb: 3, textAlign: 'center', fontWeight: 600, color: '#333' }}>
+                Meus Favoritos
+            </Typography>
+            <Box sx={{ width: '100%', marginBottom: 3 }}>
+                <List sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                    {favorites.map((favorite, index) => (
+                        <Card key={index} sx={{ display: 'flex', alignItems: 'center', boxShadow: 3, borderRadius: '8px' }}>
+                            <CardContent sx={{ flex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <ListItemText
+                                    primary={favorite.eventName}
+                                    sx={{ fontWeight: 500, fontSize: '1rem', color: '#333' }}
+                                />
+                                <Tooltip title="Remover dos Favoritos">
+                                    <IconButton
+                                        onClick={() => handleFavorite(favorite.eventId)}
+                                        color="error"
+                                        sx={{
+                                            fontSize: '1.5rem',
+                                            transition: 'transform 0.3s ease',
+                                            '&:hover': {
+                                                transform: 'scale(1.2)',
+                                            },
+                                        }}
+                                    >
+                                        <FavoriteIcon sx={{ fontSize: 'inherit' }} />
+                                    </IconButton>
+                                </Tooltip>
+                            </CardContent>
+                        </Card>
+                    ))}
+                </List>
+            </Box>
+            <Tooltip title="Adicionar aos Favoritos">
+                <Box
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        padding: 1,
+                        border: '2px solid #ff4081',
+                        borderRadius: '50%',
+                        width: '60px',
+                        height: '60px',
+                        cursor: 'pointer',
+                        backgroundColor: '#ff4081',
+                        '&:hover': {
+                            transform: 'scale(1.1)',
+                            transition: '0.3s',
+                            backgroundColor: '#d81b60',
+                        },
+                    }}
+                >
+                    <IconButton
+                        onClick={handleFavorite}
+                        sx={{
+                            fontSize: '2rem',
+                            color: '#fff',
+                            '&:hover': {
+                                color: '#fff',
+                            },
+                        }}
                     >
-                        <li>{favorite.eventName}</li>
-                    </OverlayTrigger>
-                ))}
-            </ul>
-            <OverlayTrigger
-                placement="top"
-                overlay={<Tooltip id="tooltip-add-favorite">Adicionar aos Favoritos</Tooltip>}
-            >
-                <button onClick={handleFavorite}>Adicionar aos Favoritos</button>
-            </OverlayTrigger>
+                        <FavoriteIcon />
+                    </IconButton>
+                </Box>
+            </Tooltip>
             <ToastContainer />
-        </div>
+        </Box>
     );
 };
 

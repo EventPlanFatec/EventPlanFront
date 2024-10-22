@@ -1,102 +1,123 @@
 .container {
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    padding: 20px;
-    background-color: #f5f5f5;
-    max-width: 1160px;
-    margin: 0 auto;
-}
-
-.imageContainer {
-    width: 100%;
-    overflow: hidden;
-    margin-top: 20px;
-}
-
-.eventImage {
-    width: 100%;
-    height: auto;
-    object-fit: cover;
-    max-width: 1160px;
-    max-height: 520px;
-    border-radius: 10px 10px 0 0;
-}
-
-.description,
-.dateVenue,
-.tickets {
-    background-color: #C2CAE8;
-    padding: 20px;
-    margin-bottom: 20px;
-    border: 2px solid #8380B6;
-    border-radius: 10px;
-    box-shadow: 0 4px 4px rgba(131, 128, 182, 0.25); 
-    filter: drop-shadow(0 0 1px rgba(131, 128, 182, 1)) drop-shadow(0 4px 4px rgba(131, 128, 182, 0.25));
-    box-sizing: border-box;
-}
-
-.cartIcon{
-    font-size: 30px;
-    color: #000;
-}  
-
-.description p,
-.dateVenue p,
-.tickets p {
-    margin: 0;
-}
-
-.cartIcon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #C2CAE8;
-    border-radius: 10px;
-    cursor: pointer;
-    height: 90px;
-    width: auto;
-    padding: 20px;
-    border: 2px solid #8380B6;
-    border-radius: 10px;
-    box-shadow: 0 4px 4px rgba(131, 128, 182, 0.25);
-    filter: drop-shadow(0 0 1px rgba(131, 128, 182, 1)) drop-shadow(0 4px 4px rgba(131, 128, 182, 0.25));
-    box-sizing: border-box;
-    transition: transform 0.2s ease; 
-}
-
-.cartIcon:hover {
-    transform: scale(1.1); 
-
-}
-
-.marginTop20 {
-    margin-top: 20px;
-}
-
-.btn {
-    width: 100%; 
-    max-width: 240px;
-    height: 60px;
-    background-color: white;
-    position: relative;
-    font-family: 'Inter', sans-serif;
-    font-size: 28px; 
-    font-weight: 600;
-    color: black;
-    text-align: center;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 2px solid #000;
-    border-radius: 10px;
-    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
-    filter: drop-shadow(0 0 1px rgba(0, 0, 0, 1)) drop-shadow(0 4px 4px rgba(0, 0, 0, 0.25));
-    box-sizing: border-box;
-    margin: 0 auto 40px; 
-    transition: transform 0.2s ease;
+    padding: 10px;
   }
   
-  .btn:hover {
-    transform: scale(1.1);
+  .imageContainer {
+    text-align: center;
   }
+  
+  .eventImage {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .description {
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    text-align: justify;
+    font-size: 1.1rem;
+    margin-top: 10px;
+  }
+  
+  .dateVenueContainer {
+    background-color: rgba(240, 240, 240, 0.9);
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .dateVenue {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1rem;
+    margin: 10px 0;
+  }
+  
+  .ticketsContainer {
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 12px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 0;
+  }
+  
+  .ticketsText {
+    font-weight: bold;
+  }
+  
+  .ticketsPrice {
+    color: #FF5722;
+    font-size: 1.2rem;
+  }
+  
+  .cartIcon {
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: color 0.3s;
+  }
+  
+  .cartIcon:hover {
+    color: #FF5722;
+  }
+  
+  .componentSpacing {
+    margin: 30px 0;
+  }
+  
+  @media (max-width: 768px) {
+    .description {
+      font-size: 1rem;
+    }
+  
+    .dateVenue {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  
+    .ticketsContainer {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  
+    .ticketsPrice {
+      font-size: 1rem;
+    }
+  
+    .cartIcon {
+      margin-top: 10px;
+    }
+  
+    .ticketsContainer button {
+      width: 80%;
+      height: 50px;
+      margin-top: 10px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .description {
+      padding: 15px;
+    }
+  
+    .ticketsContainer {
+      padding: 15px;
+    }
+  
+    .ticketsText, .ticketsPrice {
+      font-size: 0.9rem;
+    }
+  
+    .cartIcon {
+      font-size: 1.2rem;
+    }
+  }
+  

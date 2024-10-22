@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { getAuth, sendPasswordResetEmail } from 'firebase/auth';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import { Box, Button, TextField, Typography, Container } from '@mui/material';
 import styles from './RecoverPass.module.css';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { NavLink } from 'react-router-dom';
 
 const RecoverPass = () => {
   const [email, setEmail] = useState('');
@@ -24,37 +22,30 @@ const RecoverPass = () => {
     }
   };
 
-return (
-    <div className={`container d-flex justify-content-center align-items-center ${styles.container}`}>
-        <div className={`card p-4 ${styles.card}`}>
-            <h2 className="card-title text-center">Recuperação de Senha</h2>
-            <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <label htmlFor="email">E-mail:</label>
-                    <input 
-                        type="email" 
-                        id="email" 
-                        className={`form-control ${styles.formControl}`} 
-                        value={email} 
-                        onChange={(e) => setEmail(e.target.value)} 
-                        required 
-                    />
-                </div>
-                <button type="submit" className={`btn btn-primary btn-block mt-3 ${styles.btn1}`} style={{ width: '100%', border: '1px solid white' }}>
-                    Enviar e-mail de recuperação
-                </button>
-            </form>
-            {message && <p className={`mt-3 text-success ${styles.textSuccess}`}>{message}</p>}
-            {error && <p className={`mt-3 text-danger ${styles.textDanger}`}>{error}</p>}
-        </div>
-        <NavLink to="../Login">
-        <div className={styles.content6} aria-label="Voltar para a página de login">
-          <FontAwesomeIcon icon="fa-solid fa-right-to-bracket" className={styles.iconevoltar} />
-          VOLTAR
-        </div>
-      </NavLink>
-    </div>
-);
+  return (
+    <Container maxWidth="xs" className={styles.container}>
+      <Box className={styles.card} sx={{ padding: 3, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <Typography variant="h5" align="center" sx={{ fontWeight: 600 }}>Recuperação de Senha</Typography>
+        <form onSubmit={handleSubmit} style={{ width: '100%' }}>
+          <TextField
+            label="E-mail"
+            type="email"
+            fullWidth
+            margin="normal"
+            variant="outlined"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
+            Enviar e-mail de recuperação
+          </Button>
+        </form>
+        {message && <Typography color="success.main" sx={{ mt: 2 }}>{message}</Typography>}
+        {error && <Typography color="error.main" sx={{ mt: 2 }}>{error}</Typography>}
+      </Box>
+    </Container>
+  );
 };
 
 export default RecoverPass;
