@@ -1,99 +1,110 @@
 import React, { useState } from "react";
-import { Navbar as BootstrapNavbar, Nav, Offcanvas } from "react-bootstrap";
+import { AppBar, Toolbar, IconButton, Drawer, List, ListItem, ListItemIcon, ListItemText, Box, Button } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars, faCircleHalfStroke, faSearch, faUser, faHome, faInfoCircle, faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
-import styles from "./Navbar.module.css";
-import Logo from "../assets/Logo.svg";
+import { faBars, faHome, faInfoCircle, faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 import { NavLink } from "react-router-dom";
-import LanguageSelector from "./Traducao/LanguageSelector";
 import { useAuth } from "../context/AuthContext";
-import DarkModeToggle from "./DarkMode/DarkMode";
-
+import Logo from "../assets/Logo.svg";
+import styles from "./Navbar.module.css";
 
 const Navbar = () => {
-  const iconSize = "1.25rem";
-  const [show, setShow] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [hovered, setHovered] = useState(false);
   const { user } = useAuth();
 
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const toggleDrawer = (open) => () => {
+    setDrawerOpen(open);
+  };
+
+  const handleAvatarClick = () => {
+    if (user) {
+      return;
+    } 
+  };
+
+  const navLinks = [
+    { text: "Início", icon: faHome, path: "/" },
+    { text: "Eventos", icon: faCalendarAlt, path: "/event" },
+    { text: "Sobre", icon: faInfoCircle, path: "/about" },
+  ];
 
   return (
     <>
-      <BootstrapNavbar
-        bg="dark"
-        variant="dark"
-        expand="lg"
-        className={styles.fixedTop}
-      >
-        <div className={`container-fluid ${styles.navbarCustom}`}>
-          <div className={`d-flex align-items-center ${styles.leftItems}`}>
-            <div
-              aria-controls="basic-navbar-nav"
-              className="d-none d-lg-block"
-              style={{ marginRight: "20px" }}
-              onClick={handleShow}
-            >
-              <FontAwesomeIcon
-                icon={faBars}
-                style={{ fontSize: iconSize }}
-                className="iconLeft"
-              />
-            </div>
-            <DarkModeToggle />
-            <BootstrapNavbar.Collapse id="basic-navbar-nav"></BootstrapNavbar.Collapse>
-          </div>
-          <div className={styles.centerItem}>
-            <NavLink to="/">
-              <BootstrapNavbar.Brand className={styles.centerItem}>
-                <img src={Logo} alt="Logo" className={styles.logo} />
-              </BootstrapNavbar.Brand>
-            </NavLink>
-          </div>
-          <div className={`ml-auto d-flex align-items-center ${styles.rightItems}`}>
-            <LanguageSelector />
-            {user ? (
-              <NavLink to="/profile" className="d-none d-lg-block">
-                <FontAwesomeIcon
-                  icon={faUser}
-                  style={{ fontSize: iconSize }}
-                  className={styles.whiteIcon}
-                />
-              </NavLink>
-            ) : (
-              <NavLink to="/login" className="d-none d-lg-block">
-                <FontAwesomeIcon
-                  icon={faUser}
-                  style={{ fontSize: iconSize }}
-                  className={styles.whiteIcon}
-                />
-              </NavLink>
-            )}
-          </div>
-        </div>
-      </BootstrapNavbar>
+      <AppBar position="sticky" className={styles.fixedTop} style={{ backgroundColor: "#0d0013" }}>
+        <Toolbar className={styles.toolbar}>
+          <Box className={styles.menuContainer}>
+            <IconButton edge="start" color="inherit" onClick={toggleDrawer(true)} className={styles.hamburgerIcon}>
+              <FontAwesomeIcon icon={faBars} style={{ color: "white" }} />
+            </IconButton>
+            <span className={styles.menuText} onClick={toggleDrawer(true)} style={{ color: "white", fontWeight: "bold" }}>
+              Menu
+            </span>
+          </Box>
 
-      <Offcanvas show={show} onHide={handleClose}>
-        <Offcanvas.Header closeButton>
-          <Offcanvas.Title>Menu</Offcanvas.Title>
-        </Offcanvas.Header>
-        <Offcanvas.Body>
-          <Nav className="flex-column">
-            <NavLink to="/" onClick={handleClose}>
-              <FontAwesomeIcon icon={faHome} style={{ marginRight: "10px" }} />
-              Home
+          <NavLink to="/" className={styles.logoContainer}>
+            <img src={Logo} alt="Logo" className={styles.logo} />
+          </NavLink>
+
+          <Box className={styles.rightItems}>
+            <Box
+              className={styles.profileContainer}
+              onMouseEnter={() => setHovered(true)}
+              onMouseLeave={() => setHovered(false)}
+            >
+              <img
+                src="https://s3.glbimg.com/v1/AUTH_a468dd4e265e4c40b714860137150800/sales-vitrine-web/sales-vitrine-web/assets/images/icons/user-icon.svg"
+                alt="Avatar do Usuário"
+                className={styles.avatar}
+                onClick={handleAvatarClick}
+              />
+              {hovered && (
+                <Box className={styles.profileHover}>
+                  <strong className={styles.eventPlanTitle}>EventPlan</strong>
+                  <p className={styles.eventPlanDescription}>
+                    Garanta seu ingresso para os melhores eventos no EventPlan!
+                  </p>
+                  {user ? (
+                    <NavLink to="/profile">
+                      <Button variant="contained" color="primary" className={styles.profileButton}>
+                        Meu Perfil
+                      </Button>
+                    </NavLink>
+                  ) : (
+                    <NavLink to="/login">
+                      <Button variant="contained" color="primary" className={styles.profileButton}>
+                        Entrar
+                      </Button>
+                    </NavLink>
+                  )}
+                </Box>
+              )}
+            </Box>
+          </Box>
+        </Toolbar>
+      </AppBar>
+
+      <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer(false)}>
+        <List>
+          {navLinks.map((link) => (
+            <NavLink to={link.path} key={link.text} onClick={toggleDrawer(false)} className={styles.navLink}>
+              <ListItem button>
+                <ListItemIcon sx={{ minWidth: "30px" }}>
+                  <FontAwesomeIcon icon={link.icon} style={{ color: "black" }} />
+                </ListItemIcon>
+                <ListItemText
+                  primary={link.text}
+                  sx={{
+                    color: "black",
+                    fontWeight: 700,
+                    fontSize: "16px",
+                    paddingLeft: "4px",
+                  }}
+                />
+              </ListItem>
             </NavLink>
-            <NavLink to="/about" onClick={handleClose}>
-              <FontAwesomeIcon icon={faInfoCircle} style={{ marginRight: "10px" }} />
-              About
-            </NavLink>
-            <NavLink to="/event" onClick={handleClose}>
-              <FontAwesomeIcon icon={faCalendarAlt} style={{ marginRight: "10px" }} />
-              Eventos
-            </NavLink>
-          </Nav>
-        </Offcanvas.Body>
-      </Offcanvas>
+          ))}
+        </List>
+      </Drawer>
     </>
   );
 };
