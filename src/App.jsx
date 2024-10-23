@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { useState } from 'react';
 import './App.css';
 import { AuthProvider } from './context/AuthContext';
+import { PermissionsProvider } from './context/PermissionsContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home/Home';
@@ -11,6 +12,7 @@ import EventosPage from './pages/EventosPage/EventosPage';
 import EventList from './pages/EventList/EventList.jsx';
 import EditarEvento from './pages/EditarEvento/EditarEvento';
 import CriarEvento from './components/CriarEvento/CriarEvento';
+import ConfigPermissoes from './pages/ConfigPermissoes/ConfigPermissoes';
 
 function App() {
   const [eventos, setEventos] = useState([]);
@@ -21,6 +23,7 @@ function App() {
 
   return (
     <AuthProvider>
+      <PermissionsProvider>
       <Router>
         <Navbar />
         <div className="container-flui">
@@ -32,10 +35,12 @@ function App() {
           <Route path="/eventlist" element={<EventList />} />
           <Route path="/editar-evento/:id" element={<EditarEvento eventoAtual={buscarEventoPorId} />} />
           <Route path="/criar-evento" element={<CriarEvento />} />
+          <Route path="/config-permissoes" element={<ConfigPermissoes />} />
         </Routes>
         </div>
         <Footer />
       </Router>
+      </PermissionsProvider>
     </AuthProvider>
   );
 }

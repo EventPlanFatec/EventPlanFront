@@ -1,0 +1,79 @@
+.container {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  .title {
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+  
+  .permissionItem {
+    display: flex;
+    align-items: center;
+    margin: 15px 0;
+    padding: 10px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    transition: background-color 0.3s;
+    cursor: pointer;
+  }
+  
+  .permissionItem:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .checkbox {
+    margin-right: 15px;
+    transform: scale(1.2);
+  }
+  
+  .label {
+    font-size: 18px;
+    color: #555;
+  }
+  
+  .buttonContainer {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  .saveButton {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+  }
+  
+  .saveButton:hover {
+    background-color: #0056b3;
+  }
+  
+  @media (max-width: 768px) {
+    .container {
+      padding: 20px;
+    }
+  
+    .title {
+      font-size: 24px;
+    }
+  
+    .label {
+      font-size: 16px;
+    }
+  
+    .saveButton {
+      font-size: 14px;
+    }
+  }
+  
