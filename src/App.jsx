@@ -13,6 +13,7 @@ import EventList from './pages/EventList/EventList.jsx';
 import EditarEvento from './pages/EditarEvento/EditarEvento';
 import CriarEvento from './components/CriarEvento/CriarEvento';
 import ConfigPermissoes from './pages/ConfigPermissoes/ConfigPermissoes';
+import GerenciamentoUsuarios from './pages/GerenciamentoUsuarios/GerenciamentoUsuarios';
 
 function App() {
   const [eventos, setEventos] = useState([]);
@@ -36,6 +37,7 @@ function App() {
           <Route path="/editar-evento/:id" element={<EditarEvento eventoAtual={buscarEventoPorId} />} />
           <Route path="/criar-evento" element={<CriarEvento />} />
           <Route path="/config-permissoes" element={<ConfigPermissoes />} />
+          <Route path="/gerenciar-usuarios" element={<GerenciamentoUsuarios />} />
         </Routes>
         </div>
         <Footer />
