@@ -11,9 +11,10 @@ import Register from './pages/Register/Register';
 import EventosPage from './pages/EventosPage/EventosPage';
 import EventList from './pages/EventList/EventList.jsx';
 import EditarEvento from './pages/EditarEvento/EditarEvento';
-import CriarEvento from './components/CriarEvento/CriarEvento';
 import ConfigPermissoes from './pages/ConfigPermissoes/ConfigPermissoes';
 import GerenciamentoUsuarios from './pages/GerenciamentoUsuarios/GerenciamentoUsuarios';
+import CriarEvento from './components/CriarEvento/CriarEvento';
+import RegistrarOrganizacao from './components/RegistrarOrganizacao/RegistrarOrganizacao';
 
 function App() {
   const [eventos, setEventos] = useState([]);
@@ -35,9 +36,10 @@ function App() {
           <Route path="/eventos" element={<EventosPage eventos={eventos} setEventos={setEventos} />} />
           <Route path="/eventlist" element={<EventList />} />
           <Route path="/editar-evento/:id" element={<EditarEvento eventoAtual={buscarEventoPorId} />} />
-          <Route path="/criar-evento" element={<CriarEvento />} />
           <Route path="/config-permissoes" element={<ConfigPermissoes />} />
           <Route path="/gerenciar-usuarios" element={<GerenciamentoUsuarios />} />
+          <Route path="/criar-evento" element={<CriarEvento />} />
+          <Route path="/registrar-organizacao" element={<RegistrarOrganizacao />} />
         </Routes>
         </div>
         <Footer />
