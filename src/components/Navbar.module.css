@@ -2,30 +2,24 @@
   position: sticky;
   top: 0;
   z-index: 1000;
+  background-color: #0d0013;
 }
 
 .toolbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
-  padding: 0 10px;
 }
 
 .menuContainer {
   display: flex;
   align-items: center;
-  gap: 10px;
 }
 
 .menuText {
   font-weight: bold;
   color: white;
   cursor: pointer;
-}
-
-.menuText:hover {
-  color: #ff7f50;
 }
 
 @media (max-width: 600px) {
@@ -41,19 +35,6 @@
 
   .rightItems {
     display: none;
-  }
-
-  .profileContainer {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    cursor: pointer;
-  }
-
-  .avatar {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
   }
 }
 
@@ -71,70 +52,13 @@
 
 .rightItems {
   display: flex;
-  justify-content: flex-start;
   align-items: center;
-  gap: 15px;
-  margin-left: 10px;
-}
-
-.profileContainer {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  cursor: pointer;
 }
 
 .avatar {
-  width: 24px;
-  height: 24px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-}
-
-.profileHover {
-  position: absolute;
-  top: 25px;
-  left: -250%;
-  transform: translateX(-50%);
-  background-color: white;
-  padding: 15px;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  width: 200px;
-  text-align: center;
-  opacity: 0.9;
-  z-index: 100;
-  display: none;
-}
-
-.profileContainer:hover .profileHover {
-  display: block;
-}
-
-.eventPlanTitle {
-  font-size: 18px;
-  font-weight: bold;
-  color: #0d0013;
-  margin-bottom: 5px;
-}
-
-.eventPlanDescription {
-  font-size: 14px;
-  color: #555;
-  margin-bottom: 10px;
-}
-
-.profileButton {
-  background-color: #0d0013;
-  color: white;
-  font-size: 14px;
-  text-transform: none;
-  border: none;
-}
-
-.profileButton:hover {
-  color: white;
-  cursor: pointer;
 }
 
 .navLink {
@@ -145,39 +69,26 @@
   padding: 5px 8px;
 }
 
-.navLink .MuiListItemText-primary {
-  color: #333;
-  margin-left: 0;
-}
-
 .navLink:hover {
   background-color: rgba(0, 0, 0, 0.2);
-  color: #ff7f50;
-}
-
-.navLink:hover .MuiListItemIcon-root {
-  color: #333;
-}
-
-.navLink .MuiListItemIcon-root {
-  color: #333;
-  margin-right: 2px;
 }
 
 @media (max-width: 600px) {
   .hamburgerIcon {
-    display: block;
     font-size: 25px;
     color: white;
   }
 
-  .profileContainer {
+  .rightItems {
     margin-left: auto;
   }
 
-  .profileHover {
-    width: 180px;
-    top: 30px;
-    left: -250%;
+  .avatar {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .logo {
+    width: 100px;
   }
 }

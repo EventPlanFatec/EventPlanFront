@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { AppBar, Toolbar, IconButton, Drawer, List, ListItem, ListItemIcon, ListItemText, Box, Button } from "@mui/material";
+import { AppBar, Toolbar, IconButton, Drawer, List, ListItem, ListItemIcon, ListItemText, Box } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faHome, faInfoCircle, faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 import { NavLink } from "react-router-dom";
@@ -9,17 +9,10 @@ import styles from "./Navbar.module.css";
 
 const Navbar = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [hovered, setHovered] = useState(false);
   const { user } = useAuth();
 
   const toggleDrawer = (open) => () => {
     setDrawerOpen(open);
-  };
-
-  const handleAvatarClick = () => {
-    if (user) {
-      return;
-    } 
   };
 
   const navLinks = [
@@ -34,9 +27,9 @@ const Navbar = () => {
         <Toolbar className={styles.toolbar}>
           <Box className={styles.menuContainer}>
             <IconButton edge="start" color="inherit" onClick={toggleDrawer(true)} className={styles.hamburgerIcon}>
-              <FontAwesomeIcon icon={faBars} style={{ color: "white" }} />
+              <FontAwesomeIcon icon={faBars} />
             </IconButton>
-            <span className={styles.menuText} onClick={toggleDrawer(true)} style={{ color: "white", fontWeight: "bold" }}>
+            <span className={styles.menuText} onClick={toggleDrawer(true)}>
               Menu
             </span>
           </Box>
@@ -46,39 +39,13 @@ const Navbar = () => {
           </NavLink>
 
           <Box className={styles.rightItems}>
-            <Box
-              className={styles.profileContainer}
-              onMouseEnter={() => setHovered(true)}
-              onMouseLeave={() => setHovered(false)}
-            >
+            <NavLink to={user ? "/profile" : "/login"}>
               <img
                 src="https://s3.glbimg.com/v1/AUTH_a468dd4e265e4c40b714860137150800/sales-vitrine-web/sales-vitrine-web/assets/images/icons/user-icon.svg"
-                alt="Avatar do Usuário"
+                alt="Avatar"
                 className={styles.avatar}
-                onClick={handleAvatarClick}
               />
-              {hovered && (
-                <Box className={styles.profileHover}>
-                  <strong className={styles.eventPlanTitle}>EventPlan</strong>
-                  <p className={styles.eventPlanDescription}>
-                    Garanta seu ingresso para os melhores eventos no EventPlan!
-                  </p>
-                  {user ? (
-                    <NavLink to="/profile">
-                      <Button variant="contained" color="primary" className={styles.profileButton}>
-                        Meu Perfil
-                      </Button>
-                    </NavLink>
-                  ) : (
-                    <NavLink to="/login">
-                      <Button variant="contained" color="primary" className={styles.profileButton}>
-                        Entrar
-                      </Button>
-                    </NavLink>
-                  )}
-                </Box>
-              )}
-            </Box>
+            </NavLink>
           </Box>
         </Toolbar>
       </AppBar>
