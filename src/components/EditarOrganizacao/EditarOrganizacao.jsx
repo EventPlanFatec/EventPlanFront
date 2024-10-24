@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TextField, Button } from '@mui/material';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const RegistrarOrganizacao = () => {
+const EditarOrganizacao = ({ organizacaoId }) => {
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [telefone, setTelefone] = useState('');
@@ -11,27 +11,48 @@ const RegistrarOrganizacao = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  useEffect(() => {
+    const fetchOrganizacao = async () => {
+      try {
+        const response = await fetch(`/api/organizacoes/${organizacaoId}`);
+        const data = await response.json();
+        if (response.ok) {
+          setNome(data.nome);
+          setEmail(data.email);
+          setTelefone(data.telefone);
+          setEndereco(data.endereco);
+        } else {
+          setError('Erro ao buscar informações da organização.');
+        }
+      } catch {
+        setError('Erro de rede. Tente novamente.');
+      }
+    };
+
+    fetchOrganizacao();
+  }, [organizacaoId]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
-    const organizacao = { nome, email, telefone, endereco };
+    const organizacaoAtualizada = { nome, email, telefone, endereco };
 
     try {
-      const response = await fetch('/api/organizacoes', {
-        method: 'POST',
+      const response = await fetch(`/api/organizacoes/${organizacaoId}`, {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(organizacao),
+        body: JSON.stringify(organizacaoAtualizada),
       });
 
       if (response.ok) {
-        toast.success('Organização registrada com sucesso!');
+        toast.success('Informações da organização atualizadas com sucesso!');
       } else {
-        setError('Erro ao registrar organização.');
-        toast.error('Erro ao registrar organização.');
+        setError('Erro ao atualizar informações.');
+        toast.error('Erro ao atualizar informações.');
       }
     } catch {
       setError('Erro de rede. Tente novamente.');
@@ -62,8 +83,8 @@ const RegistrarOrganizacao = () => {
           textAlign: 'center',
           marginBottom: '20px',
           fontWeight: '600',
-          fontSize: '24px', 
-        }}>Registrar Organização</h1>
+          fontSize: '24px',
+        }}>Editar Organização</h1>
         <form onSubmit={handleSubmit}>
           <TextField
             label="Nome da Organização"
@@ -105,10 +126,10 @@ const RegistrarOrganizacao = () => {
             type="submit"
             variant="contained"
             fullWidth
-            style={{ marginTop: '10px', backgroundColor: 'rgb(46, 125, 50)' }}
+            style={{ marginTop: '10px', backgroundColor: '#1976d2' }}
             disabled={loading}
           >
-            {loading ? 'Carregando...' : 'Registrar'}
+            {loading ? 'Carregando...' : 'Atualizar Organização'}
           </Button>
           {error && <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>}
         </form>
@@ -117,4 +138,4 @@ const RegistrarOrganizacao = () => {
   );
 };
 
-export default RegistrarOrganizacao;
+export default EditarOrganizacao;

@@ -15,6 +15,7 @@ import ConfigPermissoes from './pages/ConfigPermissoes/ConfigPermissoes';
 import GerenciamentoUsuarios from './pages/GerenciamentoUsuarios/GerenciamentoUsuarios';
 import CriarEvento from './components/CriarEvento/CriarEvento';
 import RegistrarOrganizacao from './components/RegistrarOrganizacao/RegistrarOrganizacao';
+import EditarOrganizacao from './components/EditarOrganizacao/EditarOrganizacao.jsx';
 
 function App() {
   const [eventos, setEventos] = useState([]);
@@ -40,6 +41,7 @@ function App() {
           <Route path="/gerenciar-usuarios" element={<GerenciamentoUsuarios />} />
           <Route path="/criar-evento" element={<CriarEvento />} />
           <Route path="/registrar-organizacao" element={<RegistrarOrganizacao />} />
+          <Route path="/editar-organizacao/:id" element={<EditarOrganizacao />} />
         </Routes>
         </div>
         <Footer />

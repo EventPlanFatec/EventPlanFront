@@ -40,7 +40,7 @@ const ConfigPermissoes = () => {
         <label className={styles.label}>Deletar Eventos</label>
       </div>
       <div className={styles.buttonContainer}>
-        <button className={styles.saveButton}>Salvar Alterações</button>
+        <button className={styles.saveButton}>SALVAR</button>
       </div>
     </div>
   );
