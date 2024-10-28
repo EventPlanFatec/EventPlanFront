@@ -8,12 +8,6 @@ import Footer from './components/Footer';
 import Home from './pages/Home/Home';
 import Login from './pages/Login/Login';
 import Register from './pages/Register/Register';
-import RecoverPass from './pages/RecoverPass/RecoverPass';
-import Profile from './pages/Profile/Profile';
-import FAQ from './pages/FAQ/FAQ';
-import About from './pages/About/About';
-import Admin from './pages/Admin/Admin';
-import Event from './pages/Event/Event';
 import EventosPage from './pages/EventosPage/EventosPage';
 import EventList from './pages/EventList/EventList.jsx';
 import EditarEvento from './pages/EditarEvento/EditarEvento';
@@ -40,12 +34,6 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/recoverpass" element={<RecoverPass />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/FAQ" element={<FAQ />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/event/:id" element={<Event />} />
           <Route path="/eventos" element={<EventosPage eventos={eventos} setEventos={setEventos} />} />
           <Route path="/eventlist" element={<EventList />} />
           <Route path="/editar-evento/:id" element={<EditarEvento eventoAtual={buscarEventoPorId} />} />
