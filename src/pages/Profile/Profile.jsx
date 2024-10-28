@@ -25,59 +25,49 @@ const Profile = () => {
   };
 
   return (
-    <main>
-      <div className={styles.planofundo}>
-        <div className={styles.perfil}>
+    <main className={styles.main}>
+      <div className={styles.container}>
+        <div className={styles.profile}>
           <img src={PerfilImg} alt="Imagem de Perfil" />
           <span className={styles.username}>{user ? user.displayName : "Usuário"}</span>
         </div>
-        <div className={styles.content}>
-          <div className={styles.content2}>
-            O EventPlan é um site de venda de ingressos para diferentes tipos de eventos realizados no Brasil. É possível comprar entradas para shows de artistas nacionais e internacionais, festivais de música, eventos esportivos, além de cinema, museu, apresentações de teatro, entre outros.
-          </div>
-          <div className={styles.sobreUsuario}>
-            <p>Sobre Usuário</p>
-            <div className={styles.iconelapis}>
-              <FontAwesomeIcon icon="fa-solid fa-pen" />
-            </div>
+        <div className={styles.info}>
+          <p className={styles.description}>
+            O EventPlan é um site de venda de ingressos para diferentes tipos de eventos realizados no Brasil. É possível comprar entradas para shows de artistas nacionais e internacionais, festivais de música, eventos esportivos, entre outros.
+          </p>
+          <div className={styles.editProfile}>
+            <p className={styles.title}>Sobre Usuário</p>
+            <FontAwesomeIcon icon="fa-solid fa-pen" className={styles.editIcon} />
           </div>
           <NavLink to="../Profile">
-          <div className={styles.content3}>
-            MEUS EVENTOS
-          </div>
+            <div className={styles.eventsButton}>MEUS EVENTOS</div>
           </NavLink>
         </div>
 
-        <div className={styles.content4}>
-          <div className={styles.sobreUsuario}>
-            <p>Recomendações</p>
-            <div className={styles.galleryContainer}>
-              <div className={styles.gallery}>
-                <img src={ArraiaGeraldoAzevedoImg} alt="Arraia Geraldo Azevedo" />
-                <img src={DilsinhoImg} alt="Dilsinho" />
-                <img src={RebeldeImg} alt="Rebelde" />
-                <div></div>
-                <img src={AndreaBocelliImg} alt="Andrea Bocelli" />
-                <img src={FerrugemImg} alt="Ferrugem" />
-                <img src={RobertaSaImg} alt="Roberta Sá" />
-              </div>
-            </div>
-            <NavLink to="../Profile">
-            <div className={styles.content5}>
-              VER MAIS
-            </div>
-            </NavLink>
+        <div className={styles.recommendations}>
+          <h3 className={styles.title}>Recomendações</h3>
+          <div className={styles.gallery}>
+            <img src={ArraiaGeraldoAzevedoImg} alt="Arraia Geraldo Azevedo" />
+            <img src={DilsinhoImg} alt="Dilsinho" />
+            <img src={RebeldeImg} alt="Rebelde" />
+            <img src={AndreaBocelliImg} alt="Andrea Bocelli" />
+            <img src={FerrugemImg} alt="Ferrugem" />
+            <img src={RobertaSaImg} alt="Roberta Sá" />
           </div>
+          <NavLink to="../Profile">
+            <div className={styles.viewMore}>VER MAIS</div>
+          </NavLink>
         </div>
+
         {user ? (
-          <button className={styles.content6} onClick={handleLogout}>
-            <FontAwesomeIcon icon="fa-solid fa-sign-out" className={styles.iconevoltar} />
+          <button className={styles.logoutButton} onClick={handleLogout}>
+            <FontAwesomeIcon icon="fa-solid fa-sign-out" />
             SAIR
           </button>
         ) : (
-          <NavLink to="../Home">
-            <div className={styles.content6}>
-              <FontAwesomeIcon icon="fa-solid fa-right-to-bracket" className={styles.iconevoltar} />
+          <NavLink to="../">
+            <div className={styles.backButton}>
+              <FontAwesomeIcon icon="fa-solid fa-right-to-bracket" />
               VOLTAR
             </div>
           </NavLink>

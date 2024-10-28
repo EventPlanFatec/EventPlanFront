@@ -17,7 +17,7 @@ const Navbar = () => {
 
   const navLinks = [
     { text: "Início", icon: faHome, path: "/" },
-    { text: "Eventos", icon: faCalendarAlt, path: "/event" },
+    { text: "Eventos", icon: faCalendarAlt, path: "/eventlist" },
     { text: "Sobre", icon: faInfoCircle, path: "/about" },
   ];
 

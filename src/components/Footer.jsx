@@ -24,7 +24,7 @@ const Footer = () => {
             </Box>
           </Grid>
           <Grid item md={4} xs={12} style={{ textAlign: 'center' }}>
-            <NavLink to="/home">
+            <NavLink to="/">
               <img src={Logo} alt="Logo" style={{ width: '150px', marginBottom: '10px' }} />
             </NavLink>
             <Typography variant="h6" style={{ color: '#ffffff' }}>Contatos</Typography>
