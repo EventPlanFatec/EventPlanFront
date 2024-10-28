@@ -13,6 +13,7 @@ html, body {
   display: flex;
   flex-direction: column;
   width: 100%;
+  overflow-x: hidden;
 }
 
 .container-flui {
@@ -73,26 +74,27 @@ a {
   .navbar-container {
     flex-direction: column;
     align-items: center;
+    width: 100%;
   }
-
+  
   .navbar a {
     margin: 10px 0;
   }
 }
 
 footer {
+  margin-top: auto;
   width: 100%;
   padding: 2rem;
   background-color: #3f51b5;
   color: white;
   text-align: center;
   box-sizing: border-box;
-  margin-top: auto;
-  position: relative;
 }
 
 @media (max-width: 768px) {
   footer {
     padding: 1rem;
+    margin-top: 1rem;
   }
 }
