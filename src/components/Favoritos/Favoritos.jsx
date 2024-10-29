@@ -4,7 +4,7 @@ import { getDocs, setDoc, doc, collection } from "firebase/firestore";
 import { useAuth } from "../../context/AuthContext";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { IconButton, List, ListItemText, Tooltip, Typography, Box, Card, CardContent } from "@mui/material";
+import { IconButton, List, ListItemText, Tooltip, Typography, Box, Card, CardContent, Container } from "@mui/material";
 import FavoriteIcon from '@mui/icons-material/Favorite';
 
 const FavoriteEvents = ({ userId, eventId, eventName }) => {
@@ -44,21 +44,7 @@ const FavoriteEvents = ({ userId, eventId, eventName }) => {
     };
 
     return (
-        <Box
-            sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: '100%',
-                maxWidth: 600,
-                margin: '0 auto',
-                padding: 3,
-                border: '1px solid #e0e0e0',
-                borderRadius: '12px',
-                backgroundColor: '#fff',
-            }}
-        >
+        <Container maxWidth="sm" sx={{ backgroundColor: '#fff', padding: 4, borderRadius: 2, boxShadow: 3, margin: '0 auto' }}>
             <Typography variant="h5" sx={{ mb: 3, textAlign: 'center', fontWeight: 600, color: '#333' }}>
                 Meus Favoritos
             </Typography>
@@ -69,7 +55,7 @@ const FavoriteEvents = ({ userId, eventId, eventName }) => {
                             <CardContent sx={{ flex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                 <ListItemText
                                     primary={favorite.eventName}
-                                    sx={{ fontWeight: 500, fontSize: '1rem', color: '#333' }}
+                                    sx={{ fontWeight: 500, fontSize: { xs: '0.9rem', sm: '1rem' }, color: '#333' }}
                                 />
                                 <Tooltip title="Remover dos Favoritos">
                                     <IconButton
@@ -91,42 +77,44 @@ const FavoriteEvents = ({ userId, eventId, eventName }) => {
                     ))}
                 </List>
             </Box>
-            <Tooltip title="Adicionar aos Favoritos">
-                <Box
-                    sx={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        padding: 1,
-                        border: '2px solid #ff4081',
-                        borderRadius: '50%',
-                        width: '60px',
-                        height: '60px',
-                        cursor: 'pointer',
-                        backgroundColor: '#ff4081',
-                        '&:hover': {
-                            transform: 'scale(1.1)',
-                            transition: '0.3s',
-                            backgroundColor: '#d81b60',
-                        },
-                    }}
-                >
-                    <IconButton
-                        onClick={handleFavorite}
+            <Box sx={{ display: 'flex', justifyContent: 'center', marginBottom: 3 }}>
+                <Tooltip title="Adicionar aos Favoritos">
+                    <Box
                         sx={{
-                            fontSize: '2rem',
-                            color: '#fff',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            padding: 1,
+                            border: '2px solid #ff4081',
+                            borderRadius: '50%',
+                            width: '60px',
+                            height: '60px',
+                            cursor: 'pointer',
+                            backgroundColor: '#ff4081',
                             '&:hover': {
-                                color: '#fff',
+                                transform: 'scale(1.1)',
+                                transition: '0.3s',
+                                backgroundColor: '#d81b60',
                             },
                         }}
                     >
-                        <FavoriteIcon />
-                    </IconButton>
-                </Box>
-            </Tooltip>
+                        <IconButton
+                            onClick={handleFavorite}
+                            sx={{
+                                fontSize: '2rem',
+                                color: '#fff',
+                                '&:hover': {
+                                    color: '#fff',
+                                },
+                            }}
+                        >
+                            <FavoriteIcon />
+                        </IconButton>
+                    </Box>
+                </Tooltip>
+            </Box>
             <ToastContainer />
-        </Box>
+        </Container>
     );
 };
 
