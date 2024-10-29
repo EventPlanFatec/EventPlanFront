@@ -81,7 +81,7 @@ const FAQ = () => {
                 size="small"
                 onClick={() => handleFeedback(index, 'helpful')}
               >
-                Útil ({faq.helpful})
+                Útil
               </Button>
               <Button
                 variant="contained"
@@ -90,7 +90,7 @@ const FAQ = () => {
                 onClick={() => handleFeedback(index, 'nothelpful')}
                 sx={{ marginLeft: 1 }}
               >
-                Não Útil ({faq.nothelpful})
+                Não Útil
               </Button>
             </Box>
           </AccordionDetails>

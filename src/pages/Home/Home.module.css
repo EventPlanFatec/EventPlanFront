@@ -1,25 +1,9 @@
-.carouselContainer img {
-  height: 100%;
-  width: 100%;
-  object-fit: cover;
-}
-
-.carouselContainer {
-  padding-top: 4rem;
-}
-
 .btn {
   transition: transform 0.3s ease;
 }
 
 .btn:hover {
   transform: scale(1.1);
-}
-
-@media (max-width: 170px) {
-  .btn {
-    font-size: 1.25em; 
-  }
 }
 
 .cardContainer {
@@ -33,4 +17,27 @@
 .verMaisContainer {
   text-align: center;
   margin-top: 20px;
+}
+
+.carouselImage {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+@media (max-width: 900px) {
+  .cardContainer {
+    gap: 0.5rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .btn {
+    font-size: 1.25em; 
+  }
+
+  .cardContainer {
+    flex-direction: column;
+    align-items: center;
+  }
 }
