@@ -11,17 +11,17 @@ const CardEvento = ({ event }) => {
     <Link to={`/event/${event.id}`} className={styles.cardLink}>
       <Card className={styles.card}>
         <Grid container>
-          <Grid item xs={12} md={4} className={styles.cardLeft}>
+          <Grid item xs={12} md={5} className={styles.cardImageContainer}>
             <CardMedia
               component="img"
               image={event.img}
               alt="Imagem do evento"
-              className={styles.image}
+              className={styles.cardImage}
             />
           </Grid>
-          <Grid item xs={12} md={8} className={styles.cardRight}>
+          <Grid item xs={12} md={7} className={styles.cardContentContainer}>
             <CardContent>
-              <Typography variant="h6" className="d-none d-md-block">
+              <Typography variant="h6" className={styles.cardTitle}>
                 {event.nome}
               </Typography>
               <div className={styles.cardInfo}>

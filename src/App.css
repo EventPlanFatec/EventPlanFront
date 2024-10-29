@@ -70,18 +70,6 @@ a {
   margin: 0 15px;
 }
 
-@media (max-width: 768px) {
-  .navbar-container {
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-  }
-  
-  .navbar a {
-    margin: 10px 0;
-  }
-}
-
 footer {
   margin-top: auto;
   width: 100%;
@@ -93,6 +81,16 @@ footer {
 }
 
 @media (max-width: 768px) {
+  .navbar-container {
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .navbar a {
+    margin: 10px 0;
+  }
+
   footer {
     padding: 1rem;
     margin-top: 1rem;
