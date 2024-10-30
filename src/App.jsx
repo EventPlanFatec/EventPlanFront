@@ -22,12 +22,17 @@ import GerenciamentoUsuarios from './pages/GerenciamentoUsuarios/GerenciamentoUs
 import CriarEvento from './components/CriarEvento/CriarEvento';
 import RegistrarOrganizacao from './components/RegistrarOrganizacao/RegistrarOrganizacao';
 import EditarOrganizacao from './components/EditarOrganizacao/EditarOrganizacao.jsx';
+import VolunteerList from './components/VolunteerList/VolunteerList.jsx';
 
 function App() {
   const [eventos, setEventos] = useState([]);
 
   const buscarEventoPorId = (id) => {
     return eventos.find(evento => evento.id === id);
+  };
+
+  const handleAddVolunteer = (novoVoluntario) => {
+    console.log('Voluntário adicionado:', novoVoluntario);
   };
 
   return (
@@ -54,6 +59,7 @@ function App() {
           <Route path="/criar-evento" element={<CriarEvento />} />
           <Route path="/registrar-organizacao" element={<RegistrarOrganizacao />} />
           <Route path="/editar-organizacao/:id" element={<EditarOrganizacao />} />
+          <Route path="/volunteers" element={<VolunteerList />} />
         </Routes>
         </div>
         <Footer />
