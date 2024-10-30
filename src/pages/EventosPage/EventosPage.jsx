@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import CriarEvento from '../../components/CriarEvento/CriarEvento';
-import { salvarEvento, listarEventos } from '../../../src/services/eventosService';
+import { salvarEvento, listarEventos, cancelarEvento } from '../../../src/services/eventosService';
 
 const EventosPage = () => {
   const [eventos, setEventos] = useState([]);
@@ -9,7 +9,9 @@ const EventosPage = () => {
   useEffect(() => {
     const fetchEventos = async () => {
       const eventosData = await listarEventos();
-      setEventos(eventosData);
+      if (Array.isArray(eventosData)) {
+        setEventos(eventosData);
+      }
     };
     fetchEventos();
   }, []);
@@ -27,7 +29,7 @@ const EventosPage = () => {
 
   const handleCancelEvent = async (id) => {
     try {
-      await cancelarEvento(id); 
+      await cancelarEvento(id);
       setEventos(eventos.filter(evento => evento.id !== id));
       alert('Evento cancelado com sucesso!');
     } catch (error) {
