@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextField, Button, Typography, Grid, Card, CardContent } from '@mui/material';
+import { TextField, Button, Grid, Card, CardContent } from '@mui/material';
 
 const AdicionarVoluntario = ({ onAdicionarVoluntario }) => {
   const [nome, setNome] = useState('');
@@ -18,9 +18,6 @@ const AdicionarVoluntario = ({ onAdicionarVoluntario }) => {
   return (
     <Card variant="outlined">
       <CardContent>
-        <Typography variant="h5" gutterBottom>
-          Adicionar Voluntário
-        </Typography>
         <form onSubmit={handleSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
@@ -31,6 +28,7 @@ const AdicionarVoluntario = ({ onAdicionarVoluntario }) => {
                 value={nome}
                 onChange={(e) => setNome(e.target.value)}
                 required
+                inputProps={{ maxLength: 50 }}
               />
             </Grid>
             <Grid item xs={12}>
@@ -42,6 +40,7 @@ const AdicionarVoluntario = ({ onAdicionarVoluntario }) => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                inputProps={{ maxLength: 100 }}
               />
             </Grid>
             <Grid item xs={12}>
@@ -52,10 +51,11 @@ const AdicionarVoluntario = ({ onAdicionarVoluntario }) => {
                 value={funcao}
                 onChange={(e) => setFuncao(e.target.value)}
                 required
+                inputProps={{ maxLength: 50 }}
               />
             </Grid>
             <Grid item xs={12}>
-              <Button type="submit" variant="contained" color="primary">
+              <Button type="submit" variant="contained" color="primary" fullWidth>
                 Adicionar Voluntário
               </Button>
             </Grid>
