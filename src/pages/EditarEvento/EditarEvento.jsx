@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Button, Typography, Box, InputLabel, Checkbox, FormControlLabel } from '@mui/material';
+import { TextField, Button, Typography, Box, Checkbox, IconButton, InputAdornment } from '@mui/material';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate, useParams } from 'react-router-dom';
-import './EditarEvento.module.css';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import styles from './EditarEvento.module.css';
 
 const EditarEvento = ({ eventoAtual, onSave }) => {
     const [formData, setFormData] = useState({
@@ -17,31 +21,29 @@ const EditarEvento = ({ eventoAtual, onSave }) => {
     });
 
     const [isEventoPrivado, setIsEventoPrivado] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
     const [errors, setErrors] = useState({});
     const navigate = useNavigate();
     const { id } = useParams();
 
     useEffect(() => {
         if (eventoAtual) {
-            setFormData(eventoAtual);
+            setFormData({
+                ...eventoAtual,
+                imagem: null
+            });
             setIsEventoPrivado(eventoAtual.isEventoPrivado || false);
         }
     }, [eventoAtual]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: value,
-        });
+        setFormData({ ...formData, [name]: value });
     };
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
-        setFormData({
-            ...formData,
-            imagem: file,
-        });
+        setFormData({ ...formData, imagem: file });
     };
 
     const validateForm = () => {
@@ -61,133 +63,149 @@ const EditarEvento = ({ eventoAtual, onSave }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!validateForm()) {
-            return;
+        if (!validateForm()) return;
+
+        try {
+            await onSave({ ...formData, id });
+            toast.success('Evento atualizado com sucesso!');
+            navigate('/eventos');
+        } catch (error) {
+            toast.error('Erro ao atualizar o evento. Tente novamente.');
         }
-        await onSave({ ...formData, id });
-        navigate('/eventos');
     };
 
-    const handleCancel = () => {
-        navigate('/eventos');
-    };
+    const togglePasswordVisibility = () => setShowPassword(!showPassword);
+
+    if (!eventoAtual) {
+        return <div>Carregando...</div>;
+    }
 
     return (
-        <form onSubmit={handleSubmit}>
-            <Box display="flex" flexDirection="column" gap={2}>
-                <TextField
-                    label="Nome do Evento"
-                    name="nomeEvento"
-                    value={formData.nomeEvento}
-                    onChange={handleChange}
-                    error={!!errors.nomeEvento}
-                    helperText={errors.nomeEvento}
-                    required
-                />
-                <TextField
-                    label="Data"
-                    name="data"
-                    type="date"
-                    InputLabelProps={{ shrink: true }}
-                    value={formData.data}
-                    onChange={handleChange}
-                    error={!!errors.data}
-                    helperText={errors.data}
-                    required
-                />
-                <TextField
-                    label="Horário"
-                    name="horario"
-                    type="time"
-                    InputLabelProps={{ shrink: true }}
-                    value={formData.horario}
-                    onChange={handleChange}
-                    error={!!errors.horario}
-                    helperText={errors.horario}
-                    required
-                />
-                <TextField
-                    label="Local"
-                    name="local"
-                    value={formData.local}
-                    onChange={handleChange}
-                    error={!!errors.local}
-                    helperText={errors.local}
-                    required
-                />
-                <TextField
-                    label="Descrição"
-                    name="descricao"
-                    multiline
-                    rows={4}
-                    value={formData.descricao}
-                    onChange={handleChange}
-                    error={!!errors.descricao}
-                    helperText={errors.descricao}
-                    required
-                />
-                <TextField
-                    label="Preço"
-                    name="preco"
-                    type="number"
-                    value={formData.preco}
-                    onChange={handleChange}
-                    error={!!errors.preco}
-                    helperText={errors.preco}
-                    required
-                />
-                <InputLabel shrink>Imagem</InputLabel>
-                <Button variant="contained" component="label">
-                    Escolher Imagem
-                    <input
-                        type="file"
-                        name="imagem"
-                        accept="image/jpeg,image/png"
-                        onChange={handleFileChange}
-                        hidden
+        <div className={styles.container}>
+            <ToastContainer />
+            <div className={styles.register}>
+                <form onSubmit={handleSubmit} style={{ textAlign: 'center' }}>
+                    <h2 className={styles.title}>Editar Evento</h2>
+                    <TextField
+                        label="Nome do Evento"
+                        variant="outlined"
+                        required
+                        value={formData.nomeEvento}
+                        onChange={handleChange}
+                        fullWidth
+                        margin="normal"
                     />
-                </Button>
-                <FormControlLabel
-                    control={
+                    <TextField
+                        label="Data"
+                        type="date"
+                        variant="outlined"
+                        required
+                        value={formData.data}
+                        onChange={handleChange}
+                        fullWidth
+                        margin="normal"
+                        InputLabelProps={{ shrink: true }}
+                    />
+                    <TextField
+                        label="Horário"
+                        type="time"
+                        variant="outlined"
+                        required
+                        value={formData.horario}
+                        onChange={handleChange}
+                        fullWidth
+                        margin="normal"
+                        InputLabelProps={{ shrink: true }}
+                    />
+                    <TextField
+                        label="Local"
+                        variant="outlined"
+                        required
+                        value={formData.local}
+                        onChange={handleChange}
+                        fullWidth
+                        margin="normal"
+                    />
+                    <TextField
+                        label="Descrição"
+                        variant="outlined"
+                        required
+                        multiline
+                        rows={4}
+                        value={formData.descricao}
+                        onChange={handleChange}
+                        fullWidth
+                        margin="normal"
+                    />
+                    <TextField
+                        label="Preço"
+                        type="number"
+                        variant="outlined"
+                        required
+                        value={formData.preco}
+                        onChange={handleChange}
+                        fullWidth
+                        margin="normal"
+                    />
+                    <Box marginTop={2} marginBottom={1}> 
+                        <Button variant="contained" component="label" sx={{ width: '100%', textAlign: 'center' }}>
+                            Escolher Imagem
+                            <input
+                                type="file"
+                                accept="image/jpeg,image/png"
+                                onChange={handleFileChange}
+                                hidden
+                            />
+                        </Button>
+                        {errors.imagem && <Typography color="error">{errors.imagem}</Typography>}
+                    </Box>
+                    <TextField
+                        label="E-mails dos Convidados (separados por vírgula)"
+                        variant="outlined"
+                        value={formData.emailsConvidados}
+                        onChange={handleChange}
+                        fullWidth
+                        margin="normal"
+                    />
+                    <Box display="flex" alignItems="center" justifyContent="flex-start" marginBottom={2}>
                         <Checkbox
                             checked={isEventoPrivado}
                             onChange={(e) => setIsEventoPrivado(e.target.checked)}
                             color="primary"
                         />
-                    }
-                    label="Evento Privado"
-                    sx={{ marginBottom: 1 }}
-                />
-                {isEventoPrivado && (
-                    <TextField
-                        label="Senha do Evento"
-                        name="senha"
-                        type="password"
-                        value={formData.senha}
-                        onChange={handleChange}
-                        error={!!errors.senha}
-                        helperText={errors.senha}
-                        required
-                    />
-                )}
-                <TextField
-                    label="E-mails dos Convidados (separados por vírgula)"
-                    name="emailsConvidados"
-                    value={formData.emailsConvidados}
-                    onChange={handleChange}
-                    error={!!errors.emailsConvidados}
-                    helperText={errors.emailsConvidados}
-                />
-                <Box display="flex" gap={2}>
-                    <Button type="submit" variant="contained" color="primary">
-                        Atualizar Evento
-                    </Button>
-                    <Button type="button" variant="outlined" color="secondary" onClick={handleCancel}>
-                        Cancelar
-                    </Button>
-                </Box>
-            </Box>
-        </form>
+                        <Typography>Evento Privado</Typography>
+                    </Box>
+                    {isEventoPrivado && (
+                        <TextField
+                            label="Senha do Evento"
+                            type={showPassword ? 'text' : 'password'}
+                            variant="outlined"
+                            value={formData.senha}
+                            onChange={handleChange}
+                            fullWidth
+                            margin="normal"
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton onClick={togglePasswordVisibility}>
+                                            <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+                                        </IconButton>
+                                    </InputAdornment>
+                                ),
+                            }}
+                        />
+                    )}
+                    <Box display="flex" flexDirection="column" alignItems="center" gap={2} marginTop={2}>
+                        <Button type="submit" variant="contained" color="success" fullWidth sx={{ minWidth: '200px' }}>
+                            Atualizar Evento
+                        </Button>
+                        <Button type="button" variant="contained" color="error" fullWidth sx={{ minWidth: '200px' }} onClick={() => navigate('/eventos')}>
+                            Cancelar
+                        </Button>
+                    </Box>
+                </form>
+            </div>
+        </div>
     );
 };
 
