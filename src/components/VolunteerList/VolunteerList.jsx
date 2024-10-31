@@ -3,6 +3,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import AdicionarVoluntario from '../AdicionarVoluntario/AdicionarVoluntario';
 import EditarVoluntario from '../EditarVoluntario/EditarVoluntario';
 import styles from './VolunteerList.module.css';
+import { Button } from '@mui/material';
 
 const VolunteerList = () => {
   const [volunteers, setVolunteers] = useState([]);
@@ -44,6 +45,11 @@ const VolunteerList = () => {
     setEditingVolunteer(null);
   };
 
+  const handleRemoveVolunteer = (id) => {
+    setVolunteers((prev) => prev.filter((volunteer) => volunteer.id !== id));
+    toast.success('Voluntário removido com sucesso!');
+  };
+
   const toggleForm = () => {
     setShowForm(!showForm);
   };
@@ -64,14 +70,27 @@ const VolunteerList = () => {
           onUpdate={handleUpdateVolunteer}
         />
       )}
-      <div className={styles.list}>
+      <div className={styles.list} style={{ marginTop: '20px' }}>
         {volunteers.map((volunteer) => (
           <div key={volunteer.id} className={styles.volunteerCard}>
             <p><strong>Nome:</strong> {volunteer.nome}</p>
             <p><strong>Email:</strong> {volunteer.email}</p>
             <p><strong>Função:</strong> {volunteer.funcao}</p>
             <p><strong>Status:</strong> {volunteer.status}</p>
-            <button onClick={() => handleEditClick(volunteer)}>Editar</button>
+            <Button 
+              onClick={() => handleEditClick(volunteer)} 
+              variant="outlined" 
+              style={{ marginRight: '10px' }}
+            >
+              Editar
+            </Button>
+            <Button 
+              onClick={() => handleRemoveVolunteer(volunteer.id)} 
+              color="error" 
+              variant="outlined"
+            >
+              Remover
+            </Button>
           </div>
         ))}
       </div>

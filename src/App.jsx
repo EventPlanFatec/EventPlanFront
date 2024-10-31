@@ -19,6 +19,7 @@ import EventList from './pages/EventList/EventList.jsx';
 import EditarEvento from './pages/EditarEvento/EditarEvento';
 import ConfigPermissoes from './pages/ConfigPermissoes/ConfigPermissoes';
 import GerenciamentoUsuarios from './pages/GerenciamentoUsuarios/GerenciamentoUsuarios';
+import VerificarRegistro from './pages/VerificarRegistro/VerificarRegistro';
 import CriarEvento from './components/CriarEvento/CriarEvento';
 import RegistrarOrganizacao from './components/RegistrarOrganizacao/RegistrarOrganizacao';
 import EditarOrganizacao from './components/EditarOrganizacao/EditarOrganizacao.jsx';
@@ -56,6 +57,7 @@ function App() {
           <Route path="/editar-evento/:id" element={<EditarEvento eventoAtual={buscarEventoPorId} />} />
           <Route path="/config-permissoes" element={<ConfigPermissoes />} />
           <Route path="/gerenciar-usuarios" element={<GerenciamentoUsuarios />} />
+          <Route path="/verificar-registro" element={<VerificarRegistro />} />
           <Route path="/criar-evento" element={<CriarEvento />} />
           <Route path="/registrar-organizacao" element={<RegistrarOrganizacao />} />
           <Route path="/editar-organizacao/:id" element={<EditarOrganizacao />} />

@@ -41,10 +41,10 @@ const EditarVoluntario = ({ open, onClose, volunteer, onUpdate }) => {
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="primary">
+        <Button onClick={onClose} variant="outlined" style={{ borderColor: '#3f51b5', color: '#3f51b5' }}>
           Cancelar
         </Button>
-        <Button onClick={handleUpdate} color="primary">
+        <Button onClick={handleUpdate} variant="outlined" style={{ borderColor: '#4caf50', color: '#4caf50' }}>
           Salvar
         </Button>
       </DialogActions>
