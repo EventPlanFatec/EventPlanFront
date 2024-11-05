@@ -25,9 +25,11 @@ import CriarEvento from './components/CriarEvento/CriarEvento';
 import RegistrarOrganizacao from './components/RegistrarOrganizacao/RegistrarOrganizacao';
 import EditarOrganizacao from './components/EditarOrganizacao/EditarOrganizacao.jsx';
 import VolunteerList from './components/VolunteerList/VolunteerList.jsx';
+import PreferencesForm from './components/PreferencesForm/PreferencesForm';
 
 function App() {
   const [eventos, setEventos] = useState([]);
+  const [preferences, setPreferences] = useState(null);
 
   const buscarEventoPorId = (id) => {
     return eventos.find(evento => evento.id === id);
@@ -35,6 +37,11 @@ function App() {
 
   const handleAddVolunteer = (novoVoluntario) => {
     console.log('Voluntário adicionado:', novoVoluntario);
+  };
+
+  const handlePreferencesSubmit = (newPreferences) => {
+    setPreferences(newPreferences);
+    console.log('Preferências salvas:', newPreferences);
   };
 
   return (
@@ -64,6 +71,7 @@ function App() {
                 <Route path="/registrar-organizacao" element={<RegistrarOrganizacao />} />
                 <Route path="/editar-organizacao/:id" element={<EditarOrganizacao />} />
                 <Route path="/volunteers" element={<VolunteerList />} />
+                <Route path="/preferences" element={<PreferencesForm onSubmit={handlePreferencesSubmit} />} />
               </Routes>
             </div>
             <Footer />
