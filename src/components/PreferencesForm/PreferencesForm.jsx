@@ -1,10 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './PreferencesForm.module.css';
 
-const PreferencesForm = ({ onSubmit }) => {
-  const [eventType, setEventType] = useState(''); 
+const PreferencesForm = ({ onSubmit, currentPreferences }) => {
+  const [eventType, setEventType] = useState('');
   const [location, setLocation] = useState('');
   const [priceRange, setPriceRange] = useState('0-50');
+
+  useEffect(() => {
+    if (currentPreferences) {
+      setEventType(currentPreferences.eventType);
+      setLocation(currentPreferences.location);
+      setPriceRange(currentPreferences.priceRange);
+    }
+  }, [currentPreferences]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
