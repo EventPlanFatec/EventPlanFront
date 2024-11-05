@@ -9,13 +9,18 @@ export const usePreferences = () => {
 export const PreferencesProvider = ({ children }) => {
   const [preferences, setPreferences] = useState(() => {
     const savedPreferences = localStorage.getItem('preferences');
-    return savedPreferences ? JSON.parse(savedPreferences) : null;
+    return savedPreferences ? JSON.parse(savedPreferences) : {};
   });
 
   const updatePreferences = (newPreferences) => {
     setPreferences(newPreferences);
-    localStorage.setItem('preferences', JSON.stringify(newPreferences));
   };
+
+  useEffect(() => {
+    if (preferences) {
+      localStorage.setItem('preferences', JSON.stringify(preferences));
+    }
+  }, [preferences]);
 
   return (
     <PreferencesContext.Provider value={{ preferences, updatePreferences }}>
