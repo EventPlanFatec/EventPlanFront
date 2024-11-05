@@ -3,6 +3,7 @@ import { useState } from 'react';
 import './App.css';
 import { AuthProvider } from './context/AuthContext';
 import { PermissionsProvider } from './context/PermissionsContext';
+import { ThemeProvider } from './context/ThemeContext'; 
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home/Home';
@@ -39,33 +40,35 @@ function App() {
   return (
     <AuthProvider>
       <PermissionsProvider>
-      <Router>
-        <Navbar />
-        <div className="container-flui">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/recoverpass" element={<RecoverPass />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/FAQ" element={<FAQ />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/event/:id" element={<Event />} />
-          <Route path="/eventos" element={<EventosPage eventos={eventos} setEventos={setEventos} />} />
-          <Route path="/eventlist" element={<EventList />} />
-          <Route path="/editar-evento/:id" element={<EditarEvento eventoAtual={buscarEventoPorId} />} />
-          <Route path="/config-permissoes" element={<ConfigPermissoes />} />
-          <Route path="/gerenciar-usuarios" element={<GerenciamentoUsuarios />} />
-          <Route path="/verificar-registro" element={<VerificarRegistro />} />
-          <Route path="/criar-evento" element={<CriarEvento />} />
-          <Route path="/registrar-organizacao" element={<RegistrarOrganizacao />} />
-          <Route path="/editar-organizacao/:id" element={<EditarOrganizacao />} />
-          <Route path="/volunteers" element={<VolunteerList />} />
-        </Routes>
-        </div>
-        <Footer />
-      </Router>
+        <ThemeProvider> 
+          <Router>
+            <Navbar />
+            <div className="container-flui">
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/recoverpass" element={<RecoverPass />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/FAQ" element={<FAQ />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/admin" element={<Admin />} />
+                <Route path="/event/:id" element={<Event />} />
+                <Route path="/eventos" element={<EventosPage eventos={eventos} setEventos={setEventos} />} />
+                <Route path="/eventlist" element={<EventList />} />
+                <Route path="/editar-evento/:id" element={<EditarEvento eventoAtual={buscarEventoPorId} />} />
+                <Route path="/config-permissoes" element={<ConfigPermissoes />} />
+                <Route path="/gerenciar-usuarios" element={<GerenciamentoUsuarios />} />
+                <Route path="/verificar-registro" element={<VerificarRegistro />} />
+                <Route path="/criar-evento" element={<CriarEvento />} />
+                <Route path="/registrar-organizacao" element={<RegistrarOrganizacao />} />
+                <Route path="/editar-organizacao/:id" element={<EditarOrganizacao />} />
+                <Route path="/volunteers" element={<VolunteerList />} />
+              </Routes>
+            </div>
+            <Footer />
+          </Router>
+        </ThemeProvider>
       </PermissionsProvider>
     </AuthProvider>
   );

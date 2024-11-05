@@ -10,9 +10,11 @@ import FerrugemImg from "../../assets/Ferrugem.jpeg";
 import RobertaSaImg from "../../assets/RobertaSá.jpeg";
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext'; 
+import { useTheme } from '../../context/ThemeContext';
 
 const Profile = () => {
   const { user, logout } = useAuth();
+  const { darkMode, toggleDarkMode } = useTheme(); 
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -25,7 +27,7 @@ const Profile = () => {
   };
 
   return (
-    <main className={styles.main}>
+    <main className={`${styles.main} ${darkMode ? styles.dark : styles.light}`}>
       <div className={styles.container}>
         <div className={styles.profile}>
           <img src={PerfilImg} alt="Imagem de Perfil" />
@@ -33,7 +35,7 @@ const Profile = () => {
         </div>
         <div className={styles.info}>
           <p className={styles.description}>
-            O EventPlan é um site de venda de ingressos para diferentes tipos de eventos realizados no Brasil. É possível comprar entradas para shows de artistas nacionais e internacionais, festivais de música, eventos esportivos, entre outros.
+            O EventPlan é um site de venda de ingressos para diferentes tipos de eventos realizados no Brasil.
           </p>
           <div className={styles.editProfile}>
             <p className={styles.title}>Sobre Usuário</p>
@@ -57,6 +59,12 @@ const Profile = () => {
           <NavLink to="../Profile">
             <div className={styles.viewMore}>VER MAIS</div>
           </NavLink>
+        </div>
+
+        <div className={styles.themeToggle}>
+          <button onClick={toggleDarkMode} className={styles.themeButton}>
+            {darkMode ? 'Modo Escuro' : 'Modo Claro'}
+          </button>
         </div>
 
         {user ? (
