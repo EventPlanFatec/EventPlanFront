@@ -1,21 +1,23 @@
-import React from 'react';
-import styles from "./Profile.module.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import PerfilImg from "../../assets/FotoPerfil.jpeg";
-import ArraiaGeraldoAzevedoImg from "../../assets/ArraiaGeraldoAzevedo.jpeg";
-import DilsinhoImg from "../../assets/Dilsinho.jpeg";
-import RebeldeImg from "../../assets/Rebelde.jpeg";
-import AndreaBocelliImg from "../../assets/AndreaBocelli.jpeg";
-import FerrugemImg from "../../assets/Ferrugem.jpeg";
-import RobertaSaImg from "../../assets/RobertaSá.jpeg";
+import React, { useState, useRef, useEffect } from 'react';
+import styles from './Profile.module.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import PerfilImg from '../../assets/FotoPerfil.jpeg';
+import ArraiaGeraldoAzevedoImg from '../../assets/ArraiaGeraldoAzevedo.jpeg';
+import DilsinhoImg from '../../assets/Dilsinho.jpeg';
+import RebeldeImg from '../../assets/Rebelde.jpeg';
+import AndreaBocelliImg from '../../assets/AndreaBocelli.jpeg';
+import FerrugemImg from '../../assets/Ferrugem.jpeg';
+import RobertaSaImg from '../../assets/RobertaSá.jpeg';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext'; 
+import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 
 const Profile = () => {
   const { user, logout } = useAuth();
-  const { darkMode, toggleDarkMode } = useTheme(); 
+  const { darkMode, toggleDarkMode } = useTheme();
   const navigate = useNavigate();
+  const [settingsMenuOpen, setSettingsMenuOpen] = useState(false);
+  const settingsMenuRef = useRef(null);
 
   const handleLogout = async () => {
     try {
@@ -26,21 +28,68 @@ const Profile = () => {
     }
   };
 
+  const toggleSettingsMenu = () => {
+    setSettingsMenuOpen(!settingsMenuOpen);
+  };
+
+  const handleClickOutside = (event) => {
+    if (settingsMenuRef.current && !settingsMenuRef.current.contains(event.target)) {
+      setSettingsMenuOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    if (settingsMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [settingsMenuOpen]);
+
   return (
     <main className={`${styles.main} ${darkMode ? styles.dark : styles.light}`}>
       <div className={styles.container}>
         <div className={styles.profile}>
           <img src={PerfilImg} alt="Imagem de Perfil" />
-          <span className={styles.username}>{user ? user.displayName : "Usuário"}</span>
+          <span className={styles.username}>{user ? user.displayName : 'Usuário'}</span>
         </div>
+
         <div className={styles.info}>
           <p className={styles.description}>
-            O EventPlan é um site de venda de ingressos para diferentes tipos de eventos realizados no Brasil.
+            O EventPlan é um site de venda de ingressos para diferentes tipos de eventos realizados no Brasil. É possível comprar entradas para shows de artistas nacionais e internacionais, festivais de música, eventos esportivos, entre outros.
           </p>
+
+          <div className={styles.settingsSection}>
+            <button onClick={toggleSettingsMenu} className={`${styles.settingsButton} ${styles.eventsButton}`}>
+              <FontAwesomeIcon icon="fa-solid fa-cogs" /> CONFIGURAÇÕES
+            </button>
+
+            {settingsMenuOpen && (
+              <div ref={settingsMenuRef} className={`${styles.settingsMenu} ${darkMode ? styles.dark : styles.light}`}>
+                <div className={styles.settingsContent}>
+                  <h3 className={styles.settingsTitle}>Configurações de Conta</h3>
+                  <ul>
+                    <li onClick={toggleDarkMode} className={`${styles.themeOption} ${darkMode ? styles.darkOption : styles.lightOption}`}>
+                    {darkMode ? 'Tema: Escuro' : 'Tema: Claro'}
+                    </li>
+                  </ul>
+                  <button onClick={() => setSettingsMenuOpen(false)} className={styles.closeButton}>
+                    <FontAwesomeIcon icon="fa-solid fa-xmark" /> FECHAR
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
           <div className={styles.editProfile}>
             <p className={styles.title}>Sobre Usuário</p>
             <FontAwesomeIcon icon="fa-solid fa-pen" className={styles.editIcon} />
           </div>
+
           <NavLink to="../Profile">
             <div className={styles.eventsButton}>MEUS EVENTOS</div>
           </NavLink>
@@ -59,12 +108,6 @@ const Profile = () => {
           <NavLink to="../Profile">
             <div className={styles.viewMore}>VER MAIS</div>
           </NavLink>
-        </div>
-
-        <div className={styles.themeToggle}>
-          <button onClick={toggleDarkMode} className={styles.themeButton}>
-            {darkMode ? 'Modo Escuro' : 'Modo Claro'}
-          </button>
         </div>
 
         {user ? (

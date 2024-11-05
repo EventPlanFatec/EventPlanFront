@@ -2,14 +2,20 @@
 
 body {
   font-family: 'Roboto', sans-serif;
+  margin: 0;
+  padding: 0;
 }
 
 .main {
   display: flex;
   justify-content: center;
   padding: 20px;
-  background-color: white;
   transition: background-color 0.3s, color 0.3s;
+}
+
+.main.light {
+  background-color: #ffffff;
+  color: #333;
 }
 
 .main.dark {
@@ -18,11 +24,11 @@ body {
 }
 
 .container {
-  background-color: white;
+  background-color: #ffffff;
   border-radius: 10px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   padding: 20px;
-  max-width: 800px;
+  max-width: 1000px;
   width: 100%;
   transition: background-color 0.3s, box-shadow 0.3s;
 }
@@ -34,7 +40,7 @@ body {
 
 .profile {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
 }
 
 .profile img {
@@ -66,26 +72,137 @@ body {
 .description {
   font-size: 1rem;
   color: #666;
-  margin-bottom: 20px;
   line-height: 1.5;
+  margin-bottom: 20px;
 }
 
 .description.dark {
   color: #bbbbbb;
 }
 
+.settingsSection {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 20px;
+}
+
+.settingsButton {
+  background: #4CAF50;
+  color: white;
+  padding: 8px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.settingsButton:hover {
+  background: #45a049;
+}
+
+.settingsButton.dark {
+  background: #03DAC6;
+  color: #121212;
+}
+
+.settingsMenu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+  padding: 20px;
+}
+
+.settingsMenu .settingsContent {
+  background-color: white;
+  border-radius: 10px;
+  width: 80%;
+  max-width: 500px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.settingsMenu.dark .settingsContent {
+  background-color: #333;
+  color: white;
+}
+
+.settingsTitle {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.settingsContent ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.settingsContent ul li {
+  padding: 12px;
+  cursor: pointer;
+  border-bottom: 1px solid #ddd;
+  transition: background-color 0.2s;
+}
+
+.settingsContent ul li:hover {
+  background-color: #ddd;
+}
+
+.settingsContent ul li.last {
+  border-bottom: none;
+}
+
+.settingsContent ul li.dark:hover {
+  background-color: #444;
+}
+
+.closeButton {
+  margin-top: 10px;
+  width: 100%;
+  font-size: 0.9rem;
+  font-weight: bold;
+  background-color: #D32F2F;
+  color: white;
+  border: none;
+  padding: 8px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.closeButton:hover {
+  background-color: #B71C1C;
+}
+
+.closeButton.dark {
+  background-color: #D32F2F;
+}
+
+.closeButton.dark:hover {
+  background-color: #B71C1C;
+}
+
 .editProfile {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 15px;
+  margin-top: 20px;
 }
 
 .title {
-  text-align: center;
-  margin-bottom: 20px;
+  font-size: 1.4rem;
   font-weight: 600;
-  white-space: nowrap;
   color: #333;
 }
 
@@ -126,12 +243,12 @@ body {
 }
 
 .recommendations {
-  margin-top: 20px;
+  margin-top: 40px;
 }
 
 .gallery {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 10px;
 }
 
@@ -200,27 +317,60 @@ body {
   color: #03DAC6;
 }
 
-.themeToggle {
-  text-align: center;
-  margin-top: 20px;
+@media screen and (max-width: 768px) {
+  .gallery {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
+
+  .settingsMenu .settingsContent {
+    width: 90%;
+  }
+
+  .profile img {
+    width: 100px;
+    height: 100px;
+  }
+
+  .username {
+    font-size: 1.5rem;
+  }
+
+  .title {
+    font-size: 1.2rem;
+  }
+
+  .description {
+    font-size: 0.9rem;
+  }
+
+  .settingsButton {
+    font-size: 0.9rem;
+  }
+
+  .eventsButton {
+    font-size: 0.9rem;
+  }
 }
 
-.themeButton {
-  background: #4CAF50;
-  color: white;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background 0.3s;
+@media screen and (max-width: 480px) {
+  .profile img {
+    width: 80px;
+    height: 80px;
+  }
+
+  .username {
+    font-size: 1.2rem;
+  }
+
+  .description {
+    font-size: 0.85rem;
+  }
+
+  .settingsButton, .eventsButton {
+    font-size: 0.85rem;
+  }
+
+  .gallery {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  }
 }
-
-.themeButton:hover {
-  background: #45a049;
-}
-
-.themeButton.dark {
-  background: #03DAC6;
-  color: #121212;
-}
-
-
