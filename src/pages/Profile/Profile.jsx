@@ -11,10 +11,12 @@ import RobertaSaImg from '../../assets/RobertaSá.jpeg';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
+import { usePreferences } from '../../context/PreferencesContext';
 
 const Profile = () => {
   const { user, logout } = useAuth();
   const { darkMode, toggleDarkMode } = useTheme();
+  const { preferences, updatePreferences } = usePreferences();
   const navigate = useNavigate();
   const [settingsMenuOpen, setSettingsMenuOpen] = useState(false);
   const settingsMenuRef = useRef(null);
@@ -50,6 +52,10 @@ const Profile = () => {
     };
   }, [settingsMenuOpen]);
 
+  const handlePreferencesEdit = () => {
+    navigate('/preferences');
+  };
+
   return (
     <main className={`${styles.main} ${darkMode ? styles.dark : styles.light}`}>
       <div className={styles.container}>
@@ -74,8 +80,9 @@ const Profile = () => {
                   <h3 className={styles.settingsTitle}>Configurações de Conta</h3>
                   <ul>
                     <li onClick={toggleDarkMode} className={`${styles.themeOption} ${darkMode ? styles.darkOption : styles.lightOption}`}>
-                    {darkMode ? 'Tema: Escuro' : 'Tema: Claro'}
+                      {darkMode ? 'Tema: Escuro' : 'Tema: Claro'}
                     </li>
+                    <li onClick={handlePreferencesEdit} className={styles.preferenceOption}>Preferências de Eventos</li>
                   </ul>
                   <button onClick={() => setSettingsMenuOpen(false)} className={styles.closeButton}>
                     <FontAwesomeIcon icon="fa-solid fa-xmark" /> FECHAR
