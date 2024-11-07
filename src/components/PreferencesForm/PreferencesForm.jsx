@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styles from './PreferencesForm.module.css';
 
 const PreferencesForm = ({ onSubmit }) => {
-  const [eventType, setEventType] = useState('');
+  const [eventType, setEventType] = useState(''); 
   const [location, setLocation] = useState('');
   const [priceRange, setPriceRange] = useState('0-50');
 
@@ -13,7 +13,7 @@ const PreferencesForm = ({ onSubmit }) => {
       location,
       priceRange
     };
-    onSubmit(preferences);
+    onSubmit(preferences);  
   };
 
   return (
@@ -29,11 +29,11 @@ const PreferencesForm = ({ onSubmit }) => {
             value={eventType}
             onChange={(e) => setEventType(e.target.value)}
           >
-            <option value="">Selecione um tipo</option>
-            <option value="concert">Concerto</option>
-            <option value="conference">Conferência</option>
-            <option value="workshop">Workshop</option>
-            <option value="webinar">Webinar</option>
+            <option value="">Todos</option>
+            <option value="show">Show</option>
+            <option value="games">Games</option>
+            <option value="comedia">Comédia</option>
+            <option value="curso">Curso</option>
           </select>
         </div>
 

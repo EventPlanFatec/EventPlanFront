@@ -7,8 +7,9 @@ import { collection, getDocs } from 'firebase/firestore';
 import Carousel from '../../components/Carousel/Carousel';
 import styles from './Home.module.css';
 
-const Home = () => {
+const Home = ({ preferences }) => {
   const [eventos, setEventos] = useState([]);
+  const [filteredEventos, setFilteredEventos] = useState([]);
 
   useEffect(() => {
     const fetchEventos = async () => {
@@ -19,6 +20,26 @@ const Home = () => {
 
     fetchEventos();
   }, []);
+
+  useEffect(() => {
+    if (preferences) {
+      const filterEvents = eventos.filter(event => {
+        const isEventTypeMatch = preferences.eventType === 'todos' || event.type === preferences.eventType;
+        const isLocationMatch = !preferences.location || event.location === preferences.location;
+        const isPriceMatch = preferences.priceRange === '0-50' ? event.price <= 50 :
+          preferences.priceRange === '51-100' ? event.price > 50 && event.price <= 100 :
+          preferences.priceRange === '101-200' ? event.price > 100 && event.price <= 200 :
+          preferences.priceRange === '201-500' ? event.price > 200 && event.price <= 500 :
+          preferences.priceRange === '500+' ? event.price > 500 : true;
+
+        return isEventTypeMatch && isLocationMatch && isPriceMatch;
+      });
+
+      setFilteredEventos(filterEvents);
+    } else {
+      setFilteredEventos(eventos);
+    }
+  }, [preferences, eventos]);
 
   const carouselItems = [
     {
@@ -36,7 +57,7 @@ const Home = () => {
     <Box>
       <Carousel items={carouselItems} />
       <Box className={styles.cardContainer}>
-        {eventos.slice(0, 6).map(event => (
+        {filteredEventos.slice(0, 6).map(event => (
           <CardEvento key={event.id} event={event} />
         ))}
       </Box>

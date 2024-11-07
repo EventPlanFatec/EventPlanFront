@@ -28,31 +28,46 @@ import VolunteerList from './components/VolunteerList/VolunteerList.jsx';
 import PreferencesForm from './components/PreferencesForm/PreferencesForm';
 
 function App() {
-  const [eventos, setEventos] = useState([]);
+  const [eventos, setEventos] = useState([
+    { id: 1, name: 'Concerto de Rock', type: 'show', location: 'sp', price: 50 },
+    { id: 2, name: 'Workshop de React', type: 'curso', location: 'rj', price: 100 },
+    { id: 3, name: 'Webinar sobre Desenvolvimento Web', type: 'comedia', location: 'br', price: 0 },
+    { id: 4, name: 'Competição de Games', type: 'games', location: 'bh', price: 150 },
+  ]);
   const [preferences, setPreferences] = useState(null);
 
   const buscarEventoPorId = (id) => {
     return eventos.find(evento => evento.id === id);
   };
 
-  const handleAddVolunteer = (novoVoluntario) => {
-    console.log('Voluntário adicionado:', novoVoluntario);
-  };
-
   const handlePreferencesSubmit = (newPreferences) => {
     setPreferences(newPreferences);
-    console.log('Preferências salvas:', newPreferences);
+  };
+
+  const filteredEvents = () => {
+    if (!preferences) return eventos;
+    return eventos.filter(event => {
+      return (
+        (!preferences.eventType || preferences.eventType === 'todos' || event.type === preferences.eventType) &&
+        (!preferences.location || event.location === preferences.location) &&
+        (preferences.priceRange === '0-50' ? event.price <= 50 :
+         preferences.priceRange === '51-100' ? event.price > 50 && event.price <= 100 :
+         preferences.priceRange === '101-200' ? event.price > 100 && event.price <= 200 :
+         preferences.priceRange === '201-500' ? event.price > 200 && event.price <= 500 :
+         preferences.priceRange === '500+' ? event.price > 500 : true)
+      );
+    });
   };
 
   return (
     <AuthProvider>
       <PermissionsProvider>
-        <ThemeProvider> 
+        <ThemeProvider>
           <Router>
             <Navbar />
             <div className="container-flui">
               <Routes>
-                <Route path="/" element={<Home />} />
+                <Route path="/" element={<Home eventos={filteredEvents()} />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/recoverpass" element={<RecoverPass />} />
