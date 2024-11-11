@@ -35,6 +35,7 @@ function App() {
     { id: 3, name: 'Webinar sobre Desenvolvimento Web', type: 'comedia', location: 'br', price: 0 },
     { id: 4, name: 'Competição de Games', type: 'games', location: 'bh', price: 150 },
   ]);
+
   const [preferences, setPreferences] = useState(() => {
     const savedPreferences = localStorage.getItem('preferences');
     return savedPreferences ? JSON.parse(savedPreferences) : null;
@@ -42,6 +43,7 @@ function App() {
 
   const handlePreferencesSubmit = (newPreferences) => {
     setPreferences(newPreferences);
+    localStorage.setItem('preferences', JSON.stringify(newPreferences));
   };
 
   const filteredEvents = () => {
