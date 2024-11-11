@@ -39,9 +39,7 @@ const EventosPage = () => {
 
   return (
     <div className="eventos-page">
-      <h1>Criar Novo Evento</h1>
       <CriarEvento onSave={handleSave} />
-      <h2>Eventos Criados</h2>
       {eventos.map(evento => (
         <div key={evento.id}>
           <h3>{evento.nome}</h3>
