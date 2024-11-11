@@ -24,7 +24,7 @@ html, body {
 
 a {
   text-decoration: none;
-  color: black;
+  color: inherit;
 }
 
 .container {
@@ -35,14 +35,63 @@ a {
   margin-bottom: 3rem;
 }
 
-.light-mode {
+.light {
   background-color: #FFF;
   color: #333;
 }
 
-.dark-mode {
-  background-color: #333;
+.dark {
+  background-color: #121212;
+  color: #333;
+}
+
+.dark .css-dpl1yg-MuiTypography-root {
+  color: #fff;
+}
+
+.dark .css-qg6ui7-MuiTypography-root {
+  color: #fff;
+}
+
+.dark .css-jq85n-MuiTypography-root {
+  color: #fff;
+}
+
+.dark .css-1jk99ih-MuiInputBase-input-MuiOutlinedInput-input {
+  color: #fff;
+}
+
+.light .MuiPaginationItem-root,
+.dark .MuiPaginationItem-root {
+  background-color: transparent; 
+  color: #333;
+}
+
+.dark .MuiPaginationItem-root {
+  color: #FFF; 
+}
+
+.dark .MuiPaginationItem-root.Mui-selected {
+  background-color: #333; 
   color: #FFF;
+}
+
+.light .MuiPaginationItem-root.Mui-selected {
+  background-color: #1976d2; 
+  color: #FFF; 
+}
+
+.MuiPaginationItem-root.Mui-disabled {
+  color: #ccc; 
+}
+
+.MuiPaginationItem-icon {
+  color: inherit; 
+}
+
+.MuiPaginationItem-previousNext svg,
+.MuiPaginationItem-icon {
+  color: inherit; 
 }
 
 .navbar {
@@ -70,7 +119,7 @@ a {
 }
 
 footer {
-  margin-top: auto;
+  margin-top: 15px;
   width: 100%;
   padding: 2rem;
   background-color: #3f51b5;

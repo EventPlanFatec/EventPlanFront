@@ -56,6 +56,12 @@ const Profile = () => {
     navigate('/preferences');
   };
 
+  useEffect(() => {
+    if (preferences) {
+      updatePreferences(preferences);
+    }
+  }, [preferences, updatePreferences]);
+
   return (
     <main className={`${styles.main} ${darkMode ? styles.dark : styles.light}`}>
       <div className={styles.container}>

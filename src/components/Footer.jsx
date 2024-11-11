@@ -16,7 +16,7 @@ const Footer = () => {
           <Grid item md={4} xs={12}>
             <Box>
               <NavLink to="/about">
-                <Typography variant="h6">Sobre</Typography>
+                <Typography variant="h6" style={{ color: '#ffffff' }}>Sobre</Typography>
               </NavLink>
               <Typography variant="body2" style={{ marginTop: '8px' }}>
                 Nosso site EventPlan surgiu de um trabalho transdisciplinar, elaborado por estudantes da Fatec Luiz Marchesan.
