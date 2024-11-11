@@ -78,7 +78,7 @@ a {
 
 .light .MuiPaginationItem-root.Mui-selected {
   background-color: #1976d2; 
-  color: #FFF; 
+  color: #5a5454; 
 }
 
 .MuiPaginationItem-root.Mui-disabled {
@@ -92,6 +92,18 @@ a {
 .MuiPaginationItem-previousNext svg,
 .MuiPaginationItem-icon {
   color: inherit; 
+}
+
+.dark ._title_1cs34_15 {
+  color: #FFF;
+}
+
+.light ._container_c8835_1 {
+  background-color: #FFF;
+}
+
+.dark ._container_c8835_1 {
+  background-color: #121212;
 }
 
 .navbar {
