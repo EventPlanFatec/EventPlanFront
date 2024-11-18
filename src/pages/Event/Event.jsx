@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { doc, getDoc, collection, getDocs } from 'firebase/firestore';
-import { Container, Grid, Typography, Tooltip, Button, Box } from '@mui/material';
+import { Container, Grid, Typography, Button, Box, TextField, Tooltip } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Chat from '../../components/Chat/Chat';
 import EventRating from '../../components/Avaliacao/Avaliacao';
@@ -14,6 +14,8 @@ import styles from './Event.module.css';
 const Event = () => {
   const { id } = useParams();
   const [eventData, setEventData] = useState(null);
+  const [ticketType, setTicketType] = useState('');
+  const [ticketQuantity, setTicketQuantity] = useState(0);
   const [ratings, setRatings] = useState([]);
   const [averageRating, setAverageRating] = useState(0);
 
@@ -27,10 +29,12 @@ const Event = () => {
         } else {
           console.log('No such document!');
         }
+
         const ratingsCollection = collection(db, `Eventos/${id}/ratings`);
         const ratingsSnapshot = await getDocs(ratingsCollection);
         const fetchedRatings = ratingsSnapshot.docs.map(doc => doc.data());
         setRatings(fetchedRatings);
+
         const avgRating = calculateAverageRating(fetchedRatings);
         setAverageRating(avgRating);
       } catch (error) {
@@ -43,11 +47,20 @@ const Event = () => {
 
   const calculateAverageRating = (ratings) => {
     if (ratings.length === 0) return 0;
-    const totalRating = ratings.reduce((acc, rating) => {
-      const validRating = typeof rating.rating === 'number' && !isNaN(rating.rating) ? rating.rating : 0;
-      return acc + validRating;
-    }, 0);
+    const totalRating = ratings.reduce((acc, rating) => acc + rating.rating, 0);
     return totalRating / ratings.length;
+  };
+
+  const handleTicketTypeChange = (event) => {
+    setTicketType(event.target.value);
+  };
+
+  const handleTicketQuantityChange = (event) => {
+    setTicketQuantity(event.target.value);
+  };
+
+  const handlePurchase = () => {
+    console.log(`Comprado: ${ticketQuantity} ingressos do tipo ${ticketType}`);
   };
 
   if (!eventData) return <div>Loading...</div>;
@@ -61,9 +74,9 @@ const Event = () => {
           </div>
         </Grid>
         <Grid item xs={12}>
-          <div className={`${styles.description} ${styles.marginTop20}`}>
-            <Typography variant="body1">{eventData.descricao}</Typography>
-          </div>
+          <Typography variant="body1" className={`${styles.description} ${styles.marginTop20}`}>
+            {eventData.descricao}
+          </Typography>
         </Grid>
         <Grid item xs={12}>
           <div className={styles.dateVenueContainer}>
@@ -79,23 +92,52 @@ const Event = () => {
         </Grid>
         <Grid item xs={12} md={10}>
           <div className={styles.ticketsContainer}>
-            <Box display="flex" alignItems="center" flexWrap="wrap">
-              <Typography variant="body1"><strong>Ingressos:</strong></Typography>
-              <Typography variant="body1" sx={{ color: 'orange', fontWeight: 'bold', marginLeft: 1 }}>
-                Ingressos a partir de R$ {eventData.valorMin}
-              </Typography>
+            <Box display="flex" flexDirection="column" alignItems="flex-start" width="100%">
+              <Box display="flex" alignItems="center">
+                <Typography variant="body1"><strong>Ingressos:</strong></Typography>
+                <Typography variant="body1" sx={{ color: 'orange', fontWeight: 'bold', marginLeft: 1 }}>
+                  Ingressos a partir de R$ {eventData.valorMin}
+                </Typography>
+              </Box>
+              <TextField
+                select
+                label="Tipo de Ingresso"
+                value={ticketType}
+                onChange={handleTicketTypeChange}
+                fullWidth
+                variant="outlined"
+                margin="normal"
+                sx={{ marginTop: 2 }}
+              >
+                <option value="normal">Normal</option>
+                <option value="VIP">VIP</option>
+                <option value="estudante">Estudante</option>
+              </TextField>
+              <TextField
+                type="number"
+                label="Quantidade"
+                value={ticketQuantity}
+                onChange={handleTicketQuantityChange}
+                fullWidth
+                variant="outlined"
+                margin="normal"
+                inputProps={{ min: 1, max: 10 }}
+                sx={{ marginTop: 2 }}
+              />
             </Box>
           </div>
         </Grid>
         <Grid item xs={12} md={2}>
-          <Button 
-            variant="contained" 
-            color="primary" 
-            sx={{ width: '100%', height: '50px', marginTop: { xs: '10px', md: '18px' } }}
-            onClick={() => console.log('Comprar clicado!')}
-          >
-            Comprar
-          </Button>
+          <Box display="flex" justifyContent="center" alignItems="center" height="100%">
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{ width: '100%', height: '50px', marginTop: 2 }}
+              onClick={handlePurchase}
+            >
+              Comprar
+            </Button>
+          </Box>
         </Grid>
         <Grid item xs={12}>
           <Box sx={{ marginY: '1vh' }}>

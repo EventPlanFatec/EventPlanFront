@@ -1,123 +1,73 @@
 .container {
-    padding: 10px;
-  }
-  
-  .imageContainer {
-    text-align: center;
-  }
-  
-  .eventImage {
-    max-width: 100%;
-    height: auto;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  }
-  
-  .description {
-    background-color: rgba(255, 255, 255, 0.9);
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    text-align: justify;
-    font-size: 1.1rem;
-    margin-top: 10px;
-  }
-  
-  .dateVenueContainer {
-    background-color: rgba(240, 240, 240, 0.9);
-    padding: 15px;
-    border-radius: 8px;
-    margin-top: 20px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .dateVenue {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 1rem;
-    margin: 10px 0;
-  }
-  
+  padding: 10px;
+}
+
+.imageContainer {
+  text-align: center;
+}
+
+.eventImage {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.description {
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  text-align: justify;
+  font-size: 1.1rem;
+  margin-top: 10px;
+}
+
+.dateVenueContainer {
+  background-color: rgba(240, 240, 240, 0.9);
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.dateVenue {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1rem;
+  margin: 10px 0;
+}
+
+.ticketsContainer {
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  margin: 20px 0;
+}
+
+.ticketsContainer > .MuiTextField-root {
+  margin-bottom: 10px;
+}
+
+@media (max-width: 768px) {
   .ticketsContainer {
-    background-color: rgba(255, 255, 255, 0.9);
-    padding: 12px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     margin: 20px 0;
   }
-  
+
   .ticketsText {
-    font-weight: bold;
+    font-size: 1rem;
   }
-  
+
   .ticketsPrice {
-    color: #FF5722;
-    font-size: 1.2rem;
+    font-size: 1rem;
   }
-  
-  .cartIcon {
-    font-size: 1.5rem;
-    cursor: pointer;
-    transition: color 0.3s;
+
+  .ticketsContainer button {
+    width: 100%;
   }
-  
-  .cartIcon:hover {
-    color: #FF5722;
-  }
-  
-  .componentSpacing {
-    margin: 30px 0;
-  }
-  
-  @media (max-width: 768px) {
-    .description {
-      font-size: 1rem;
-    }
-  
-    .dateVenue {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-  
-    .ticketsContainer {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-  
-    .ticketsPrice {
-      font-size: 1rem;
-    }
-  
-    .cartIcon {
-      margin-top: 10px;
-    }
-  
-    .ticketsContainer button {
-      width: 80%;
-      height: 50px;
-      margin-top: 10px;
-    }
-  }
-  
-  @media (max-width: 480px) {
-    .description {
-      padding: 15px;
-    }
-  
-    .ticketsContainer {
-      padding: 15px;
-    }
-  
-    .ticketsText, .ticketsPrice {
-      font-size: 0.9rem;
-    }
-  
-    .cartIcon {
-      font-size: 1.2rem;
-    }
-  }
-  
+}
