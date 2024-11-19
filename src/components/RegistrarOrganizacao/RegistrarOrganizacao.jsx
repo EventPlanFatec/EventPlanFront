@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { TextField, Button } from '@mui/material';
 import { toast, ToastContainer } from 'react-toastify';
+import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import 'react-toastify/dist/ReactToastify.css';
 
 const RegistrarOrganizacao = () => {
@@ -19,6 +20,11 @@ const RegistrarOrganizacao = () => {
     const organizacao = { nome, email, telefone, endereco };
 
     try {
+      const auth = getAuth();
+      const userCredential = await createUserWithEmailAndPassword(auth, email, 'senhaSegura123');
+      const user = userCredential.user;
+      await sendEmailVerification(user);
+      toast.success('Usuário registrado! Verifique seu e-mail para ativar sua conta.');
       const response = await fetch('/api/organizacoes', {
         method: 'POST',
         headers: {
@@ -33,37 +39,46 @@ const RegistrarOrganizacao = () => {
         setError('Erro ao registrar organização.');
         toast.error('Erro ao registrar organização.');
       }
-    } catch {
-      setError('Erro de rede. Tente novamente.');
-      toast.error('Erro de rede. Tente novamente.');
+    } catch (error) {
+      console.error(error);
+      setError('Erro ao registrar organização ou enviar verificação.');
+      toast.error('Erro ao registrar organização ou enviar verificação.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      marginTop: '50px',
-    }}>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        marginTop: '50px',
+      }}
+    >
       <ToastContainer />
-      <div style={{
-        padding: '20px',
-        borderRadius: '8px',
-        boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
-        backgroundColor: '#ffffff',
-        width: '100%',
-        maxWidth: '400px',
-        margin: '0 20px',
-      }}>
-        <h1 style={{
-          textAlign: 'center',
-          marginBottom: '20px',
-          fontWeight: '600',
-          fontSize: '24px', 
-        }}>Registrar Organização</h1>
+      <div
+        style={{
+          padding: '20px',
+          borderRadius: '8px',
+          boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+          backgroundColor: '#ffffff',
+          width: '100%',
+          maxWidth: '400px',
+          margin: '0 20px',
+        }}
+      >
+        <h1
+          style={{
+            textAlign: 'center',
+            marginBottom: '20px',
+            fontWeight: '600',
+            fontSize: '24px',
+          }}
+        >
+          Registrar Organização
+        </h1>
         <form onSubmit={handleSubmit}>
           <TextField
             label="Nome da Organização"

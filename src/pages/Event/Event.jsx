@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { doc, getDoc, collection, getDocs } from 'firebase/firestore';
 import { Container, Grid, Typography, Button, Box, TextField, Tooltip } from '@mui/material';
@@ -16,6 +16,7 @@ const Event = () => {
   const [eventData, setEventData] = useState(null);
   const [ticketType, setTicketType] = useState('');
   const [ticketQuantity, setTicketQuantity] = useState(0);
+  // eslint-disable-next-line no-unused-vars
   const [ratings, setRatings] = useState([]);
   const [averageRating, setAverageRating] = useState(0);
 
