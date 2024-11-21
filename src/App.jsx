@@ -1,6 +1,5 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { useState } from 'react';
-import 'leaflet/dist/leaflet.css';
+import { useState, useEffect } from 'react';
 import './App.css';
 import { AuthProvider } from './context/AuthContext';
 import { PermissionsProvider } from './context/PermissionsContext';
