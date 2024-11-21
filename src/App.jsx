@@ -31,6 +31,7 @@ import PreferencesForm from './components/PreferencesForm/PreferencesForm';
 import CartPage from './pages/CartPage/CartPage';
 import PagamentoPage from './pages/PagamentoPage/PagamentoPage.jsx';
 import FinalizarPagamentoPage from './pages/FinalizarPagamentoPage/FinalizarPagamentoPage.jsx';
+import InventoryPage from './pages/InventoryPage/InventoryPage';
 
 function App() {
   const [eventos, setEventos] = useState([
@@ -98,6 +99,7 @@ function App() {
                     <Route path="/carrinho" element={<CartPage />} />
                     <Route path="/pagamento" element={<PagamentoPage />} />
                     <Route path="/finalizar-pagamento" element={<FinalizarPagamentoPage />} />
+                    <Route path="/inventario" element={<InventoryPage eventos={eventos} />} />
                   </Routes>
                 </div>
                 <Footer />
