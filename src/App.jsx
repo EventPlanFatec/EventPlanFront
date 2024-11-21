@@ -5,6 +5,7 @@ import { AuthProvider } from './context/AuthContext';
 import { PermissionsProvider } from './context/PermissionsContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { PreferencesProvider } from './context/PreferencesContext';
+import { CartProvider } from './context/CartContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home/Home';
@@ -27,6 +28,7 @@ import RegistrarOrganizacao from './components/RegistrarOrganizacao/RegistrarOrg
 import EditarOrganizacao from './components/EditarOrganizacao/EditarOrganizacao.jsx';
 import VolunteerList from './components/VolunteerList/VolunteerList.jsx';
 import PreferencesForm from './components/PreferencesForm/PreferencesForm';
+import CartPage from './pages/CartPage/CartPage';
 
 function App() {
   const [eventos, setEventos] = useState([
@@ -66,34 +68,37 @@ function App() {
       <PermissionsProvider>
         <ThemeProvider>
           <PreferencesProvider> 
-            <Router>
-              <Navbar />
-              <div className="container-flui">
-                <Routes>
-                  <Route path="/" element={<Home eventos={filteredEvents()} />} />
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/register" element={<Register />} />
-                  <Route path="/recoverpass" element={<RecoverPass />} />
-                  <Route path="/profile" element={<Profile />} />
-                  <Route path="/FAQ" element={<FAQ />} />
-                  <Route path="/about" element={<About />} />
-                  <Route path="/admin" element={<Admin />} />
-                  <Route path="/event/:id" element={<Event />} />
-                  <Route path="/eventos" element={<EventosPage eventos={eventos} setEventos={setEventos} />} />
-                  <Route path="/eventlist" element={<EventList />} />
-                  <Route path="/editar-evento/:id" element={<EditarEvento />} />
-                  <Route path="/config-permissoes" element={<ConfigPermissoes />} />
-                  <Route path="/gerenciar-usuarios" element={<GerenciamentoUsuarios />} />
-                  <Route path="/verificar-registro" element={<VerificarRegistro />} />
-                  <Route path="/criar-evento" element={<CriarEvento />} />
-                  <Route path="/registrar-organizacao" element={<RegistrarOrganizacao />} />
-                  <Route path="/editar-organizacao/:id" element={<EditarOrganizacao />} />
-                  <Route path="/volunteers" element={<VolunteerList />} />
-                  <Route path="/preferences" element={<PreferencesForm onSubmit={handlePreferencesSubmit} />} />
-                </Routes>
-              </div>
-              <Footer />
-            </Router>
+            <CartProvider>
+              <Router>
+                <Navbar />
+                <div className="container-flui">
+                  <Routes>
+                    <Route path="/" element={<Home eventos={filteredEvents()} />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Register />} />
+                    <Route path="/recoverpass" element={<RecoverPass />} />
+                    <Route path="/profile" element={<Profile />} />
+                    <Route path="/FAQ" element={<FAQ />} />
+                    <Route path="/about" element={<About />} />
+                    <Route path="/admin" element={<Admin />} />
+                    <Route path="/event/:id" element={<Event />} />
+                    <Route path="/eventos" element={<EventosPage eventos={eventos} setEventos={setEventos} />} />
+                    <Route path="/eventlist" element={<EventList />} />
+                    <Route path="/editar-evento/:id" element={<EditarEvento />} />
+                    <Route path="/config-permissoes" element={<ConfigPermissoes />} />
+                    <Route path="/gerenciar-usuarios" element={<GerenciamentoUsuarios />} />
+                    <Route path="/verificar-registro" element={<VerificarRegistro />} />
+                    <Route path="/criar-evento" element={<CriarEvento />} />
+                    <Route path="/registrar-organizacao" element={<RegistrarOrganizacao />} />
+                    <Route path="/editar-organizacao/:id" element={<EditarOrganizacao />} />
+                    <Route path="/volunteers" element={<VolunteerList />} />
+                    <Route path="/preferences" element={<PreferencesForm onSubmit={handlePreferencesSubmit} />} />
+                    <Route path="/carrinho" element={<CartPage />} />
+                  </Routes>
+                </div>
+                <Footer />
+              </Router>
+            </CartProvider>
           </PreferencesProvider>
         </ThemeProvider>
       </PermissionsProvider>
