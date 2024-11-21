@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { AppBar, Toolbar, IconButton, Drawer, List, ListItem, ListItemIcon, ListItemText, Box } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars, faHome, faInfoCircle, faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faHome, faInfoCircle, faCalendarAlt, faShoppingCart, faBox } from "@fortawesome/free-solid-svg-icons";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import Logo from "../assets/Logo.svg";
@@ -19,6 +19,8 @@ const Navbar = () => {
     { text: "Início", icon: faHome, path: "/" },
     { text: "Eventos", icon: faCalendarAlt, path: "/eventlist" },
     { text: "Sobre", icon: faInfoCircle, path: "/about" },
+    { text: "Carrinho", icon: faShoppingCart, path: "/carrinho" },
+    { text: "Inventário", icon: faBox, path: "/inventario" },
   ];
 
   return (
@@ -45,6 +47,9 @@ const Navbar = () => {
                 alt="Avatar"
                 className={styles.avatar}
               />
+            </NavLink>
+            <NavLink to="/carrinho">
+              <FontAwesomeIcon icon={faShoppingCart} style={{ color: 'white', fontSize: '20px', marginLeft: '16px' }} />
             </NavLink>
           </Box>
         </Toolbar>
