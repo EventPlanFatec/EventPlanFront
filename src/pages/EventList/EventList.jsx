@@ -38,7 +38,7 @@ const EventList = () => {
 
   const handleSelect = (event) => {
     setFilter(event);
-    setCurrentPage(1);
+    setCurrentPage(1);  // Reset para a primeira página sempre que o filtro for alterado
     setAnchorEl(null);
   };
 
