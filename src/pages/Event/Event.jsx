@@ -9,13 +9,14 @@ import UploadImage from '../../components/UploadImage/UploadImage';
 import ExportToCSV from '../../components/ExportToCsv/ExportToCsv';
 import { db } from '../../firebase/config';
 import styles from './Event.module.css';
+import { useCart } from '../../context/CartContext';
 
 const Event = () => {
   const { id } = useParams();
   const [eventData, setEventData] = useState(null);
   const [ticketType, setTicketType] = useState('');
   const [ticketQuantity, setTicketQuantity] = useState(0);
-  const [cart, setCart] = useState([]);
+  const { cart, addToCart } = useCart();
   const [ratings, setRatings] = useState([]);
   const [averageRating, setAverageRating] = useState(0);
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -53,7 +54,7 @@ const Event = () => {
         quantity: ticketQuantity,
         price: eventData.valorMin * ticketQuantity,
       };
-      setCart((prevCart) => [...prevCart, newItem]);
+      addToCart(newItem);
       setTicketType('');
       setTicketQuantity(0);
       setShowConfirmation(true);
