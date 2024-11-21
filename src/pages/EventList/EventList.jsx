@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button, Menu, MenuItem, Pagination, Box } from '@mui/material';
 import { db } from '../../firebase/config';
 import { collection, getDocs } from 'firebase/firestore';
 import CardEvento from '../../components/CardEvento/CardEvento';
 import styles from './EventList.module.css';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 
 const EventList = () => {
   const [events, setEvents] = useState([]);
@@ -11,6 +13,8 @@ const EventList = () => {
   const [eventsPerPage] = useState(5);
   const [filter, setFilter] = useState('todos');
   const [anchorEl, setAnchorEl] = useState(null);
+  const mapRef = useRef(null);
+  const [userLocation, setUserLocation] = useState(null); // Armazenar a localização do usuário
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -20,6 +24,41 @@ const EventList = () => {
     };
 
     fetchEvents();
+  }, []);
+
+  useEffect(() => {
+    // Verifique se o mapa já foi inicializado
+    if (mapRef.current) return; // Se o mapa já existir, não cria um novo
+
+    // Inicializa o mapa
+    const mapInstance = L.map('map', {
+      center: [51.505, -0.09], // Posição inicial
+      zoom: 13,
+    });
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    }).addTo(mapInstance);
+
+    mapRef.current = mapInstance; // Armazene a instância do mapa no useRef
+
+    // Obter a localização do usuário
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setUserLocation({ lat: latitude, lng: longitude }); // Atualiza a localização do usuário
+          mapInstance.setView([latitude, longitude], 13); // Centraliza o mapa na posição do usuário
+          L.marker([latitude, longitude]).addTo(mapInstance) // Marca a posição do usuário
+            .bindPopup('Sua localização')
+            .openPopup();
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+    }
+
   }, []);
 
   const filteredEvents = filter === 'todos' ? events : events.filter(event => event.tipo === filter);
@@ -34,13 +73,22 @@ const EventList = () => {
     setAnchorEl(null);
   };
 
+  const handleLocateUser = () => {
+    if (navigator.geolocation && userLocation) {
+      mapRef.current.setView([userLocation.lat, userLocation.lng], 13);
+      L.marker([userLocation.lat, userLocation.lng]).addTo(mapRef.current)
+        .bindPopup('Sua localização')
+        .openPopup();
+    }
+  };
+
   return (
     <Box className={styles.container}>
       <Button 
         variant="contained" 
         onClick={(e) => setAnchorEl(e.currentTarget)} 
         className={styles.dropdown}
-        size="small" // Set button size to small
+        size="small"
       >
         Filtro: {filter}
       </Button>
@@ -66,6 +114,14 @@ const EventList = () => {
         onChange={(e, page) => paginate(page)} 
         className={styles.paginationContainer}
       />
+      <div id="map" style={{ width: '100%', height: '400px' }}></div>
+      <Button 
+        variant="contained" 
+        onClick={handleLocateUser} 
+        className={styles.locateButton}
+      >
+        Localizar-me
+      </Button>
     </Box>
   );
 };
