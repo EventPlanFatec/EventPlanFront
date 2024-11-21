@@ -19,9 +19,25 @@ const PreferencesForm = ({ onSubmit, currentPreferences }) => {
     const preferences = {
       eventType,
       location,
-      priceRange
+      priceRange,
     };
-    onSubmit(preferences);  
+
+    // Salva as preferências no localStorage
+    localStorage.setItem('userPreferences', JSON.stringify(preferences));
+
+    // Função para enviar notificação (simulação)
+    sendNotification(preferences);
+
+    onSubmit(preferences);
+  };
+
+  const sendNotification = (preferences) => {
+    // Simulação de envio de notificação com base nas preferências
+    const { eventType, location, priceRange } = preferences;
+
+    // Aqui você pode integrar com um serviço de notificação real
+    // Exemplo simples de alerta (simulação)
+    alert(`Notificação enviada!\nTipo de Evento: ${eventType}\nLocalização: ${location}\nFaixa de Preço: ${priceRange}`);
   };
 
   return (
