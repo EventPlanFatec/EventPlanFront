@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import './App.css';
 import { AuthProvider } from './context/AuthContext';
 import { PermissionsProvider } from './context/PermissionsContext';
@@ -29,6 +29,8 @@ import EditarOrganizacao from './components/EditarOrganizacao/EditarOrganizacao.
 import VolunteerList from './components/VolunteerList/VolunteerList.jsx';
 import PreferencesForm from './components/PreferencesForm/PreferencesForm';
 import CartPage from './pages/CartPage/CartPage';
+import PagamentoPage from './pages/PagamentoPage/PagamentoPage.jsx';
+import FinalizarPagamentoPage from './pages/FinalizarPagamentoPage/FinalizarPagamentoPage.jsx';
 
 function App() {
   const [eventos, setEventos] = useState([
@@ -67,7 +69,7 @@ function App() {
     <AuthProvider>
       <PermissionsProvider>
         <ThemeProvider>
-          <PreferencesProvider> 
+          <PreferencesProvider>
             <CartProvider>
               <Router>
                 <Navbar />
@@ -94,6 +96,8 @@ function App() {
                     <Route path="/volunteers" element={<VolunteerList />} />
                     <Route path="/preferences" element={<PreferencesForm onSubmit={handlePreferencesSubmit} />} />
                     <Route path="/carrinho" element={<CartPage />} />
+                    <Route path="/pagamento" element={<PagamentoPage />} />
+                    <Route path="/finalizar-pagamento" element={<FinalizarPagamentoPage />} />
                   </Routes>
                 </div>
                 <Footer />
