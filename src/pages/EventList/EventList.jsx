@@ -23,10 +23,19 @@ const EventList = () => {
     fetchEvents();
   }, []);
 
+  const validateSearchQuery = (query) => {
+    return query.trim().replace(/[^a-zA-Z0-9 ]/g, '').toLowerCase();
+  };
+
+  const validateFilter = (selectedFilter) => {
+    const validFilters = ['todos', 'show', 'games', 'comedia', 'curso'];
+    return validFilters.includes(selectedFilter) ? selectedFilter : 'todos';
+  };
+
   const filteredEvents = events.filter(event => {
     const matchSearchQuery = (
-      (event.nome && event.nome.toLowerCase().includes(searchQuery.toLowerCase())) ||
-      (event.descricao && event.descricao.toLowerCase().includes(searchQuery.toLowerCase()))
+      (event.nome && event.nome.toLowerCase().includes(searchQuery)) ||
+      (event.descricao && event.descricao.toLowerCase().includes(searchQuery))
     );
     const matchFilter = filter === 'todos' || event.tipo === filter;
     return matchSearchQuery && matchFilter;
@@ -37,8 +46,9 @@ const EventList = () => {
   const currentEvents = filteredEvents.slice(indexOfFirstEvent, indexOfLastEvent);
 
   const handleSelect = (event) => {
-    setFilter(event);
-    setCurrentPage(1);  // Reset para a primeira página sempre que o filtro for alterado
+    const validFilter = validateFilter(event);
+    setFilter(validFilter);
+    setCurrentPage(1);
     setAnchorEl(null);
   };
 
@@ -49,7 +59,7 @@ const EventList = () => {
           label="Buscar eventos"
           variant="outlined"
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          onChange={(e) => setSearchQuery(validateSearchQuery(e.target.value))}
           style={{ marginRight: '10px' }}
           size="small"
         />
