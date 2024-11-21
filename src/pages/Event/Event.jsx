@@ -18,6 +18,7 @@ const Event = () => {
   const [cart, setCart] = useState([]);
   const [ratings, setRatings] = useState([]);
   const [averageRating, setAverageRating] = useState(0);
+  const [showConfirmation, setShowConfirmation] = useState(false);
 
   useEffect(() => {
     const fetchEventAndRatings = async () => {
@@ -55,6 +56,10 @@ const Event = () => {
       setCart((prevCart) => [...prevCart, newItem]);
       setTicketType('');
       setTicketQuantity(0);
+      setShowConfirmation(true);
+      setTimeout(() => {
+        setShowConfirmation(false);
+      }, 3000);
     }
   };
 
@@ -69,6 +74,17 @@ const Event = () => {
 
   return (
     <Container className={styles.container}>
+      {showConfirmation && (
+        <Box className={styles.confirmation}>
+          <Typography variant="body1" color="white">
+            Ingresso adicionado ao carrinho!
+          </Typography>
+          <Box>
+            <Button variant="outlined" color="inherit" href="/carrinho">Revisar Carrinho</Button>
+            <Button variant="contained" color="primary" href="/pagamento">Prosseguir para o Pagamento</Button>
+          </Box>
+        </Box>
+      )}
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <div className={styles.imageContainer}>
