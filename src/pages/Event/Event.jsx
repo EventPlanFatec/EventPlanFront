@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { doc, getDoc, collection, getDocs } from 'firebase/firestore';
-import { Container, Grid, Typography, Button, Box, TextField, Tooltip } from '@mui/material';
+import { Container, Grid, Typography, Button, Box, TextField, Select, MenuItem, InputLabel, FormControl, Tooltip } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCalendar } from '@fortawesome/free-regular-svg-icons';
+import { faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import Chat from '../../components/Chat/Chat';
 import EventRating from '../../components/Avaliacao/Avaliacao';
 import FavoriteEvents from '../../components/Favoritos/Favoritos';
 import UploadImage from '../../components/UploadImage/UploadImage';
-import ExportToCSV from '../../components/ExportToCsv/ExportToCsv';
+import ExportToCSV from '../../components/ExportToCsv/ExportToCSV';
 import { db } from '../../firebase/config';
 import styles from './Event.module.css';
 
@@ -18,6 +20,7 @@ const Event = () => {
   const [ticketQuantity, setTicketQuantity] = useState(0);
   const [ratings, setRatings] = useState([]);
   const [averageRating, setAverageRating] = useState(0);
+  const [cart, setCart] = useState([]);
 
   useEffect(() => {
     const fetchEventAndRatings = async () => {
@@ -59,8 +62,31 @@ const Event = () => {
     setTicketQuantity(event.target.value);
   };
 
+  const handleAddToCart = () => {
+    if (ticketQuantity > 0 && ticketType) {
+      const newCartItem = {
+        type: ticketType,
+        quantity: ticketQuantity,
+        price: eventData.valorMin * ticketQuantity,
+      };
+      setCart(prevCart => [...prevCart, newCartItem]);
+      setTicketQuantity(0);
+      setTicketType('');
+    } else {
+      alert('Por favor, selecione o tipo e a quantidade de ingressos.');
+    }
+  };
+
   const handlePurchase = () => {
-    console.log(`Comprado: ${ticketQuantity} ingressos do tipo ${ticketType}`);
+    console.log('Compra realizada:', cart);
+  };
+
+  const getCartSummary = () => {
+    if (cart.length === 0) return 'Carrinho vazio';
+    const totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
+    const totalPrice = cart.reduce((sum, item) => sum + item.price, 0);
+    const types = cart.map(item => `${item.quantity} ingresso(s) ${item.type}`).join(' - ');
+    return `${types} - R$ ${totalPrice}`;
   };
 
   if (!eventData) return <div>Loading...</div>;
@@ -82,37 +108,35 @@ const Event = () => {
           <div className={styles.dateVenueContainer}>
             <div className={styles.dateVenue}>
               <Typography variant="body1">
-                <FontAwesomeIcon icon={['far', 'calendar']} /> {eventData.data}
+                <FontAwesomeIcon icon={faCalendar} /> {eventData.data}
               </Typography>
               <Typography variant="body1">
-                <FontAwesomeIcon icon={['fas', 'map-marker-alt']} /> {eventData.local}
+                <FontAwesomeIcon icon={faMapMarkerAlt} /> {eventData.local}
               </Typography>
             </div>
           </div>
         </Grid>
         <Grid item xs={12} md={10}>
-          <div className={styles.ticketsContainer}>
+          <div className={styles.ticketsContainer} style={{ padding: '20px' }}>
             <Box display="flex" flexDirection="column" alignItems="flex-start" width="100%">
-              <Box display="flex" alignItems="center">
+              <Box display="flex" alignItems="center" sx={{ marginBottom: 2 }}>
                 <Typography variant="body1"><strong>Ingressos:</strong></Typography>
                 <Typography variant="body1" sx={{ color: 'orange', fontWeight: 'bold', marginLeft: 1 }}>
                   Ingressos a partir de R$ {eventData.valorMin}
                 </Typography>
               </Box>
-              <TextField
-                select
-                label="Tipo de Ingresso"
-                value={ticketType}
-                onChange={handleTicketTypeChange}
-                fullWidth
-                variant="outlined"
-                margin="normal"
-                sx={{ marginTop: 2 }}
-              >
-                <option value="normal">Normal</option>
-                <option value="VIP">VIP</option>
-                <option value="estudante">Estudante</option>
-              </TextField>
+              <FormControl fullWidth variant="outlined" margin="normal">
+                <InputLabel>Tipo de Ingresso</InputLabel>
+                <Select
+                  value={ticketType}
+                  onChange={handleTicketTypeChange}
+                  label="Tipo de Ingresso"
+                >
+                  <MenuItem value="normal">Normal</MenuItem>
+                  <MenuItem value="VIP">VIP</MenuItem>
+                  <MenuItem value="estudante">Estudante</MenuItem>
+                </Select>
+              </FormControl>
               <TextField
                 type="number"
                 label="Quantidade"
@@ -125,19 +149,31 @@ const Event = () => {
                 sx={{ marginTop: 2 }}
               />
             </Box>
+
+            <Box display="flex" justifyContent="space-between" alignItems="center" width="100%" sx={{ marginTop: 2 }}>
+              <Box display="flex" alignItems="center" sx={{ marginRight: 2 }}>
+                <Typography variant="body1">{getCartSummary()}</Typography>
+              </Box>
+              <Box display="flex">
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  sx={{ padding: '8px 16px', marginRight: 2 }}
+                  onClick={handleAddToCart}
+                >
+                  Adicionar ao Carrinho
+                </Button>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  sx={{ padding: '8px 16px' }}
+                  onClick={handlePurchase}
+                >
+                  Comprar
+                </Button>
+              </Box>
+            </Box>
           </div>
-        </Grid>
-        <Grid item xs={12} md={2}>
-          <Box display="flex" justifyContent="center" alignItems="center" height="100%">
-            <Button
-              variant="contained"
-              color="primary"
-              sx={{ width: '100%', height: '50px', marginTop: 2 }}
-              onClick={handlePurchase}
-            >
-              Comprar
-            </Button>
-          </Box>
         </Grid>
         <Grid item xs={12}>
           <Box sx={{ marginY: '1vh' }}>
