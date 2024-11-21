@@ -2,9 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { doc, getDoc, collection, getDocs } from 'firebase/firestore';
 import { Container, Grid, Typography, Button, Box, TextField, Select, MenuItem, InputLabel, FormControl, Tooltip } from '@mui/material';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCalendar } from '@fortawesome/free-regular-svg-icons';
-import { faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import Chat from '../../components/Chat/Chat';
 import EventRating from '../../components/Avaliacao/Avaliacao';
 import FavoriteEvents from '../../components/Favoritos/Favoritos';
@@ -107,12 +104,8 @@ const Event = () => {
         <Grid item xs={12}>
           <div className={styles.dateVenueContainer}>
             <div className={styles.dateVenue}>
-              <Typography variant="body1">
-                <FontAwesomeIcon icon={faCalendar} /> {eventData.data}
-              </Typography>
-              <Typography variant="body1">
-                <FontAwesomeIcon icon={faMapMarkerAlt} /> {eventData.local}
-              </Typography>
+              <Typography variant="body1">{eventData.data}</Typography>
+              <Typography variant="body1">{eventData.local}</Typography>
             </div>
           </div>
         </Grid>
