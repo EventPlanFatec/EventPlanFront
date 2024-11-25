@@ -32,6 +32,7 @@ import CartPage from './pages/CartPage/CartPage';
 import PagamentoPage from './pages/PagamentoPage/PagamentoPage.jsx';
 import FinalizarPagamentoPage from './pages/FinalizarPagamentoPage/FinalizarPagamentoPage.jsx';
 import InventoryPage from './pages/InventoryPage/InventoryPage';
+import EventosGerenciamento from './pages/EventosGerenciamento/EventosGerenciamento';
 
 function App() {
   const [eventos, setEventos] = useState([
@@ -100,6 +101,7 @@ function App() {
                     <Route path="/pagamento" element={<PagamentoPage />} />
                     <Route path="/finalizar-pagamento" element={<FinalizarPagamentoPage />} />
                     <Route path="/inventario" element={<InventoryPage eventos={eventos} />} />
+                    <Route path="gerenciamento-eventos" element={<EventosGerenciamento />} />
                   </Routes>
                 </div>
                 <Footer />

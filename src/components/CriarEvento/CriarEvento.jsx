@@ -1,213 +1,321 @@
-import React, { useState, useEffect } from 'react';
-import { TextField, Button, Typography, Box, Checkbox, IconButton, InputAdornment } from '@mui/material';
+import React from "react";
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
+  Button,
+  Box,
+  Checkbox,
+  IconButton,
+  InputAdornment,
+  Typography,
+  CircularProgress,
+} from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
-import { useNavigate, useParams } from 'react-router-dom';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import styles from './CriarEvento.module.css';
+import PropTypes from "prop-types";
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { storage } from '../../firebase/config'; // Ajuste o caminho para o arquivo de configuração do Firebase
 
-const CriarEvento = ({ onSave, eventoAtual }) => {
-    const [formData, setFormData] = useState({
-        nomeEvento: '',
-        data: '',
-        horario: '',
-        local: '',
-        descricao: '',
-        preco: '',
-        imagem: null,
-        emailsConvidados: '',
-        senha: '',
-    });
+const CriarEvento = ({ open, onClose, onSave, formData, setFormData, editId }) => {
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [isEventoPrivado, setIsEventoPrivado] = React.useState(false);
+  const [errors, setErrors] = React.useState({});
+  const [loading, setLoading] = React.useState(false);
+  const [progress, setProgress] = React.useState(0);
+  const [image, setImage] = React.useState(null); // Variável para armazenar a imagem selecionada
 
-    const [isEventoPrivado, setIsEventoPrivado] = useState(false);
-    const [showPassword, setShowPassword] = useState(false);
-    const [errors, setErrors] = useState({});
-    const navigate = useNavigate();
-    const { id } = useParams();
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
+    if (name === "imagens" && files[0]) {
+      setImage(files[0]);
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
+  };
 
-    useEffect(() => {
-        if (eventoAtual) {
-            setFormData(eventoAtual);
-            setIsEventoPrivado(eventoAtual.isEventoPrivado || false);
-        }
-    }, [eventoAtual]);
+  const handlePasswordVisibility = () => setShowPassword(!showPassword);
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-    };
+  const handleEventoPrivadoChange = (e) => {
+    setIsEventoPrivado(e.target.checked);
+  };
 
-    const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const validFormats = ['image/jpeg', 'image/png'];
-            if (!validFormats.includes(file.type) || file.size > 5 * 1024 * 1024) {
-                setErrors((prev) => ({ ...prev, imagem: 'A imagem deve ser JPEG ou PNG e ter no máximo 5MB.' }));
-                return;
-            }
-        }
-        setErrors((prev) => ({ ...prev, imagem: null }));
-        setFormData({ ...formData, imagem: file });
-    };
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.nomeEvento) newErrors.nomeEvento = "Nome do evento é obrigatório.";
+    if (!formData.dataInicio) newErrors.dataInicio = "Data de início é obrigatória.";
+    if (!formData.dataFim) newErrors.dataFim = "Data de fim é obrigatória.";
+    if (!formData.horarioInicio) newErrors.horarioInicio = "Horário de início é obrigatório.";
+    if (!formData.horarioFim) newErrors.horarioFim = "Horário de fim é obrigatório.";
+    if (!formData.local) newErrors.local = "Local é obrigatório.";
+    if (!formData.descricao) newErrors.descricao = "Descrição é obrigatória.";
+    if (!formData.lotacaoMaxima) newErrors.lotacaoMaxima = "Lotação máxima é obrigatória.";
+    if (!image) newErrors.imagens = "Imagem é obrigatória."; // Adicionando validação para a imagem
+    if (isEventoPrivado && !formData.senha) newErrors.senha = "Senha é obrigatória para eventos privados.";
 
-    const validateForm = () => {
-        const newErrors = {};
-        if (!formData.nomeEvento) newErrors.nomeEvento = 'Nome do evento é obrigatório.';
-        if (!formData.data) newErrors.data = 'Data é obrigatória.';
-        if (!formData.horario) newErrors.horario = 'Horário é obrigatório.';
-        if (!formData.local) newErrors.local = 'Local é obrigatório.';
-        if (!formData.descricao) newErrors.descricao = 'Descrição é obrigatória.';
-        if (!formData.preco) newErrors.preco = 'Preço é obrigatório.';
-        if (!formData.imagem && !eventoAtual) newErrors.imagem = 'Imagem é obrigatória.';
-        if (isEventoPrivado && !formData.senha) newErrors.senha = 'Senha é obrigatória para eventos privados.';
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    };
+  const handleImageUpload = async () => {
+    if (!image) return;
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (!validateForm()) return;
+    const storageRef = ref(storage, `events/${editId ? editId : 'new'}/images/${image.name}`);
+    const uploadTask = uploadBytesResumable(storageRef, image);
 
+    uploadTask.on(
+      'state_changed',
+      (snapshot) => {
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        setProgress(progress);
+      },
+      (error) => {
+        console.error("Upload error: ", error);
+      },
+      async () => {
         try {
-            await onSave({ ...formData, id });
-            toast.success('Evento salvo com sucesso!');
-            navigate('/eventos');
+          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+          setFormData({ ...formData, imagens: [downloadURL] }); // Armazena a URL da imagem no formData
         } catch (error) {
-            toast.error('Erro ao salvar o evento. Tente novamente.');
+          console.error("Error fetching download URL: ", error);
         }
-    };
-
-    const togglePasswordVisibility = () => setShowPassword(!showPassword);
-
-    return (
-        <div className={styles.container}>
-            <ToastContainer />
-            <div className={styles.register}>
-                <form onSubmit={handleSubmit} style={{ textAlign: 'center' }}>
-                    <h2 className={styles.title}>Criar Evento</h2>
-                    <TextField
-                        label="Nome do Evento"
-                        variant="outlined"
-                        required
-                        value={formData.nomeEvento}
-                        onChange={handleChange}
-                        fullWidth
-                        margin="normal"
-                    />
-                    <TextField
-                        label="Data"
-                        type="date"
-                        variant="outlined"
-                        required
-                        value={formData.data}
-                        onChange={handleChange}
-                        fullWidth
-                        margin="normal"
-                        InputLabelProps={{ shrink: true }}
-                    />
-                    <TextField
-                        label="Horário"
-                        type="time"
-                        variant="outlined"
-                        required
-                        value={formData.horario}
-                        onChange={handleChange}
-                        fullWidth
-                        margin="normal"
-                        InputLabelProps={{ shrink: true }}
-                    />
-                    <TextField
-                        label="Local"
-                        variant="outlined"
-                        required
-                        value={formData.local}
-                        onChange={handleChange}
-                        fullWidth
-                        margin="normal"
-                    />
-                    <TextField
-                        label="Descrição"
-                        variant="outlined"
-                        required
-                        multiline
-                        rows={4}
-                        value={formData.descricao}
-                        onChange={handleChange}
-                        fullWidth
-                        margin="normal"
-                    />
-                    <TextField
-                        label="Preço"
-                        type="number"
-                        variant="outlined"
-                        required
-                        value={formData.preco}
-                        onChange={handleChange}
-                        fullWidth
-                        margin="normal"
-                    />
-                    <Box marginTop={2} marginBottom={1}> 
-                        <Button variant="contained" component="label" sx={{ width: '100%', textAlign: 'center' }}>
-                            Escolher Imagem
-                            <input
-                                type="file"
-                                accept="image/jpeg,image/png"
-                                onChange={handleFileChange}
-                                hidden
-                            />
-                        </Button>
-                        {errors.imagem && <Typography color="error">{errors.imagem}</Typography>}
-                    </Box>
-                    <TextField
-                        label="E-mails dos Convidados (separados por vírgula)"
-                        variant="outlined"
-                        value={formData.emailsConvidados}
-                        onChange={handleChange}
-                        fullWidth
-                        margin="normal"
-                    />
-                    <Box display="flex" alignItems="center" justifyContent="flex-start" marginBottom={2}>
-                        <Checkbox
-                            checked={isEventoPrivado}
-                            onChange={(e) => setIsEventoPrivado(e.target.checked)}
-                            color="primary"
-                        />
-                        <Typography>Evento Privado</Typography>
-                    </Box>
-                    {isEventoPrivado && (
-                        <TextField
-                            label="Senha do Evento"
-                            type={showPassword ? 'text' : 'password'}
-                            variant="outlined"
-                            value={formData.senha}
-                            onChange={handleChange}
-                            fullWidth
-                            margin="normal"
-                            InputProps={{
-                                endAdornment: (
-                                    <InputAdornment position="end">
-                                        <IconButton onClick={togglePasswordVisibility}>
-                                            <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
-                                        </IconButton>
-                                    </InputAdornment>
-                                ),
-                            }}
-                        />
-                    )}
-                    <Box display="flex" flexDirection="column" alignItems="center" gap={2} marginTop={2}>
-                        <Button type="submit" variant="contained" color="success" fullWidth sx={{ minWidth: '200px' }}>
-                            Salvar Evento
-                        </Button>
-                        <Button type="button" variant="contained" color="error" fullWidth sx={{ minWidth: '200px' }} onClick={() => navigate('/eventos')}>
-                            Cancelar
-                        </Button>
-                    </Box>
-                </form>
-            </div>
-        </div>
+      }
     );
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validateForm()) return;
+
+    setLoading(true);
+    try {
+      await handleImageUpload(); // Envia a imagem antes de salvar o evento
+      await onSave({ ...formData, editId });
+      onClose();
+    } catch (error) {
+      console.error("Erro ao salvar evento", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Dialog open={open} onClose={onClose}>
+      <DialogTitle>{editId ? "Editar Evento" : "Criar Evento"}</DialogTitle>
+      <DialogContent>
+        <form onSubmit={handleSubmit}>
+        <TextField
+            label="Nome do Evento"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            name="nomeEvento"
+            value={formData.nomeEvento}
+            onChange={handleChange}
+            error={Boolean(errors.nomeEvento)}
+            helperText={errors.nomeEvento}
+            required
+          />
+
+          <TextField
+            label="Data Início"
+            type="date"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            name="dataInicio"
+            value={formData.dataInicio}
+            onChange={handleChange}
+            error={Boolean(errors.dataInicio)}
+            helperText={errors.dataInicio}
+            required
+            InputLabelProps={{ shrink: true }}
+          />
+
+          <TextField
+            label="Data Fim"
+            type="date"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            name="dataFim"
+            value={formData.dataFim}
+            onChange={handleChange}
+            error={Boolean(errors.dataFim)}
+            helperText={errors.dataFim}
+            required
+            InputLabelProps={{ shrink: true }}
+          />
+
+          <TextField
+            label="Horário Início"
+            type="time"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            name="horarioInicio"
+            value={formData.horarioInicio}
+            onChange={handleChange}
+            error={Boolean(errors.horarioInicio)}
+            helperText={errors.horarioInicio}
+            required
+            InputLabelProps={{ shrink: true }}
+          />
+
+          <TextField
+            label="Horário Fim"
+            type="time"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            name="horarioFim"
+            value={formData.horarioFim}
+            onChange={handleChange}
+            error={Boolean(errors.horarioFim)}
+            helperText={errors.horarioFim}
+            required
+            InputLabelProps={{ shrink: true }}
+          />
+
+          <TextField
+            label="Local"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            name="local"
+            value={formData.local}
+            onChange={handleChange}
+            error={Boolean(errors.local)}
+            helperText={errors.local}
+            required
+          />
+
+          <TextField
+            label="Descrição"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            name="descricao"
+            value={formData.descricao}
+            onChange={handleChange}
+            error={Boolean(errors.descricao)}
+            helperText={errors.descricao}
+            multiline
+            rows={4}
+            required
+          />
+
+          <TextField
+            label="Lotação Máxima"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            name="lotacaoMaxima"
+            type="number"
+            value={formData.lotacaoMaxima}
+            onChange={handleChange}
+            error={Boolean(errors.lotacaoMaxima)}
+            helperText={errors.lotacaoMaxima}
+            required
+          />
+
+          <Button
+            variant="contained"
+            component="label"
+            fullWidth
+            sx={{ marginTop: 2 }}
+          >
+            Escolher Imagem
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleChange}
+              name="imagens"
+              hidden
+              required
+            />
+          </Button>
+          {errors.imagens && <Typography color="error">{errors.imagens}</Typography>}
+
+          {progress > 0 && (
+            <Box sx={{ marginTop: 2 }}>
+              <CircularProgress variant="determinate" value={progress} />
+              <Typography variant="body2">{`${Math.round(progress)}%`}</Typography>
+            </Box>
+          )}
+
+          <Box marginTop={2} display="flex" alignItems="center">
+            <Checkbox
+              checked={isEventoPrivado}
+              onChange={handleEventoPrivadoChange}
+              color="primary"
+            />
+            <Typography>Evento Privado</Typography>
+          </Box>
+
+          {isEventoPrivado && (
+            <TextField
+              label="Senha"
+              type={showPassword ? "text" : "password"}
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              name="senha"
+              value={formData.senha}
+              onChange={handleChange}
+              error={Boolean(errors.senha)}
+              helperText={errors.senha}
+              required
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={() => setShowPassword(!showPassword)}>
+                      <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+          )}
+
+          <DialogActions>
+            <Button onClick={onClose} color="secondary">
+              Cancelar
+            </Button>
+            <Button
+              type="submit"
+              color="primary"
+              disabled={loading}
+            >
+              {loading ? "Salvando..." : editId ? "Salvar Alterações" : "Criar Evento"}
+            </Button>
+          </DialogActions>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+CriarEvento.propTypes = {
+  open: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  onSave: PropTypes.func.isRequired,
+  formData: PropTypes.shape({
+    nomeEvento: PropTypes.string.isRequired,
+    dataInicio: PropTypes.string.isRequired,
+    dataFim: PropTypes.string.isRequired,
+    horarioInicio: PropTypes.string.isRequired,
+    horarioFim: PropTypes.string.isRequired,
+    local: PropTypes.string.isRequired,
+    descricao: PropTypes.string.isRequired,
+    lotacaoMaxima: PropTypes.number.isRequired,
+    imagens: PropTypes.array.isRequired,
+    senha: PropTypes.string,
+  }).isRequired,
+  setFormData: PropTypes.func.isRequired,
+    editId: PropTypes.number,
 };
 
 export default CriarEvento;
