@@ -1,5 +1,9 @@
+import API_URL from "../services/apiConfig";
+
+const EVENTOS_URL = `${API_URL}/api/events`;
+
 export const salvarEvento = async (formData) => {
-  const response = await fetch('/api/eventos', {
+  const response = await fetch(EVENTOS_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -15,7 +19,7 @@ export const salvarEvento = async (formData) => {
 };
 
 export const listarEventos = async () => {
-  const response = await fetch('/api/eventos', {
+  const response = await fetch(EVENTOS_URL, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -30,7 +34,7 @@ export const listarEventos = async () => {
 };
 
 export const cancelarEvento = async (id) => {
-  const response = await fetch(`/api/eventos/${id}`, {
+  const response = await fetch(`${EVENTOS_URL}/deletar/${id}`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
@@ -45,7 +49,7 @@ export const cancelarEvento = async (id) => {
 };
 
 export const editarEvento = async (id, formData) => {
-  const response = await fetch(`/api/eventos/${id}`, {
+  const response = await fetch(`${EVENTOS_URL}/${id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
