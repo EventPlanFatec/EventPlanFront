@@ -1,3 +1,3 @@
-const API_URL = "http://localhost:7151";
+const API_URL = "https://eventplanapi.azurewebsites.net/";
 
 export default API_URL;
