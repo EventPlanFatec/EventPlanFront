@@ -12,7 +12,6 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install dependencies and build
         run: |
-          cd EventPlan
           npm ci
           npm run build
       - name: Deploy to Firebase
