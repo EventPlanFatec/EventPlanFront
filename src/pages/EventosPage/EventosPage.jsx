@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import CriarEvento from '../../components/CriarEvento/CriarEvento';
+import CriarEvento from '../../components/CriarEvento/EventoForm';
 import { salvarEvento, listarEventos, cancelarEvento } from '../../../src/services/eventosService';
 
 const EventosPage = () => {

@@ -4,7 +4,7 @@ class EventoModel {
       nome = '',
       date = new Date(),
       description = '',
-      location = '',
+      local = '',
       type = '',
       capacity = null,
       price = null
@@ -13,7 +13,7 @@ class EventoModel {
       this.nome = nome;
       this.date = date;
       this.description = description;
-      this.location = location;
+      this.local = local;
       this.type = type;
       this.capacity = capacity;
       this.price = price;
@@ -50,7 +50,7 @@ class EventoModel {
         nome: this.nome,
         date: this.date,
         description: this.description,
-        location: this.location,
+        local: this.local,
         type: this.type,
         capacity: this.capacity,
         price: this.price

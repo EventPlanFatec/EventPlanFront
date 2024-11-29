@@ -23,13 +23,13 @@ import EditarEvento from './pages/EditarEvento/EditarEvento';
 import ConfigPermissoes from './pages/ConfigPermissoes/ConfigPermissoes';
 import GerenciamentoUsuarios from './pages/GerenciamentoUsuarios/GerenciamentoUsuarios';
 import VerificarRegistro from './pages/VerificarRegistro/VerificarRegistro';
-import CriarEvento from './components/CriarEvento/CriarEvento';
+import CriarEvento from './components/CriarEvento/EventoForm.jsx';
 import RegistrarOrganizacao from './components/RegistrarOrganizacao/RegistrarOrganizacao';
 import CartPage from './pages/CartPage/CartPage';
 import PagamentoPage from './pages/PagamentoPage/PagamentoPage.jsx';
 import FinalizarPagamentoPage from './pages/FinalizarPagamentoPage/FinalizarPagamentoPage.jsx';
 import InventoryPage from './pages/InventoryPage/InventoryPage';
-import EventosGerenciamento from './pages/EventosGerenciamento/EventosGerenciamento';
+import EventosAdminPage from './pages/EventosGerenciamento/EventosAdminPage.jsx';
 
 function App() {
   const [eventos, setEventos] = useState([
@@ -95,7 +95,7 @@ function App() {
                     <Route path="/pagamento" element={<PagamentoPage />} />
                     <Route path="/finalizar-pagamento" element={<FinalizarPagamentoPage />} />
                     <Route path="/inventario" element={<InventoryPage eventos={eventos} />} />
-                    <Route path="gerenciamento-eventos" element={<EventosGerenciamento />} />
+                    <Route path="gerenciamento-eventos" element={<EventosAdminPage />} />
                   </Routes>
                 </div>
                 <Footer />
