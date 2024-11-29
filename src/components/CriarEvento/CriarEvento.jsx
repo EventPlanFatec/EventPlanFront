@@ -91,7 +91,7 @@ const CriarEvento = ({ open, onClose, onSave, formData, setFormData, editId }) =
 
     setLoading(true);
     try {
-      await handleImageUpload(); // Envia a imagem antes de salvar o evento
+      await handleImageUpload();
       await onSave({ ...formData, editId });
       onClose();
     } catch (error) {
