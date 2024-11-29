@@ -23,16 +23,13 @@ import EditarEvento from './pages/EditarEvento/EditarEvento';
 import ConfigPermissoes from './pages/ConfigPermissoes/ConfigPermissoes';
 import GerenciamentoUsuarios from './pages/GerenciamentoUsuarios/GerenciamentoUsuarios';
 import VerificarRegistro from './pages/VerificarRegistro/VerificarRegistro';
-import CriarEvento from './components/CriarEvento/CriarEvento';
+import CriarEvento from './components/CriarEvento/EventoForm.jsx';
 import RegistrarOrganizacao from './components/RegistrarOrganizacao/RegistrarOrganizacao';
-import EditarOrganizacao from './components/EditarOrganizacao/EditarOrganizacao.jsx';
-import VolunteerList from './components/VolunteerList/VolunteerList.jsx';
-import PreferencesForm from './components/PreferencesForm/PreferencesForm';
 import CartPage from './pages/CartPage/CartPage';
 import PagamentoPage from './pages/PagamentoPage/PagamentoPage.jsx';
 import FinalizarPagamentoPage from './pages/FinalizarPagamentoPage/FinalizarPagamentoPage.jsx';
 import InventoryPage from './pages/InventoryPage/InventoryPage';
-import EventosGerenciamento from './pages/EventosGerenciamento/EventosGerenciamento';
+import EventosAdminPage from './pages/EventosGerenciamento/EventosAdminPage.jsx';
 
 function App() {
   const [eventos, setEventos] = useState([
@@ -94,14 +91,11 @@ function App() {
                     <Route path="/verificar-registro" element={<VerificarRegistro />} />
                     <Route path="/criar-evento" element={<CriarEvento />} />
                     <Route path="/registrar-organizacao" element={<RegistrarOrganizacao />} />
-                    <Route path="/editar-organizacao/:id" element={<EditarOrganizacao />} />
-                    <Route path="/volunteers" element={<VolunteerList />} />
-                    <Route path="/preferences" element={<PreferencesForm onSubmit={handlePreferencesSubmit} />} />
                     <Route path="/carrinho" element={<CartPage />} />
                     <Route path="/pagamento" element={<PagamentoPage />} />
                     <Route path="/finalizar-pagamento" element={<FinalizarPagamentoPage />} />
                     <Route path="/inventario" element={<InventoryPage eventos={eventos} />} />
-                    <Route path="gerenciamento-eventos" element={<EventosGerenciamento />} />
+                    <Route path="gerenciamento-eventos" element={<EventosAdminPage />} />
                   </Routes>
                 </div>
                 <Footer />
