@@ -3,7 +3,7 @@ import { TextField, Button, IconButton, InputAdornment } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import GoogleIcon from '@mui/icons-material/Google';
 import FacebookIcon from '@mui/icons-material/Facebook';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';  // Importando useNavigate
 import { toast, ToastContainer } from 'react-toastify';
 import { userAuthentication } from '../../hooks/userAuthentication';
 import 'react-toastify/dist/ReactToastify.css';
@@ -16,6 +16,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const { login, googleSignIn, facebookSignIn, error: authError, loading } = userAuthentication();
+  const navigate = useNavigate();  // Usando o hook useNavigate
 
   const validateEmail = (email) => {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -38,6 +39,7 @@ const Login = () => {
       const res = await login(user);
       if (res) {
         toast.success('Login realizado com sucesso!');
+        navigate('/PerfilUsuario');  // Redirecionando para a página PerfilUsuario
       }
     } catch (err) {
       setError('Erro ao fazer login. Por favor, tente novamente.');
@@ -50,6 +52,7 @@ const Login = () => {
       const user = await signInMethod();
       if (user) {
         toast.success(`Login com ${signInMethod.name} realizado com sucesso!`);
+        navigate('/PerfilUsuario');  // Redirecionando para a página PerfilUsuario
       }
     } catch {
       toast.error(`Erro ao fazer login com ${signInMethod.name}.`);
@@ -64,7 +67,7 @@ const Login = () => {
   }, [authError]);
 
   const togglePasswordVisibility = () => {
-    setShowPassword(prev => !prev);
+    setShowPassword((prev) => !prev);
   };
 
   return (
@@ -81,7 +84,7 @@ const Login = () => {
             onChange={(e) => setEmail(e.target.value)}
             fullWidth
             margin="normal"
-            aria-label='Campo de email'
+            aria-label="Campo de email"
           />
           <TextField
             label="Senha"
@@ -92,7 +95,7 @@ const Login = () => {
             onChange={(e) => setPassword(e.target.value)}
             fullWidth
             margin="normal"
-            aria-label='Campo de senha'
+            aria-label="Campo de senha"
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -106,7 +109,13 @@ const Login = () => {
           <NavLink to="../recoverpass" className={styles.terms}>
             <span>Esqueceu a senha?</span>
           </NavLink>
-          <Button type="submit" variant="contained" fullWidth disabled={loading} style={{ marginTop: '10px', backgroundColor: '#1976d2' }}>
+          <Button
+            type="submit"
+            variant="contained"
+            fullWidth
+            disabled={loading}
+            style={{ marginTop: '10px', backgroundColor: '#1976d2' }}
+          >
             {loading ? 'Carregando...' : 'ENTRAR'}
           </Button>
           <div className={styles.socialLogin}>
@@ -136,8 +145,17 @@ const Login = () => {
             <p className={styles.ou}>OU</p>
           </div>
           <NavLink to="../Register">
-            <Button variant="contained" fullWidth style={{ marginTop: '10px', backgroundColor: '#2e7d32' }}>REGISTRAR-SE</Button>
+            <Button variant="contained" fullWidth style={{ marginTop: '10px', backgroundColor: '#2e7d32' }}>
+              REGISTRAR-SE
+            </Button>
           </NavLink>
+          <div className={styles.socialLogin}>
+            <NavLink to="../pedido">
+              <Button variant="outlined" fullWidth style={{ marginTop: '10px', color: '#000', borderColor: '#000' }}>
+                IR PARA PEDIDOS
+              </Button>
+            </NavLink>
+          </div>
         </form>
       </div>
     </div>

@@ -1,0 +1,24 @@
+.profileContainer {
+    margin: 20px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+  }
+  
+  .title {
+    margin-bottom: 20px;
+  }
+  
+  .subtitle {
+    margin: 20px 0 10px;
+  }
+  
+  .infoGrid {
+    margin-bottom: 20px;
+  }
+  
+  .editButton, .saveButton, .cancelButton {
+    margin-top: 10px;
+    margin-right: 10px;
+  }
+  

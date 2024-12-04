@@ -1,27 +1,64 @@
 import React, { useState } from "react";
-import { AppBar, Toolbar, IconButton, Drawer, List, ListItem, ListItemIcon, ListItemText, Box } from "@mui/material";
+import {
+  AppBar,
+  Toolbar,
+  IconButton,
+  Drawer,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Box,
+} from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars, faHome, faInfoCircle, faCalendarAlt, faShoppingCart, faBox } from "@fortawesome/free-solid-svg-icons";
+import {
+  faBars,
+  faHome,
+  faInfoCircle,
+  faCalendarAlt,
+  faShoppingCart,
+  faBox,
+  faUserShield,
+  faPlusCircle,
+  faUsers,
+} from "@fortawesome/free-solid-svg-icons";
 import { NavLink } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { usePermissions } from "../context/PermissionsContext";
 import Logo from "../assets/Logo.svg";
 import styles from "./Navbar.module.css";
 
 const Navbar = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const { user } = useAuth();
+  const { userType } = usePermissions();
 
   const toggleDrawer = (open) => () => {
     setDrawerOpen(open);
   };
 
+  // Links padrão para todos os usuários
   const navLinks = [
     { text: "Início", icon: faHome, path: "/" },
     { text: "Eventos", icon: faCalendarAlt, path: "/eventlist" },
     { text: "Sobre", icon: faInfoCircle, path: "/about" },
-    { text: "Carrinho", icon: faShoppingCart, path: "/carrinho" },
-    { text: "Inventário", icon: faBox, path: "/inventario" },
   ];
+
+  // Links adicionais com base no tipo de usuário
+  if (userType === "UsuarioAdm") {
+    navLinks.push(
+      { text: "Aceitar Organizações", icon: faUserShield, path: "/accept-organizations" },
+      { text: "Gerenciar Usuários", icon: faUsers, path: "/manage-users" }
+    );
+  } else if (userType === "Organizacao") {
+    navLinks.push(
+      { text: "Criar Evento", icon: faPlusCircle, path: "/create-event" },
+      { text: "Meus Eventos", icon: faBox, path: "/my-events" }
+    );
+  } else if (userType === "UsuarioFinal") {
+    navLinks.push(
+      { text: "Carrinho", icon: faShoppingCart, path: "/carrinho" },
+      { text: "Meus Ingressos", icon: faBox, path: "/my-tickets" }
+    );
+  }
 
   return (
     <>
@@ -41,16 +78,18 @@ const Navbar = () => {
           </NavLink>
 
           <Box className={styles.rightItems}>
-            <NavLink to={user ? "/profile" : "/login"}>
+            <NavLink to={userType ? "/profile" : "/login"}>
               <img
                 src="https://s3.glbimg.com/v1/AUTH_a468dd4e265e4c40b714860137150800/sales-vitrine-web/sales-vitrine-web/assets/images/icons/user-icon.svg"
                 alt="Avatar"
                 className={styles.avatar}
               />
             </NavLink>
-            <NavLink to="/carrinho">
-              <FontAwesomeIcon icon={faShoppingCart} style={{ color: 'white', fontSize: '20px', marginLeft: '16px' }} />
-            </NavLink>
+            {userType === "UsuarioFinal" && (
+              <NavLink to="/carrinho">
+                <FontAwesomeIcon icon={faShoppingCart} style={{ color: "white", fontSize: "20px", marginLeft: "16px" }} />
+              </NavLink>
+            )}
           </Box>
         </Toolbar>
       </AppBar>
