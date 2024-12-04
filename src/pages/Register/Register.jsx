@@ -25,21 +25,6 @@ const Register = () => {
     return regex.test(email);
   };
 
-  const checkEmailExists = async (email) => {
-    try {
-      const response = await fetch('/api/check-email', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      });
-      const data = await response.json();
-      return data.exists;
-    } catch (error) {
-      console.error('Erro ao verificar e-mail:', error);
-      return false;
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -59,12 +44,6 @@ const Register = () => {
     if (password !== confirmPassword) {
       setError('As senhas não conferem');
       toast.error('As senhas não conferem');
-      return;
-    }
-
-    if (await checkEmailExists(email)) {
-      setError('Este e-mail já está em uso. Tente outro.');
-      toast.error('Este e-mail já está em uso.');
       return;
     }
 

@@ -30,6 +30,7 @@ import PagamentoPage from './pages/PagamentoPage/PagamentoPage.jsx';
 import FinalizarPagamentoPage from './pages/FinalizarPagamentoPage/FinalizarPagamentoPage.jsx';
 import InventoryPage from './pages/InventoryPage/InventoryPage';
 import EventosAdminPage from './pages/EventosGerenciamento/EventosAdminPage.jsx';
+import AdminUserManagement from './pages/Admin/Admin.jsx';
 
 function App() {
   const [eventos, setEventos] = useState([
@@ -96,6 +97,8 @@ function App() {
                     <Route path="/finalizar-pagamento" element={<FinalizarPagamentoPage />} />
                     <Route path="/inventario" element={<InventoryPage eventos={eventos} />} />
                     <Route path="gerenciamento-eventos" element={<EventosAdminPage />} />
+                    <Route path="/admin/user-management" element={<AdminUserManagement />} />
+                    <Route path="*" element={<h1>Not Found</h1>} />
                   </Routes>
                 </div>
                 <Footer />
