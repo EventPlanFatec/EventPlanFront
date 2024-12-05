@@ -114,7 +114,8 @@ const Navbar = () => {
   } else if (userType === "UsuarioFinal") {
     navLinks.push(
       { text: "Carrinho", icon: faShoppingCart, path: "/carrinho" },
-      { text: "Meus Ingressos", icon: faBox, path: "/my-tickets" }
+      { text: "Meus Ingressos", icon: faBox, path: "/my-tickets" },
+      { text: "Perfil", icon: faBox, path: "/PerfilUsuario" }
     );
   }
 
