@@ -78,6 +78,11 @@ const EventoCriacao = () => {
     }); // Limpa os dados do formulário
   };
 
+  // Função para navegar para a página de criação de ingresso
+  const handleCreateIngresso = () => {
+    navigate("/criar-ingresso"); // Substitua pela rota de criação de ingresso
+  };
+
   return (
     <Box className={styles.container}>
       <Typography className={styles.title} variant="h4" gutterBottom>
@@ -263,6 +268,13 @@ const EventoCriacao = () => {
             </Button>
             <Button type="submit" variant="contained" color="primary">
               Salvar Evento
+            </Button>
+          </Box>
+
+          {/* Botão para Criar Ingresso */}
+          <Box mt={3}>
+            <Button variant="contained" color="secondary" onClick={handleCreateIngresso} fullWidth>
+              Criar Ingresso
             </Button>
           </Box>
         </form>

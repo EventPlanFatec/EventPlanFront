@@ -34,6 +34,7 @@ import PerfilUsuario from './pages/PerfilUsuario/PerfilUsuario';
 import PerfilOrganizacao from './pages/PerfilOrganizacao/PerfilOrganizacao';
 import PerfilAdm from './pages/PerfilAdm/PerfilAdm';
 import EventosGerenciamento from "./pages/EventosGerenciamento/EventosGerenciamento.jsx";
+import IngressoCriacao from './pages/IngressoCriacao/IngressoCriacao.jsx';
 
 
 function App() {
@@ -105,6 +106,7 @@ function App() {
                     <Route path="/PerfilOrganizacao" element={<PerfilOrganizacao />} />
                     <Route path="/PerfilAdm" element={<PerfilAdm />} />
                     <Route path="/manage-events" element={<EventosGerenciamento />} />
+                    <Route path="/criar-ingresso" element={<IngressoCriacao />} />
                   </Routes>
                 </div>
                 <Footer />
