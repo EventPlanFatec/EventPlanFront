@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { TextField, Button, IconButton, InputAdornment } from '@mui/material';
+import { TextField, Button, IconButton, InputAdornment, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import GoogleIcon from '@mui/icons-material/Google';
 import FacebookIcon from '@mui/icons-material/Facebook';
-import { NavLink, useNavigate } from 'react-router-dom';  // Importando useNavigate
+import { NavLink, useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import { userAuthentication } from '../../hooks/userAuthentication';
 import 'react-toastify/dist/ReactToastify.css';
@@ -12,11 +12,12 @@ import styles from './Login.module.css';
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [userType, setUserType] = useState(''); // Estado para armazenar o tipo de usuário selecionado
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
   const { login, googleSignIn, facebookSignIn, error: authError, loading } = userAuthentication();
-  const navigate = useNavigate();  // Usando o hook useNavigate
+  const navigate = useNavigate();
 
   const validateEmail = (email) => {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -26,28 +27,32 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-  
+
     if (!validateEmail(email)) {
       setError('Email inválido');
       toast.error('Email inválido');
       return;
     }
-  
-    const user = { email, password };
-  
+
+    if (!userType) {
+      setError('Selecione o tipo de usuário');
+      toast.error('Selecione o tipo de usuário');
+      return;
+    }
+
+    const user = { email, password, userType }; // Inclui o tipo de usuário na autenticação
+
     try {
       const res = await login(user);
+
       if (res) {
-        // Suponha que o "res" contenha informações sobre o tipo de usuário após o login
-        // Se o tipo de usuário estiver nos dados retornados, como um campo "role" ou similar:
-        const userRole = res.role; // Exemplo de obtenção do tipo de usuário, ajuste conforme sua implementação
-  
-        if (userRole === 'organizacao') {
-          navigate('/PerfilOrganizacao');  // Redirecionar para PerfilOrganizacao
-        } else if (userRole === 'usuarioAdm') {
-          navigate('/PerfilAdm');  // Redirecionar para PerfilAdm
+        // Redireciona com base no tipo de usuário
+        if (userType === 'organizacao') {
+          navigate('/PerfilOrganizacao');
+        } else if (userType === 'usuarioAdm') {
+          navigate('/PerfilAdm');
         } else {
-          navigate('/PerfilUsuario');  // Redirecionar para PerfilUsuario (usuário comum)
+          navigate('/PerfilUsuario');
         }
         toast.success('Login realizado com sucesso!');
       }
@@ -56,18 +61,9 @@ const Login = () => {
       toast.error('Erro ao fazer login. Por favor, tente novamente.');
     }
   };
-  
 
-  const handleSocialSignIn = async (signInMethod) => {
-    try {
-      const user = await signInMethod();
-      if (user) {
-        toast.success(`Login com ${signInMethod.name} realizado com sucesso!`);
-        navigate('/PerfilUsuario');  // Redirecionando para a página PerfilUsuario
-      }
-    } catch {
-      toast.error(`Erro ao fazer login com ${signInMethod.name}.`);
-    }
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
   };
 
   useEffect(() => {
@@ -76,10 +72,6 @@ const Login = () => {
       toast.error('Erro de autenticação. Tente novamente.');
     }
   }, [authError]);
-
-  const togglePasswordVisibility = () => {
-    setShowPassword((prev) => !prev);
-  };
 
   return (
     <div className={styles.container}>
@@ -117,9 +109,25 @@ const Login = () => {
               ),
             }}
           />
-          <NavLink to="../recoverpass" className={styles.terms}>
-            <span>Esqueceu a senha?</span>
-          </NavLink>
+
+          <FormControl fullWidth margin="normal">
+            <InputLabel id="user-type-label">Tipo de Usuário</InputLabel>
+            <Select
+              labelId="user-type-label"
+              id="userType"
+              value={userType}
+              onChange={(e) => setUserType(e.target.value)}
+              label="Tipo de Usuário"
+              required
+            >
+              <MenuItem value="organizacao">Organização</MenuItem>
+              <MenuItem value="usuarioAdm">Administrador</MenuItem>
+              <MenuItem value="usuarioFinal">Usuário Final</MenuItem>
+            </Select>
+          </FormControl>
+
+          {error && <p className={styles.error}>{error}</p>}
+
           <Button
             type="submit"
             variant="contained"
@@ -129,44 +137,9 @@ const Login = () => {
           >
             {loading ? 'Carregando...' : 'ENTRAR'}
           </Button>
-          <div className={styles.socialLogin}>
-            <Button
-              variant="outlined"
-              color="error"
-              onClick={() => handleSocialSignIn(googleSignIn)}
-              fullWidth
-              startIcon={<GoogleIcon />}
-              style={{ marginBottom: '5px' }}
-            >
-              Entrar com Google
-            </Button>
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={() => handleSocialSignIn(facebookSignIn)}
-              fullWidth
-              startIcon={<FacebookIcon />}
-              style={{ marginBottom: '10px' }}
-            >
-              Entrar com Facebook
-            </Button>
-          </div>
-          {error && <p className={styles.error}>{error}</p>}
-          <div className={styles.socialLogin}>
-            <p className={styles.ou}>OU</p>
-          </div>
-          <NavLink to="../Register">
-            <Button variant="contained" fullWidth style={{ marginTop: '10px', backgroundColor: '#2e7d32' }}>
-              REGISTRAR-SE
-            </Button>
+          <NavLink to="../recoverpass" className={styles.terms}>
+            <span>Esqueceu a senha?</span>
           </NavLink>
-          <div className={styles.socialLogin}>
-            <NavLink to="../pedido">
-              <Button variant="outlined" fullWidth style={{ marginTop: '10px', color: '#000', borderColor: '#000' }}>
-                IR PARA PEDIDOS
-              </Button>
-            </NavLink>
-          </div>
         </form>
       </div>
     </div>
