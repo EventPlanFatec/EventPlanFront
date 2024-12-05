@@ -9,6 +9,8 @@ import {
   ListItemIcon,
   ListItemText,
   Box,
+  TextField,
+  InputAdornment,
 } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -21,6 +23,7 @@ import {
   faUserShield,
   faPlusCircle,
   faUsers,
+  faSearch,
 } from "@fortawesome/free-solid-svg-icons";
 import { NavLink } from "react-router-dom";
 import { getAuth, onAuthStateChanged } from "firebase/auth";  // Importa Firebase Auth
@@ -33,6 +36,7 @@ const Navbar = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [userType, setUserType] = useState(null);  // Estado para tipo de usuário
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Função para buscar o tipo de usuário no Firebase (ajustada para coleções específicas)
   const fetchUserType = async (email) => {
@@ -83,6 +87,12 @@ const Navbar = () => {
     setDrawerOpen(open);
   };
 
+  // Função de busca para eventos
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+    // Aqui você pode adicionar a lógica para filtrar eventos com base no `searchQuery`
+  };
+
   // Links padrão para todos os usuários
   const navLinks = [
     { text: "Início", icon: faHome, path: "/" },
@@ -124,6 +134,24 @@ const Navbar = () => {
           <NavLink to="/" className={styles.logoContainer}>
             <img src={Logo} alt="Logo" className={styles.logo} />
           </NavLink>
+
+          <Box className={styles.searchContainer}>
+            <TextField
+              variant="outlined"
+              placeholder="Pesquisar eventos..."
+              value={searchQuery}
+              onChange={handleSearchChange}
+              size="small"
+              sx={{ backgroundColor: "white", borderRadius: "4px" }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <FontAwesomeIcon icon={faSearch} />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Box>
 
           <Box className={styles.rightItems}>
             <NavLink to={isLoggedIn ? "/profile" : "/login"}>

@@ -1,4 +1,3 @@
-// src/pages/IngressoGerenciamento.js
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Button, Card, CardContent, Typography, Box, TextField } from "@mui/material";
@@ -103,6 +102,20 @@ const IngressoGerenciamento = () => {
             label="Data"
             value={selectedIngresso.data}
             onChange={(e) => setSelectedIngresso({ ...selectedIngresso, data: e.target.value })}
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            label="QR Code"
+            value={selectedIngresso.qrCode}
+            onChange={(e) => setSelectedIngresso({ ...selectedIngresso, qrCode: e.target.value })}
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            label="VIP"
+            value={selectedIngresso.vip ? "Sim" : "Não"}
+            onChange={(e) => setSelectedIngresso({ ...selectedIngresso, vip: e.target.value === "Sim" })}
             fullWidth
             margin="normal"
           />
