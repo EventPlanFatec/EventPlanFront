@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
 import { TextField, Button, IconButton, InputAdornment, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import GoogleIcon from '@mui/icons-material/Google';
-import FacebookIcon from '@mui/icons-material/Facebook';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import { userAuthentication } from '../../hooks/userAuthentication';
@@ -12,7 +10,7 @@ import styles from './Login.module.css';
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [userType, setUserType] = useState(''); // Estado para armazenar o tipo de usuário selecionado
+  const [userType, setUserType] = useState('');
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
@@ -40,13 +38,12 @@ const Login = () => {
       return;
     }
 
-    const user = { email, password, userType }; // Inclui o tipo de usuário na autenticação
+    const user = { email, password, userType };
 
     try {
       const res = await login(user);
 
       if (res) {
-        // Redireciona com base no tipo de usuário
         if (userType === 'organizacao') {
           navigate('/PerfilOrganizacao');
         } else if (userType === 'usuarioAdm') {
@@ -137,10 +134,20 @@ const Login = () => {
           >
             {loading ? 'Carregando...' : 'ENTRAR'}
           </Button>
+
           <NavLink to="../recoverpass" className={styles.terms}>
             <span>Esqueceu a senha?</span>
           </NavLink>
         </form>
+
+        <Button
+          variant="outlined"
+          fullWidth
+          style={{ marginTop: '20px', borderColor: '#1976d2', color: '#1976d2' }}
+          onClick={() => navigate('/register')} // Redireciona para a página de registro
+        >
+          REGISTRAR
+        </Button>
       </div>
     </div>
   );
