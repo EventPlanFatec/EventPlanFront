@@ -38,6 +38,7 @@ import IngressoCriacao from './pages/IngressoCriacao/IngressoCriacao.jsx';
 import IngressoGerenciamento from './pages/IngressoGerenciamento/IngressoGerenciamento.jsx';
 import SearchBar from './components/SearchBar/SearchBar.jsx';
 import EventosEncontrados from './pages/EventosEncontrados/EventosEncontrados.jsx';
+import UsuarioIngresso from './pages/UsuarioIngresso/UsuarioIngresso.jsx';
 
 
 function App() {
@@ -113,6 +114,7 @@ function App() {
                     <Route path="/editar-ingresso" element={<IngressoGerenciamento />} />
                     <Route path="/" element={<SearchBar />} />
                     <Route path="/eventos-encontrados" element={<EventosEncontrados />} />
+                    <Route path="/my-tickets" element={<UsuarioIngresso />} />
                   </Routes>
                 </div>
                 <Footer />
