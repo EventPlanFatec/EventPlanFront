@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   AppBar,
   Toolbar,
@@ -23,13 +23,61 @@ import {
   faUsers,
 } from "@fortawesome/free-solid-svg-icons";
 import { NavLink } from "react-router-dom";
-import { usePermissions } from "../context/PermissionsContext";
+import { getAuth, onAuthStateChanged } from "firebase/auth";  // Importa Firebase Auth
+import { db } from "../firebase/config";  // Supondo que você tenha o Firebase configurado
+import { collection, getDocs, query, where } from "firebase/firestore";  // Importa Firebase Firestore
 import Logo from "../assets/Logo.svg";
 import styles from "./Navbar.module.css";
 
 const Navbar = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const { userType } = usePermissions();
+  const [userType, setUserType] = useState(null);  // Estado para tipo de usuário
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // Função para buscar o tipo de usuário no Firebase (ajustada para coleções específicas)
+  const fetchUserType = async (email) => {
+    let userType = null;
+
+    // Verificar se o usuário está na coleção "organizacao"
+    const orgRef = collection(db, "organizacao");
+    const orgQuery = query(orgRef, where("email", "==", email));
+    const orgSnapshot = await getDocs(orgQuery);
+    if (!orgSnapshot.empty) {
+      userType = "Organizacao"; // Se encontrado, é um tipo 'Organizacao'
+    } else {
+      // Verificar se o usuário está na coleção "usuariosadm"
+      const adminRef = collection(db, "usuariosadm");
+      const adminQuery = query(adminRef, where("email", "==", email));
+      const adminSnapshot = await getDocs(adminQuery);
+      if (!adminSnapshot.empty) {
+        userType = "UsuarioAdm"; // Se encontrado, é um tipo 'UsuarioAdm'
+      } else {
+        // Se não encontrado em "usuariosadm", verificar em "usuarios"
+        const userRef = collection(db, "usuarios");
+        const userQuery = query(userRef, where("email", "==", email));
+        const userSnapshot = await getDocs(userQuery);
+        if (!userSnapshot.empty) {
+          userType = "UsuarioFinal"; // Se encontrado, é um tipo 'UsuarioFinal'
+        }
+      }
+    }
+
+    setUserType(userType); // Atualiza o estado do tipo de usuário
+  };
+
+  // UseEffect para verificar se o usuário está logado
+  useEffect(() => {
+    const auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setIsLoggedIn(true);
+        fetchUserType(user.email); // Chama a função para buscar o tipo do usuário no Firestore
+      } else {
+        setIsLoggedIn(false);
+        setUserType(null); // Se não houver usuário logado, reseta o tipo
+      }
+    });
+  }, []);
 
   const toggleDrawer = (open) => () => {
     setDrawerOpen(open);
@@ -51,7 +99,7 @@ const Navbar = () => {
   } else if (userType === "Organizacao") {
     navLinks.push(
       { text: "Criar Evento", icon: faPlusCircle, path: "/create-event" },
-      { text: "Meus Eventos", icon: faBox, path: "/my-events" }
+      { text: "Gerenciar Eventos", icon: faBox, path: "/manage-events" } // Link para Gerenciar Eventos
     );
   } else if (userType === "UsuarioFinal") {
     navLinks.push(
@@ -78,7 +126,7 @@ const Navbar = () => {
           </NavLink>
 
           <Box className={styles.rightItems}>
-            <NavLink to={userType ? "/profile" : "/login"}>
+            <NavLink to={isLoggedIn ? "/profile" : "/login"}>
               <img
                 src="https://s3.glbimg.com/v1/AUTH_a468dd4e265e4c40b714860137150800/sales-vitrine-web/sales-vitrine-web/assets/images/icons/user-icon.svg"
                 alt="Avatar"
