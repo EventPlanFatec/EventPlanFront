@@ -4,7 +4,7 @@ import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { Button } from "@mui/material"; 
 
 // Abaixo exemplo de como inicializar o Firestore, use a configuração do seu projeto.
-import { firebaseApp } from "../../firebase/config"; 
+import { db } from "../../firebase/config"; 
 
 const UsuarioIngresso = () => {
   const [ingressos, setIngressos] = useState([]);
@@ -16,8 +16,6 @@ const UsuarioIngresso = () => {
 
   // Simula o ID do usuário logado (substitua pelo ID real)
   const usuarioId = 123;
-
-  const db = getFirestore(firebaseApp);
 
   // Busca os ingressos do backend
   useEffect(() => {
