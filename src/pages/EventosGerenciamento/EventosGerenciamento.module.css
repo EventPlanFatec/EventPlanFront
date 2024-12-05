@@ -1,0 +1,96 @@
+/* EventosGerenciamento.module.css */
+
+/* Container principal */
+.container {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  /* Título principal */
+  .title {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  /* Botão de "Criar Novo Evento" */
+  .createButton {
+    margin-bottom: 20px;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .createButton:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Mensagem quando não há eventos */
+  .noEventsMessage {
+    font-size: 1.2rem;
+    color: #888;
+    text-align: center;
+  }
+  
+  /* Cartão de evento */
+  .eventCard {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  /* Título do evento */
+  .eventTitle {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  /* Data do evento */
+  .eventDate {
+    font-size: 1rem;
+    color: #555;
+  }
+  
+  /* Botões de ação (editar e excluir) */
+  .actions {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .actionButton {
+    padding: 8px 16px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .editButton {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  .editButton:hover {
+    background-color: #218838;
+  }
+  
+  .deleteButton {
+    background-color: #dc3545;
+    color: white;
+  }
+  
+  .deleteButton:hover {
+    background-color: #c82333;
+  }
+  

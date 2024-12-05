@@ -23,7 +23,7 @@ import EditarEvento from './pages/EditarEvento/EditarEvento';
 import ConfigPermissoes from './pages/ConfigPermissoes/ConfigPermissoes';
 import GerenciamentoUsuarios from './pages/GerenciamentoUsuarios/GerenciamentoUsuarios';
 import VerificarRegistro from './pages/VerificarRegistro/VerificarRegistro';
-import CriarEvento from './components/CriarEvento/EventoForm.jsx';
+import CriarEvento from '../src/pages/EventoCriacao/EventoCriacao';
 import RegistrarOrganizacao from './components/RegistrarOrganizacao/RegistrarOrganizacao';
 import CartPage from './pages/CartPage/CartPage';
 import PagamentoPage from './pages/PagamentoPage/PagamentoPage.jsx';
@@ -33,6 +33,8 @@ import EventosAdminPage from './pages/EventosGerenciamento/EventosAdminPage.jsx'
 import PerfilUsuario from './pages/PerfilUsuario/PerfilUsuario';
 import PerfilOrganizacao from './pages/PerfilOrganizacao/PerfilOrganizacao';
 import PerfilAdm from './pages/PerfilAdm/PerfilAdm';
+import EventosGerenciamento from "./pages/EventosGerenciamento/EventosGerenciamento.jsx";
+
 
 function App() {
   const [eventos, setEventos] = useState([
@@ -92,7 +94,7 @@ function App() {
                     <Route path="/config-permissoes" element={<ConfigPermissoes />} />
                     <Route path="/gerenciar-usuarios" element={<GerenciamentoUsuarios />} />
                     <Route path="/verificar-registro" element={<VerificarRegistro />} />
-                    <Route path="/criar-evento" element={<CriarEvento />} />
+                    <Route path="/create-event" element={<CriarEvento />} />
                     <Route path="/registrar-organizacao" element={<RegistrarOrganizacao />} />
                     <Route path="/carrinho" element={<CartPage />} />
                     <Route path="/pagamento" element={<PagamentoPage />} />
@@ -102,6 +104,7 @@ function App() {
                     <Route path="/PerfilUsuario" element={<PerfilUsuario />} />
                     <Route path="/PerfilOrganizacao" element={<PerfilOrganizacao />} />
                     <Route path="/PerfilAdm" element={<PerfilAdm />} />
+                    <Route path="/manage-events" element={<EventosGerenciamento />} />
                   </Routes>
                 </div>
                 <Footer />
