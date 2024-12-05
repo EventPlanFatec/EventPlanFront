@@ -1,15 +1,22 @@
 import React, { useState } from "react";
-import { InputBase, Button, Box } from "@mui/material";
+import { InputBase, Box, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 const SearchBar = () => {
-  const [searchQuery, setSearchQuery] = useState(""); // Estado para a pesquisa
-  const navigate = useNavigate(); // Hook do React Router para navegação
+  const [searchQuery, setSearchQuery] = useState(""); // Estado da barra de pesquisa
+  const navigate = useNavigate(); // Hook para navegação
 
+  // Redirecionar para a página de eventos encontrados
   const handleSearchSubmit = () => {
     if (searchQuery.trim()) {
-      // Redireciona para a página de resultados com os critérios de pesquisa na URL
       navigate(`/eventos-encontrados?query=${encodeURIComponent(searchQuery)}`);
+    }
+  };
+
+  // Detectar o pressionamento da tecla Enter
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      handleSearchSubmit();
     }
   };
 
@@ -18,10 +25,11 @@ const SearchBar = () => {
       <InputBase
         placeholder="Buscar por Nome, Localização ou Palavras-chave..."
         value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
+        onChange={(e) => setSearchQuery(e.target.value)} // Atualiza o estado
+        onKeyDown={handleKeyDown} // Detecta a tecla Enter
         style={{
           backgroundColor: "#fff",
-          padding: "5px",
+          padding: "10px",
           borderRadius: "5px",
           width: "80%",
         }}

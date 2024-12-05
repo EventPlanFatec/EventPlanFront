@@ -36,6 +36,8 @@ import PerfilAdm from './pages/PerfilAdm/PerfilAdm';
 import EventosGerenciamento from "./pages/EventosGerenciamento/EventosGerenciamento.jsx";
 import IngressoCriacao from './pages/IngressoCriacao/IngressoCriacao.jsx';
 import IngressoGerenciamento from './pages/IngressoGerenciamento/IngressoGerenciamento.jsx';
+import SearchBar from './components/SearchBar/SearchBar.jsx';
+import EventosEncontrados from './pages/EventosEncontrados/EventosEncontrados.jsx';
 
 
 function App() {
@@ -109,6 +111,8 @@ function App() {
                     <Route path="/manage-events" element={<EventosGerenciamento />} />
                     <Route path="/criar-ingresso" element={<IngressoCriacao />} />
                     <Route path="/editar-ingresso" element={<IngressoGerenciamento />} />
+                    <Route path="/" element={<SearchBar />} />
+                    <Route path="/eventos-encontrados" element={<EventosEncontrados />} />
                   </Routes>
                 </div>
                 <Footer />
