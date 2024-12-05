@@ -26,26 +26,37 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-
+  
     if (!validateEmail(email)) {
       setError('Email inválido');
       toast.error('Email inválido');
       return;
     }
-
+  
     const user = { email, password };
-
+  
     try {
       const res = await login(user);
       if (res) {
+        // Suponha que o "res" contenha informações sobre o tipo de usuário após o login
+        // Se o tipo de usuário estiver nos dados retornados, como um campo "role" ou similar:
+        const userRole = res.role; // Exemplo de obtenção do tipo de usuário, ajuste conforme sua implementação
+  
+        if (userRole === 'organizacao') {
+          navigate('/PerfilOrganizacao');  // Redirecionar para PerfilOrganizacao
+        } else if (userRole === 'usuarioAdm') {
+          navigate('/PerfilAdm');  // Redirecionar para PerfilAdm
+        } else {
+          navigate('/PerfilUsuario');  // Redirecionar para PerfilUsuario (usuário comum)
+        }
         toast.success('Login realizado com sucesso!');
-        navigate('/PerfilUsuario');  // Redirecionando para a página PerfilUsuario
       }
     } catch (err) {
       setError('Erro ao fazer login. Por favor, tente novamente.');
       toast.error('Erro ao fazer login. Por favor, tente novamente.');
     }
   };
+  
 
   const handleSocialSignIn = async (signInMethod) => {
     try {

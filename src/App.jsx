@@ -31,6 +31,8 @@ import FinalizarPagamentoPage from './pages/FinalizarPagamentoPage/FinalizarPaga
 import InventoryPage from './pages/InventoryPage/InventoryPage';
 import EventosAdminPage from './pages/EventosGerenciamento/EventosAdminPage.jsx';
 import PerfilUsuario from './pages/PerfilUsuario/PerfilUsuario';
+import PerfilOrganizacao from './pages/PerfilOrganizacao/PerfilOrganizacao';
+import PerfilAdm from './pages/PerfilAdm/PerfilAdm';
 
 function App() {
   const [eventos, setEventos] = useState([
@@ -98,6 +100,8 @@ function App() {
                     <Route path="/inventario" element={<InventoryPage eventos={eventos} />} />
                     <Route path="gerenciamento-eventos" element={<EventosAdminPage />} />
                     <Route path="/PerfilUsuario" element={<PerfilUsuario />} />
+                    <Route path="/PerfilOrganizacao" element={<PerfilOrganizacao />} />
+                    <Route path="/PerfilAdm" element={<PerfilAdm />} />
                   </Routes>
                 </div>
                 <Footer />

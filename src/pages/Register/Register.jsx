@@ -1,243 +1,269 @@
 import React, { useState } from 'react';
-import { TextField, Button, IconButton, InputAdornment, Radio, RadioGroup, FormControlLabel, FormLabel } from '@mui/material';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
-import { userAuthentication } from '../../hooks/userAuthentication';
-import { toast, ToastContainer } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
-import 'react-toastify/dist/ReactToastify.css';
-import styles from './Register.module.css';
-import { db } from '../../firebase/config'; // Importe a configuração do Firebase
-import { collection, doc, setDoc } from 'firebase/firestore';
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth, db } from '../../firebase/config'; // Importando auth e db
+import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom'; // Importando useNavigate para redirecionamento
 
 const Register = () => {
-  const [idType, setIdType] = useState('cpf'); // CPF ou CNPJ
-  const [userType, setUserType] = useState(''); // usuário ou administrador
-  const [idValue, setIdValue] = useState('');
-  const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [nome, setNome] = useState('');
+  const [cnpj, setCnpj] = useState('');
+  const [cpf, setCpf] = useState('');
+  const [sobrenome, setSobrenome] = useState('');
+  const [dataNascimento, setDataNascimento] = useState('');
+  const [estado, setEstado] = useState('');
+  const [cidade, setCidade] = useState('');
+  const [bairro, setBairro] = useState('');
+  const [logradouro, setLogradouro] = useState('');
+  const [numeroPredial, setNumeroPredial] = useState('');
+  const [complemento, setComplemento] = useState('');
+  const [tipoUsuario, setTipoUsuario] = useState('usuariofinal'); // "organizacao", "usuariofinal", "adm"
   const [error, setError] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const { createUser, error: authError, loading } = userAuthentication();
-  const navigate = useNavigate();
-
-  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  const validateCPF = (cpf) => /^\d{11}$/.test(cpf);
-  const validateCNPJ = (cnpj) => /^\d{14}$/.test(cnpj);
-
-  const handleIdValidation = () => {
-    if (idType === 'cpf' && !validateCPF(idValue)) {
-      toast.error('CPF inválido. Insira 11 dígitos.');
-      return false;
-    }
-    if (idType === 'cnpj' && !validateCNPJ(idValue)) {
-      toast.error('CNPJ inválido. Insira 14 dígitos.');
-      return false;
-    }
-    return true;
-  };
-
-  const createUserInFirestore = async (user) => {
-    try {
-      if (idType === 'cpf') {
-        if (userType === 'usuario') {
-          // Criar o usuário na coleção 'usuarios' (usuário final)
-          const userRef = doc(collection(db, 'usuarios'), idValue); // Usa o idValue (CPF) como o ID do documento
-          await setDoc(userRef, {
-            ...user,
-            createdAt: new Date(),
-          });
-        } else if (userType === 'administrador') {
-          // Criar o usuário na coleção 'usuariosadm' (usuário administrador)
-          const adminRef = doc(collection(db, 'usuariosadm'), idValue); // Usa o idValue (CPF) como o ID do documento
-          await setDoc(adminRef, {
-            ...user,
-            createdAt: new Date(),
-          });
-        }
-      } else if (idType === 'cnpj') {
-        // Criar a organização na coleção 'organizacoes'
-        const organizationRef = doc(collection(db, 'organizacoes'), idValue); // Usa o idValue (CNPJ) como o ID do documento
-        await setDoc(organizationRef, {
-          ...user,
-          createdAt: new Date(),
-        });
-      }
-      toast.success('Usuário/Organização criado com sucesso!');
-    } catch (error) {
-      toast.error('Erro ao criar usuário/organização no Firebase.');
-    }
-  };
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate(); // Hook para navegação
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validando os campos antes de tentar criar o usuário
+    if (!email || !password || (tipoUsuario === 'usuariofinal' && (!nome || !cpf || !sobrenome || !dataNascimento)) || 
+        (tipoUsuario === 'organizacao' && (!nome || !cnpj)) || 
+        (tipoUsuario === 'adm' && (!nome || !cpf || !sobrenome || !dataNascimento))) {
+      setError('Por favor, preencha todos os campos obrigatórios');
+      return;
+    }
+
+    setLoading(true);
     setError('');
 
-    if (!validateEmail(email)) {
-      toast.error('Email inválido.');
-      return;
-    }
-
-    if (!handleIdValidation()) {
-      return;
-    }
-
-    if (password.length < 6) {
-      toast.error('A senha deve ter no mínimo 6 caracteres.');
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      toast.error('As senhas não conferem.');
-      return;
-    }
-
-    // Criação do usuário com base no tipo
-    const user = {
-      idType,
-      idValue,
-      userType: idType === 'cpf' ? userType : 'organizacao', // Se for CPF, define o tipo de usuário
-      email,
-      password,
-      displayName: fullName,
-      phone,
-    };
-
     try {
-      await createUser(user); // Este método pode ser ajustado para salvar no Firebase Authentication
-      // Agora, cria o documento na coleção apropriada no Firestore
-      await createUserInFirestore(user);
+      // Criando o usuário no Firebase Authentication
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      console.log('Usuário criado com sucesso!');
 
-      // Redirecionamento baseado no tipo de usuário
-      if (idType === 'cpf') {
-        if (userType === 'usuario') {
-          navigate('/PerfilUsuario'); // Redireciona para o perfil de usuário
-        } else if (userType === 'administrador') {
-          navigate('/AdminDashboard'); // Redireciona para o painel do administrador
+      let userDocRef;
+      if (tipoUsuario === 'organizacao') {
+        // Criando documento na coleção 'organizacao' com o UID
+        userDocRef = doc(db, 'organizacao', user.uid); // Cria ou atualiza documento na coleção 'organizacao'
+        const docSnap = await getDoc(userDocRef);
+        if (!docSnap.exists()) {
+          await setDoc(userDocRef, {
+            email: user.email,
+            nome: nome,
+            cnpj: cnpj,
+            estado: estado,
+            cidade: cidade,
+            bairro: bairro,
+            logradouro: logradouro,
+            numeroPredial: numeroPredial,
+            complemento: complemento,
+            createdAt: new Date(),
+          });
+          console.log('Organização criada no Firestore!');
         }
-      } else if (idType === 'cnpj') {
-        navigate('/OrganizacaoDashboard'); // Redireciona para o painel da organização
+        // Redirecionando para o perfil da organização
+        navigate('/perfilorganizacao');
+      } else if (tipoUsuario === 'usuariofinal') {
+        // Criando documento na coleção 'usuarios' com o UID
+        userDocRef = doc(db, 'usuarios', user.uid); // Cria ou atualiza documento na coleção 'usuarios'
+        const docSnap = await getDoc(userDocRef);
+        if (!docSnap.exists()) {
+          await setDoc(userDocRef, {
+            email: user.email,
+            nome: nome,
+            cpf: cpf,
+            sobrenome: sobrenome,
+            dataNascimento: dataNascimento,
+            estado: estado,
+            cidade: cidade,
+            bairro: bairro,
+            logradouro: logradouro,
+            numeroPredial: numeroPredial,
+            complemento: complemento,
+            createdAt: new Date(),
+          });
+          console.log('Usuário final criado no Firestore!');
+        }
+        // Redirecionando para o perfil do usuário final
+        navigate('/perfilusuario');
+      } else if (tipoUsuario === 'adm') {
+        // Criando documento na coleção 'usuariosadm' com o UID
+        userDocRef = doc(db, 'usuariosadm', user.uid); // Cria ou atualiza documento na coleção 'usuariosadm'
+        const docSnap = await getDoc(userDocRef);
+        if (!docSnap.exists()) {
+          await setDoc(userDocRef, {
+            email: user.email,
+            nome: nome,
+            cpf: cpf,
+            sobrenome: sobrenome,
+            dataNascimento: dataNascimento,
+            estado: estado,
+            cidade: cidade,
+            bairro: bairro,
+            logradouro: logradouro,
+            numeroPredial: numeroPredial,
+            complemento: complemento,
+            emailAdm: email, // Aqui você pode adicionar o email do usuário ADM que autorizou
+            createdAt: new Date(),
+          });
+          console.log('Administrador criado no Firestore!');
+        }
+        // Redirecionando para o perfil do administrador
+        navigate('/perfiladm');
       }
+
+      // Sucesso no registro
+      console.log('Documento criado no Firestore!');
     } catch (err) {
-      toast.error('Erro ao criar usuário. Tente novamente.');
+      console.error('Erro ao criar usuário:', err.message);
+      setError(err.message); // Exibindo o erro caso ocorra
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className={styles.container}>
-      <ToastContainer />
-      <div className={styles.register}>
-        <form onSubmit={handleSubmit}>
-          <h2 className={styles.title}>Registrar-se</h2>
-          <FormLabel component="legend" className={styles.label}>CPF ou CNPJ</FormLabel>
-          <RadioGroup
-            value={idType}
-            onChange={(e) => setIdType(e.target.value)}
-            row
-            className={styles.radioGroup}
-          >
-            <FormControlLabel value="cpf" control={<Radio />} label="CPF" />
-            <FormControlLabel value="cnpj" control={<Radio />} label="CNPJ" />
-          </RadioGroup>
-          <TextField
-            label={idType === 'cpf' ? 'CPF' : 'CNPJ'}
-            variant="outlined"
-            required
-            value={idValue}
-            onChange={(e) => setIdValue(e.target.value)}
-            fullWidth
-            margin="normal"
-          />
-          {idType === 'cpf' && (
-            <>
-              <FormLabel component="legend" className={styles.label}>Tipo de Usuário</FormLabel>
-              <RadioGroup
-                value={userType}
-                onChange={(e) => setUserType(e.target.value)}
-                row
-                className={styles.radioGroup}
-              >
-                <FormControlLabel value="usuario" control={<Radio />} label="Usuário" />
-                <FormControlLabel value="administrador" control={<Radio />} label="Administrador" />
-              </RadioGroup>
-            </>
-          )}
-          <TextField
-            label="Nome Completo"
-            variant="outlined"
-            required
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            fullWidth
-            margin="normal"
-          />
-          <TextField
-            label="E-mail"
+    <div>
+      <h1>Registrar</h1>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label>Email:</label>
+          <input
             type="email"
-            variant="outlined"
-            required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            fullWidth
-            margin="normal"
+            placeholder="Digite seu e-mail"
           />
-          <TextField
-            label="Telefone"
-            type="tel"
-            variant="outlined"
-            required
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            fullWidth
-            margin="normal"
-          />
-          <TextField
-            label="Senha"
-            type={showPassword ? 'text' : 'password'}
-            variant="outlined"
-            required
+        </div>
+        <div>
+          <label>Senha:</label>
+          <input
+            type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            fullWidth
-            margin="normal"
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton onClick={() => setShowPassword(!showPassword)}>
-                    <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
+            placeholder="Digite sua senha"
           />
-          <TextField
-            label="Confirme a Senha"
-            type={showConfirmPassword ? 'text' : 'password'}
-            variant="outlined"
-            required
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            fullWidth
-            margin="normal"
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
-                    <FontAwesomeIcon icon={showConfirmPassword ? faEyeSlash : faEye} />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
-          <Button type="submit" variant="contained" color="primary" fullWidth disabled={loading}>
-            {loading ? 'Criando...' : 'Cadastrar'}
-          </Button>
-        </form>
-      </div>
+        </div>
+        <div>
+          <label>Tipo de Usuário:</label>
+          <select onChange={(e) => setTipoUsuario(e.target.value)} value={tipoUsuario}>
+            <option value="usuariofinal">Usuário Final</option>
+            <option value="organizacao">Organização</option>
+            <option value="adm">Administrador</option>
+          </select>
+        </div>
+
+        {/* Campos específicos para cada tipo de usuário */}
+        {tipoUsuario === 'organizacao' && (
+          <>
+            <div>
+              <label>Nome da Organização:</label>
+              <input
+                type="text"
+                value={nome}
+                onChange={(e) => setNome(e.target.value)}
+                placeholder="Digite o nome da organização"
+              />
+            </div>
+            <div>
+              <label>CNPJ:</label>
+              <input
+                type="text"
+                value={cnpj}
+                onChange={(e) => setCnpj(e.target.value)}
+                placeholder="Digite o CNPJ"
+              />
+            </div>
+          </>
+        )}
+
+        {tipoUsuario === 'usuariofinal' && (
+          <>
+            <div>
+              <label>Nome:</label>
+              <input
+                type="text"
+                value={nome}
+                onChange={(e) => setNome(e.target.value)}
+                placeholder="Digite seu nome"
+              />
+            </div>
+            <div>
+              <label>CPF:</label>
+              <input
+                type="text"
+                value={cpf}
+                onChange={(e) => setCpf(e.target.value)}
+                placeholder="Digite seu CPF"
+              />
+            </div>
+            <div>
+              <label>Sobrenome:</label>
+              <input
+                type="text"
+                value={sobrenome}
+                onChange={(e) => setSobrenome(e.target.value)}
+                placeholder="Digite seu sobrenome"
+              />
+            </div>
+            <div>
+              <label>Data de Nascimento:</label>
+              <input
+                type="date"
+                value={dataNascimento}
+                onChange={(e) => setDataNascimento(e.target.value)}
+              />
+            </div>
+          </>
+        )}
+
+        {tipoUsuario === 'adm' && (
+          <>
+            <div>
+              <label>Nome:</label>
+              <input
+                type="text"
+                value={nome}
+                onChange={(e) => setNome(e.target.value)}
+                placeholder="Digite seu nome"
+              />
+            </div>
+            <div>
+              <label>CPF:</label>
+              <input
+                type="text"
+                value={cpf}
+                onChange={(e) => setCpf(e.target.value)}
+                placeholder="Digite seu CPF"
+              />
+            </div>
+            <div>
+              <label>Sobrenome:</label>
+              <input
+                type="text"
+                value={sobrenome}
+                onChange={(e) => setSobrenome(e.target.value)}
+                placeholder="Digite seu sobrenome"
+              />
+            </div>
+            <div>
+              <label>Data de Nascimento:</label>
+              <input
+                type="date"
+                value={dataNascimento}
+                onChange={(e) => setDataNascimento(e.target.value)}
+              />
+            </div>
+          </>
+        )}
+
+        <button type="submit" disabled={loading}>
+          {loading ? 'Registrando...' : 'Registrar'}
+        </button>
+      </form>
     </div>
   );
 };
