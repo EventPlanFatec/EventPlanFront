@@ -34,6 +34,11 @@ const EventosGerenciamento = () => {
     navigate(`/editar-evento/${eventId}`);
   };
 
+  // Função para editar ingresso
+  const handleEditIngresso = (eventId) => {
+    navigate(`/editar-ingresso/${eventId}`); // Navega para a página de edição do ingresso
+  };
+
   // Função para excluir evento
   const handleDelete = async (eventId) => {
     try {
@@ -74,7 +79,14 @@ const EventosGerenciamento = () => {
                     variant="contained"
                     onClick={() => handleEdit(event.eventoId)}
                   >
-                    Editar
+                    Editar Evento
+                  </Button>
+                  <Button
+                    className={`${styles.actionButton} ${styles.editButton}`}
+                    variant="contained"
+                    onClick={() => handleEditIngresso(event.eventoId)} // Botão "Editar Ingresso"
+                  >
+                    Editar Ingresso
                   </Button>
                   <Button
                     className={`${styles.actionButton} ${styles.deleteButton}`}

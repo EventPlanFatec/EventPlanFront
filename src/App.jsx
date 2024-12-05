@@ -35,6 +35,7 @@ import PerfilOrganizacao from './pages/PerfilOrganizacao/PerfilOrganizacao';
 import PerfilAdm from './pages/PerfilAdm/PerfilAdm';
 import EventosGerenciamento from "./pages/EventosGerenciamento/EventosGerenciamento.jsx";
 import IngressoCriacao from './pages/IngressoCriacao/IngressoCriacao.jsx';
+import IngressoGerenciamento from './pages/IngressoGerenciamento/IngressoGerenciamento.jsx';
 
 
 function App() {
@@ -107,6 +108,7 @@ function App() {
                     <Route path="/PerfilAdm" element={<PerfilAdm />} />
                     <Route path="/manage-events" element={<EventosGerenciamento />} />
                     <Route path="/criar-ingresso" element={<IngressoCriacao />} />
+                    <Route path="/editar-ingresso" element={<IngressoGerenciamento />} />
                   </Routes>
                 </div>
                 <Footer />
