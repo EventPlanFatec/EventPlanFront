@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth, db } from '../../firebase/config'; // Importando auth e db
+import { auth, db, storage } from '../../firebase/config'; // Importando storage para o Firebase Storage
 import { doc, setDoc, getDoc } from 'firebase/firestore';
-import { useNavigate } from 'react-router-dom'; // Importando useNavigate para redirecionamento
+import { useNavigate } from 'react-router-dom';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 
 const Register = () => {
   const [email, setEmail] = useState('');
@@ -18,15 +19,15 @@ const Register = () => {
   const [logradouro, setLogradouro] = useState('');
   const [numeroPredial, setNumeroPredial] = useState('');
   const [complemento, setComplemento] = useState('');
-  const [tipoUsuario, setTipoUsuario] = useState('usuariofinal'); // "organizacao", "usuariofinal", "adm"
+  const [tipoUsuario, setTipoUsuario] = useState('usuariofinal');
+  const [fotoPerfil, setFotoPerfil] = useState(null); // Para armazenar a foto de perfil
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate(); // Hook para navegação
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validando os campos antes de tentar criar o usuário
     if (!email || !password || (tipoUsuario === 'usuariofinal' && (!nome || !cpf || !sobrenome || !dataNascimento)) || 
         (tipoUsuario === 'organizacao' && (!nome || !cnpj)) || 
         (tipoUsuario === 'adm' && (!nome || !cpf || !sobrenome || !dataNascimento))) {
@@ -41,12 +42,29 @@ const Register = () => {
       // Criando o usuário no Firebase Authentication
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-      console.log('Usuário criado com sucesso!');
 
       let userDocRef;
+      let fotoURL = ''; // URL da foto de perfil
+
+      if (fotoPerfil) {
+        // Upload da foto de perfil para o Firebase Storage
+        const storageRef = ref(storage, `perfil/${user.uid}`);
+        const uploadTask = uploadBytesResumable(storageRef, fotoPerfil);
+
+        // Esperando o upload da imagem ser concluído
+        await uploadTask.then(() => {
+          return getDownloadURL(uploadTask.snapshot.ref);
+        }).then((downloadURL) => {
+          fotoURL = downloadURL;
+        }).catch((err) => {
+          setError('Erro ao fazer upload da foto de perfil');
+          setLoading(false);
+          return;
+        });
+      }
+
       if (tipoUsuario === 'organizacao') {
-        // Criando documento na coleção 'organizacao' com o UID
-        userDocRef = doc(db, 'organizacao', user.uid); // Cria ou atualiza documento na coleção 'organizacao'
+        userDocRef = doc(db, 'organizacao', user.uid);
         const docSnap = await getDoc(userDocRef);
         if (!docSnap.exists()) {
           await setDoc(userDocRef, {
@@ -59,15 +77,13 @@ const Register = () => {
             logradouro: logradouro,
             numeroPredial: numeroPredial,
             complemento: complemento,
+            fotoPerfil: fotoURL, // Salvando a URL da foto
             createdAt: new Date(),
           });
-          console.log('Organização criada no Firestore!');
         }
-        // Redirecionando para o perfil da organização
         navigate('/perfilorganizacao');
       } else if (tipoUsuario === 'usuariofinal') {
-        // Criando documento na coleção 'usuarios' com o UID
-        userDocRef = doc(db, 'usuarios', user.uid); // Cria ou atualiza documento na coleção 'usuarios'
+        userDocRef = doc(db, 'usuarios', user.uid);
         const docSnap = await getDoc(userDocRef);
         if (!docSnap.exists()) {
           await setDoc(userDocRef, {
@@ -82,15 +98,13 @@ const Register = () => {
             logradouro: logradouro,
             numeroPredial: numeroPredial,
             complemento: complemento,
+            fotoPerfil: fotoURL, // Salvando a URL da foto
             createdAt: new Date(),
           });
-          console.log('Usuário final criado no Firestore!');
         }
-        // Redirecionando para o perfil do usuário final
         navigate('/perfilusuario');
       } else if (tipoUsuario === 'adm') {
-        // Criando documento na coleção 'usuariosadm' com o UID
-        userDocRef = doc(db, 'usuariosadm', user.uid); // Cria ou atualiza documento na coleção 'usuariosadm'
+        userDocRef = doc(db, 'usuariosadm', user.uid);
         const docSnap = await getDoc(userDocRef);
         if (!docSnap.exists()) {
           await setDoc(userDocRef, {
@@ -105,20 +119,17 @@ const Register = () => {
             logradouro: logradouro,
             numeroPredial: numeroPredial,
             complemento: complemento,
-            emailAdm: email, // Aqui você pode adicionar o email do usuário ADM que autorizou
+            fotoPerfil: fotoURL, // Salvando a URL da foto
             createdAt: new Date(),
           });
-          console.log('Administrador criado no Firestore!');
         }
-        // Redirecionando para o perfil do administrador
         navigate('/perfiladm');
       }
 
-      // Sucesso no registro
       console.log('Documento criado no Firestore!');
     } catch (err) {
       console.error('Erro ao criar usuário:', err.message);
-      setError(err.message); // Exibindo o erro caso ocorra
+      setError(err.message);
     } finally {
       setLoading(false);
     }
@@ -217,6 +228,13 @@ const Register = () => {
                 onChange={(e) => setDataNascimento(e.target.value)}
               />
             </div>
+            <div>
+              <label>Foto de Perfil:</label>
+              <input
+                type="file"
+                onChange={(e) => setFotoPerfil(e.target.files[0])}
+              />
+            </div>
           </>
         )}
 
@@ -255,6 +273,13 @@ const Register = () => {
                 type="date"
                 value={dataNascimento}
                 onChange={(e) => setDataNascimento(e.target.value)}
+              />
+            </div>
+            <div>
+              <label>Foto de Perfil:</label>
+              <input
+                type="file"
+                onChange={(e) => setFotoPerfil(e.target.files[0])}
               />
             </div>
           </>
