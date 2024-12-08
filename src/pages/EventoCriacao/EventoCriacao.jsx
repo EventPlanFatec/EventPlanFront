@@ -1,284 +1,206 @@
-import React, { useState } from "react";
-import axios from "axios";
-import { TextField, Button, Box, Typography } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import styles from "./EventoCriacao.module.css";  // Importando o módulo CSS
+import React, { useState } from 'react';
+import { TextField, Button, Box, Typography } from '@mui/material';
+import { db } from '../../firebase/config';
+import { collection, addDoc, getDocs, orderBy, query, limit, doc, getDoc } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom';
+import { getAuth } from 'firebase/auth'; // Para pegar o UID do usuário autenticado
 
 const EventoCriacao = () => {
   const navigate = useNavigate();
-  const [isFormVisible, setIsFormVisible] = useState(false); // Estado para controlar a exibição do formulário
-  const [eventData, setEventData] = useState({
-    nomeEvento: "",
-    dataInicio: "",
-    dataFim: "",
-    horarioInicio: "",
-    horarioFim: "",
-    lotacaoMaxima: "",
-    tipoLogradouro: "",
-    logradouro: "",
-    numeroCasa: "",
-    bairro: "",
-    cidade: "",
-    estado: "",
-    cep: "",
-    tipo: "",
-    imagem01: "",
-    imagem02: "",
-    imagem03: "",
-    video: "",
-    organizacaoId: "id-da-organizacao", // Substitua pelo ID real da organização
+  const [evento, setEvento] = useState({
+    nome: '',
+    dataInicio: '',
+    dataFim: '',
+    horarioInicio: '',
+    horarioFim: '',
+    local: '',
+    descricao: '',
+    userUID: '',  // Novo campo para UID do usuário
+    cnpjOrganizacao: '', // Novo campo para CNPJ da organização
+    eventoId: '' // Novo campo para EventoId
   });
 
-  const handleInputChange = (e) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    setEventData({ ...eventData, [name]: value });
+    setEvento({ ...evento, [name]: value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Obtendo o UID do usuário autenticado
+    const user = getAuth().currentUser;
+    if (!user) {
+      console.error("Usuário não autenticado.");
+      return;
+    }
+    const userUID = user.uid; // UID do usuário
+
     try {
-      const response = await axios.post(
-        "http://localhost:5000/api/events",
-        eventData
-      );
-      if (response.status === 201) {
-        navigate("/eventos-gerenciamento"); // Redireciona para a página de gerenciamento
+      // Buscando o CNPJ da organização usando o UID
+      const orgRef = doc(db, 'organizacao', userUID); // Documento da organização com o UID do usuário
+      const orgDoc = await getDoc(orgRef);
+
+      if (orgDoc.exists()) {
+        const cnpjOrganizacao = orgDoc.data().cnpj; // Recuperando o CNPJ da organização
+        console.log('CNPJ da Organização: ', cnpjOrganizacao);  // Verifique o CNPJ aqui
+
+        // Buscando o último evento para incrementar o EventoId
+        const eventosRef = collection(db, 'Eventos');
+        const eventosQuery = query(eventosRef, orderBy('eventoId', 'desc'), limit(1));
+        const querySnapshot = await getDocs(eventosQuery);
+
+        let ultimoEventoId = 0;
+        if (!querySnapshot.empty) {
+          const ultimoEvento = querySnapshot.docs[0].data();
+          ultimoEventoId = parseInt(ultimoEvento.eventoId) || 0;
+          console.log('Último EventoId encontrado: ', ultimoEventoId); // Verifique o EventoId aqui
+        }
+
+        const novoEventoId = ultimoEventoId + 1;
+        console.log('Novo EventoId: ', novoEventoId); // Verifique o novo EventoId aqui
+
+        // Adicionando o evento no Firestore com UID, CNPJ e EventoId
+        const eventoComDadosAdicionais = {
+          ...evento,
+          userUID: userUID,         // UID do usuário
+          cnpjOrganizacao: cnpjOrganizacao, // CNPJ da organização
+          eventoId: novoEventoId.toString(),  // EventoId incrementado
+        };
+
+        // Adicionando o evento na coleção "Eventos" do Firestore
+        const docRef = await addDoc(collection(db, 'Eventos'), eventoComDadosAdicionais);
+
+        console.log('Evento criado com ID: ', docRef.id);
+
+        // Redirecionando para a página de gerenciamento de eventos após salvar
+        navigate('/eventos');  // Ou o caminho que você quiser
+      } else {
+        console.error('Organização não encontrada para o UID fornecido.');
       }
-    } catch (error) {
-      console.error("Erro ao criar evento", error);
+    } catch (e) {
+      console.error('Erro ao buscar CNPJ da organização ou evento: ', e);
     }
   };
 
-  const handleStartCreate = () => {
-    setIsFormVisible(true); // Exibe o formulário
-  };
-
-  const handleCancel = () => {
-    setIsFormVisible(false); // Esconde o formulário
-    setEventData({
-      nomeEvento: "",
-      dataInicio: "",
-      dataFim: "",
-      horarioInicio: "",
-      horarioFim: "",
-      lotacaoMaxima: "",
-      tipoLogradouro: "",
-      logradouro: "",
-      numeroCasa: "",
-      bairro: "",
-      cidade: "",
-      estado: "",
-      cep: "",
-      tipo: "",
-      imagem01: "",
-      imagem02: "",
-      imagem03: "",
-      video: "",
-      organizacaoId: "id-da-organizacao",
-    }); // Limpa os dados do formulário
-  };
-
-  // Função para navegar para a página de criação de ingresso
-  const handleCreateIngresso = () => {
-    navigate("/criar-ingresso"); // Substitua pela rota de criação de ingresso
-  };
-
   return (
-    <Box className={styles.container}>
-      <Typography className={styles.title} variant="h4" gutterBottom>
-        Criar Novo Evento
+    <Box sx={{ maxWidth: 600, margin: '0 auto', padding: 3 }}>
+      <Typography variant="h4" gutterBottom>
+        Criar Evento
       </Typography>
 
-      {/* Exibe o botão de iniciar a criação, caso o formulário não esteja visível */}
-      {!isFormVisible ? (
-        <Box mt={3}>
-          <Button variant="contained" color="primary" onClick={handleStartCreate} fullWidth>
-            Iniciar Criação do Evento
+      <form onSubmit={handleSubmit}>
+        <TextField
+          label="Nome do Evento"
+          name="nome"
+          value={evento.nome}
+          onChange={handleChange}
+          fullWidth
+          required
+          margin="normal"
+        />
+        <TextField
+          label="Data de Início"
+          name="dataInicio"
+          type="date"
+          value={evento.dataInicio}
+          onChange={handleChange}
+          fullWidth
+          required
+          margin="normal"
+          InputLabelProps={{
+            shrink: true
+          }}
+        />
+        <TextField
+          label="Data de Fim"
+          name="dataFim"
+          type="date"
+          value={evento.dataFim}
+          onChange={handleChange}
+          fullWidth
+          required
+          margin="normal"
+          InputLabelProps={{
+            shrink: true
+          }}
+        />
+        <TextField
+          label="Horário de Início"
+          name="horarioInicio"
+          type="time"
+          value={evento.horarioInicio}
+          onChange={handleChange}
+          fullWidth
+          required
+          margin="normal"
+        />
+        <TextField
+          label="Horário de Fim"
+          name="horarioFim"
+          type="time"
+          value={evento.horarioFim}
+          onChange={handleChange}
+          fullWidth
+          required
+          margin="normal"
+        />
+        <TextField
+          label="Local"
+          name="local"
+          value={evento.local}
+          onChange={handleChange}
+          fullWidth
+          required
+          margin="normal"
+        />
+        <TextField
+          label="Descrição"
+          name="descricao"
+          value={evento.descricao}
+          onChange={handleChange}
+          fullWidth
+          required
+          margin="normal"
+          multiline
+          rows={4}
+        />
+
+        {/* Campos para UID, CNPJ e EventoId (não são visíveis no formulário, mas enviados ao Firestore) */}
+        <TextField
+          label="UID do Usuário"
+          name="userUID"
+          value={evento.userUID}
+          onChange={handleChange}
+          fullWidth
+          margin="normal"
+          disabled
+        />
+        <TextField
+          label="CNPJ da Organização"
+          name="cnpjOrganizacao"
+          value={evento.cnpjOrganizacao}
+          onChange={handleChange}
+          fullWidth
+          margin="normal"
+          disabled
+        />
+        <TextField
+          label="Evento ID"
+          name="eventoId"
+          value={evento.eventoId}
+          onChange={handleChange}
+          fullWidth
+          margin="normal"
+          disabled
+        />
+
+        <Box sx={{ marginTop: 2 }}>
+          <Button variant="contained" color="primary" type="submit">
+            Criar Evento
           </Button>
         </Box>
-      ) : (
-        // Exibe o formulário para criação de evento
-        <form onSubmit={handleSubmit} className={styles.form}>
-          <TextField
-            label="Nome do Evento"
-            name="nomeEvento"
-            value={eventData.nomeEvento}
-            onChange={handleInputChange}
-            fullWidth
-            required
-            margin="normal"
-          />
-          <TextField
-            label="Data de Início"
-            name="dataInicio"
-            type="date"
-            value={eventData.dataInicio}
-            onChange={handleInputChange}
-            fullWidth
-            required
-            margin="normal"
-          />
-          <TextField
-            label="Data de Fim"
-            name="dataFim"
-            type="date"
-            value={eventData.dataFim}
-            onChange={handleInputChange}
-            fullWidth
-            required
-            margin="normal"
-          />
-          <TextField
-            label="Horário de Início"
-            name="horarioInicio"
-            type="time"
-            value={eventData.horarioInicio}
-            onChange={handleInputChange}
-            fullWidth
-            required
-            margin="normal"
-          />
-          <TextField
-            label="Horário de Fim"
-            name="horarioFim"
-            type="time"
-            value={eventData.horarioFim}
-            onChange={handleInputChange}
-            fullWidth
-            required
-            margin="normal"
-          />
-          <TextField
-            label="Lotação Máxima"
-            name="lotacaoMaxima"
-            type="number"
-            value={eventData.lotacaoMaxima}
-            onChange={handleInputChange}
-            fullWidth
-            required
-            margin="normal"
-          />
-          <TextField
-            label="Tipo de Logradouro"
-            name="tipoLogradouro"
-            value={eventData.tipoLogradouro}
-            onChange={handleInputChange}
-            fullWidth
-            required
-            margin="normal"
-          />
-          <TextField
-            label="Logradouro"
-            name="logradouro"
-            value={eventData.logradouro}
-            onChange={handleInputChange}
-            fullWidth
-            required
-            margin="normal"
-          />
-          <TextField
-            label="Número da Casa"
-            name="numeroCasa"
-            value={eventData.numeroCasa}
-            onChange={handleInputChange}
-            fullWidth
-            required
-            margin="normal"
-          />
-          <TextField
-            label="Bairro"
-            name="bairro"
-            value={eventData.bairro}
-            onChange={handleInputChange}
-            fullWidth
-            required
-            margin="normal"
-          />
-          <TextField
-            label="Cidade"
-            name="cidade"
-            value={eventData.cidade}
-            onChange={handleInputChange}
-            fullWidth
-            required
-            margin="normal"
-          />
-          <TextField
-            label="Estado"
-            name="estado"
-            value={eventData.estado}
-            onChange={handleInputChange}
-            fullWidth
-            required
-            margin="normal"
-          />
-          <TextField
-            label="CEP"
-            name="cep"
-            value={eventData.cep}
-            onChange={handleInputChange}
-            fullWidth
-            required
-            margin="normal"
-          />
-          <TextField
-            label="Tipo"
-            name="tipo"
-            value={eventData.tipo}
-            onChange={handleInputChange}
-            fullWidth
-            required
-            margin="normal"
-          />
-          <TextField
-            label="Imagem 01 (URL)"
-            name="imagem01"
-            value={eventData.imagem01}
-            onChange={handleInputChange}
-            fullWidth
-            margin="normal"
-          />
-          <TextField
-            label="Imagem 02 (URL)"
-            name="imagem02"
-            value={eventData.imagem02}
-            onChange={handleInputChange}
-            fullWidth
-            margin="normal"
-          />
-          <TextField
-            label="Imagem 03 (URL)"
-            name="imagem03"
-            value={eventData.imagem03}
-            onChange={handleInputChange}
-            fullWidth
-            margin="normal"
-          />
-          <TextField
-            label="Vídeo (URL)"
-            name="video"
-            value={eventData.video}
-            onChange={handleInputChange}
-            fullWidth
-            margin="normal"
-          />
-          <Box mt={3} display="flex" justifyContent="space-between">
-            <Button variant="outlined" color="secondary" onClick={handleCancel}>
-              Cancelar
-            </Button>
-            <Button type="submit" variant="contained" color="primary">
-              Salvar Evento
-            </Button>
-          </Box>
-
-          {/* Botão para Criar Ingresso */}
-          <Box mt={3}>
-            <Button variant="contained" color="secondary" onClick={handleCreateIngresso} fullWidth>
-              Criar Ingresso
-            </Button>
-          </Box>
-        </form>
-      )}
+      </form>
     </Box>
   );
 };
