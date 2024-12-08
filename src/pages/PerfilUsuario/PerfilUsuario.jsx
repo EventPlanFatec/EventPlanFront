@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { getAuth, onAuthStateChanged, updateProfile } from 'firebase/auth';
-import { db } from '../../firebase/config'; // Importando a instância do Firestore
-import { doc, setDoc, getDoc } from 'firebase/firestore'; // Para salvar e carregar dados no Firestore
+import { db, storage } from '../../firebase/config'; // Adicionando o storage
+import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage'; // Para upload e obter URL
+import { FaPen } from 'react-icons/fa'; // Ícone de lápis do React Icons
+import styles from "../PerfilUsuario/PerfilUsuario.module.css";
 
 const PerfilUsuario = () => {
   const [user, setUser] = useState(null);
@@ -13,19 +16,19 @@ const PerfilUsuario = () => {
   const [bairro, setBairro] = useState('');
   const [rua, setRua] = useState('');
   const [numeroCasa, setNumeroCasa] = useState('');
-  const [cpf, setCpf] = useState(''); // Novo estado para CPF
-  const [dataNascimento, setDataNascimento] = useState(''); // Novo estado para Data de Nascimento
+  const [cpf, setCpf] = useState('');
+  const [dataNascimento, setDataNascimento] = useState('');
+  const [fotoPerfil, setFotoPerfil] = useState(null); // Estado para armazenar a imagem
   const [originalData, setOriginalData] = useState({});
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isModified, setIsModified] = useState(false); // Novo estado para verificar alterações
 
   useEffect(() => {
-    // Verifica o estado de autenticação do usuário
     const unsubscribe = onAuthStateChanged(getAuth(), async (user) => {
       if (user) {
-        setUser(user); // Salva as informações do usuário logado
-        // Carregar dados do Firestore, se existirem
+        setUser(user);
         const docRef = doc(db, 'usuarios', user.uid);
         const docSnap = await getDoc(docRef);
 
@@ -38,19 +41,26 @@ const PerfilUsuario = () => {
           setBairro(userData.bairro || '');
           setRua(userData.rua || '');
           setNumeroCasa(userData.numeroCasa || '');
-          setCpf(userData.cpf || ''); // Preenche o CPF
-          setDataNascimento(userData.dataNascimento || ''); // Preenche a Data de Nascimento
+          setCpf(userData.cpf || '');
+          setDataNascimento(userData.dataNascimento || '');
           setOriginalData(userData);
         }
       } else {
-        setUser(null); // Se não houver usuário logado, retorna null
+        setUser(null);
       }
-      setLoading(false); // Define o loading como false após verificar o usuário
+      setLoading(false);
     });
 
-    // Limpar o listener quando o componente for desmontado
     return () => unsubscribe();
   }, []);
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFotoPerfil(file);
+      setIsModified(true); // Alterou a foto, marca como modificado
+    }
+  };
 
   const handleSaveChanges = async (e) => {
     e.preventDefault();
@@ -59,12 +69,21 @@ const PerfilUsuario = () => {
     setSuccess('');
 
     try {
-      // Atualizar o nome e sobrenome no Firebase Authentication
+      let photoURL = user.photoURL;
+
+      if (fotoPerfil) {
+        const storageRef = ref(storage, `perfil/${user.uid}`);
+        const uploadTask = uploadBytesResumable(storageRef, fotoPerfil);
+
+        await uploadTask;
+        photoURL = await getDownloadURL(uploadTask.snapshot.ref);
+      }
+
       await updateProfile(user, {
         displayName: `${nome} ${sobrenome}`,
+        photoURL,
       });
 
-      // Salvar os dados no Firestore para persistência
       await setDoc(doc(db, 'usuarios', user.uid), {
         nome,
         sobrenome,
@@ -73,39 +92,28 @@ const PerfilUsuario = () => {
         bairro,
         rua,
         numeroCasa,
-        cpf, // Salvar CPF
-        dataNascimento, // Salvar Data de Nascimento
+        cpf,
+        dataNascimento,
+        photoURL, // Salvar a URL da foto no Firestore
       });
 
       setSuccess('Perfil atualizado com sucesso!');
-      setOriginalData({ nome, sobrenome, estado, cidade, bairro, rua, numeroCasa, cpf, dataNascimento });
+      setOriginalData({ nome, sobrenome, estado, cidade, bairro, rua, numeroCasa, cpf, dataNascimento, photoURL });
+      setIsModified(false); // Após salvar, setamos como não modificado
     } catch (err) {
       console.error('Erro ao atualizar perfil:', err.message);
-      setError('Erro ao atualizar perfil: ' + err.message); // Exibe o erro
+      setError('Erro ao atualizar perfil: ' + err.message);
     } finally {
       setIsUpdating(false);
     }
   };
 
-  const handleDiscardChanges = () => {
-    // Restaurar os valores originais
-    setNome(originalData.nome);
-    setSobrenome(originalData.sobrenome);
-    setEstado(originalData.estado);
-    setCidade(originalData.cidade);
-    setBairro(originalData.bairro);
-    setRua(originalData.rua);
-    setNumeroCasa(originalData.numeroCasa);
-    setCpf(originalData.cpf); // Restaurar CPF
-    setDataNascimento(originalData.dataNascimento); // Restaurar Data de Nascimento
-  };
-
   if (loading) {
-    return <p>Carregando...</p>; // Exibe uma mensagem enquanto aguarda a verificação do usuário
+    return <p>Carregando...</p>;
   }
 
   if (!user) {
-    return <p>Usuário não está logado.</p>; // Exibe mensagem caso o usuário não esteja logado
+    return <p>Usuário não está logado.</p>;
   }
 
   return (
@@ -113,89 +121,60 @@ const PerfilUsuario = () => {
       <h1>Perfil do Usuário</h1>
       <p><strong>UID:</strong> {user.uid}</p>
       <p><strong>Email:</strong> {user.email}</p>
-      
-      {/* Campos Editáveis */}
+
+      {/* Exibir imagem de perfil, se existir */}
+      <div>
+        <label>Foto de Perfil:</label>
+        {user.photoURL ? (
+          <img src={user.photoURL} alt="Foto de Perfil" style={{ width: '100px', height: '100px', borderRadius: '50%' }} />
+        ) : (
+          <p>Nenhuma foto de perfil.</p>
+        )}
+        {/* Botão de ícone de lápis */}
+        <button onClick={() => document.getElementById('fotoPerfilInput').click()} style={{ border: 'none', background: 'transparent', cursor: 'pointer' }}>
+          <FaPen size={20} color="gray" />
+        </button>
+        <input
+          type="file"
+          id="fotoPerfilInput"
+          style={{ display: 'none' }}
+          onChange={handleFileChange}
+        />
+      </div>
+
       <form onSubmit={handleSaveChanges}>
         <div>
           <label>Nome:</label>
-          <input
-            type="text"
-            value={nome}
-            onChange={(e) => setNome(e.target.value)}
-            placeholder="Digite seu nome"
-          />
+          <input type="text" value={nome} onChange={(e) => { setNome(e.target.value); setIsModified(true); }} placeholder="Digite seu nome" />
         </div>
         <div>
           <label>Sobrenome:</label>
-          <input
-            type="text"
-            value={sobrenome}
-            onChange={(e) => setSobrenome(e.target.value)}
-            placeholder="Digite seu sobrenome"
-          />
+          <input type="text" value={sobrenome} onChange={(e) => { setSobrenome(e.target.value); setIsModified(true); }} placeholder="Digite seu sobrenome" />
         </div>
         <div>
           <label>Estado:</label>
-          <input
-            type="text"
-            value={estado}
-            onChange={(e) => setEstado(e.target.value)}
-            placeholder="Digite seu estado"
-          />
+          <input type="text" value={estado} onChange={(e) => { setEstado(e.target.value); setIsModified(true); }} placeholder="Digite seu estado" />
         </div>
         <div>
           <label>Cidade:</label>
-          <input
-            type="text"
-            value={cidade}
-            onChange={(e) => setCidade(e.target.value)}
-            placeholder="Digite sua cidade"
-          />
+          <input type="text" value={cidade} onChange={(e) => { setCidade(e.target.value); setIsModified(true); }} placeholder="Digite sua cidade" />
         </div>
         <div>
           <label>Bairro:</label>
-          <input
-            type="text"
-            value={bairro}
-            onChange={(e) => setBairro(e.target.value)}
-            placeholder="Digite seu bairro"
-          />
+          <input type="text" value={bairro} onChange={(e) => { setBairro(e.target.value); setIsModified(true); }} placeholder="Digite seu bairro" />
         </div>
         <div>
           <label>Rua:</label>
-          <input
-            type="text"
-            value={rua}
-            onChange={(e) => setRua(e.target.value)}
-            placeholder="Digite sua rua"
-          />
+          <input type="text" value={rua} onChange={(e) => { setRua(e.target.value); setIsModified(true); }} placeholder="Digite sua rua" />
         </div>
         <div>
           <label>Número da Casa:</label>
-          <input
-            type="text"
-            value={numeroCasa}
-            onChange={(e) => setNumeroCasa(e.target.value)}
-            placeholder="Digite o número da sua casa"
-          />
-        </div>
-        
-        {/* Campos Não Editáveis */}
-        <div>
-          <label>CPF:</label>
-          <p>{cpf}</p> {/* Exibindo o CPF como texto não editável */}
-        </div>
-        <div>
-          <label>Data de Nascimento:</label>
-          <p>{dataNascimento}</p> {/* Exibindo a Data de Nascimento como texto não editável */}
+          <input type="text" value={numeroCasa} onChange={(e) => { setNumeroCasa(e.target.value); setIsModified(true); }} placeholder="Digite o número da sua casa" />
         </div>
 
         <div>
-          <button type="submit" disabled={isUpdating}>
+          <button type="submit" disabled={isUpdating || !isModified}>
             {isUpdating ? 'Atualizando...' : 'Salvar alterações'}
-          </button>
-          <button type="button" onClick={handleDiscardChanges} disabled={isUpdating}>
-            Descartar
           </button>
         </div>
       </form>
