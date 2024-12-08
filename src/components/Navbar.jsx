@@ -37,8 +37,9 @@ const Navbar = () => {
   const [userType, setUserType] = useState(null);  // Estado para tipo de usuário
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isLoadingUserType, setIsLoadingUserType] = useState(true); // Estado para saber se o tipo de usuário foi carregado
 
-  // Função para buscar o tipo de usuário no Firebase (ajustada para coleções específicas)
+  // Função para buscar o tipo de usuário no Firebase
   const fetchUserType = async (email) => {
     let userType = null;
 
@@ -67,6 +68,7 @@ const Navbar = () => {
     }
 
     setUserType(userType); // Atualiza o estado do tipo de usuário
+    setIsLoadingUserType(false); // Define que o carregamento foi concluído
   };
 
   // UseEffect para verificar se o usuário está logado
@@ -79,6 +81,7 @@ const Navbar = () => {
       } else {
         setIsLoggedIn(false);
         setUserType(null); // Se não houver usuário logado, reseta o tipo
+        setIsLoadingUserType(false); // Se não há usuário logado, define que a carga foi concluída
       }
     });
   }, []);
@@ -110,7 +113,7 @@ const Navbar = () => {
     navLinks.push(
       { text: "Criar Evento", icon: faPlusCircle, path: "/create-event" },
       { text: "Gerenciar Eventos", icon: faBox, path: "/manage-events" },
-      { text: "Perfil da Organização", icon: faBox, path: "/PerfilOrganizacao" } // Link para Gerenciar Eventos
+      { text: "Perfil da Organização", icon: faBox, path: "/PerfilOrganizacao" }
     );
   } else if (userType === "UsuarioFinal") {
     navLinks.push(
@@ -118,6 +121,11 @@ const Navbar = () => {
       { text: "Meus Ingressos", icon: faBox, path: "/my-tickets" },
       { text: "Perfil", icon: faBox, path: "/PerfilUsuario" }
     );
+  }
+
+  // Enquanto o tipo de usuário estiver carregando, renderiza uma barra de carregamento ou nada
+  if (isLoadingUserType) {
+    return <div>Carregando...</div>;
   }
 
   return (
@@ -185,8 +193,9 @@ const Navbar = () => {
                   sx={{
                     color: "black",
                     fontWeight: 700,
-                    fontSize: "16px",
-                    paddingLeft: "4px",
+                    fontSize: "20px",
+                    textTransform: "uppercase",
+                    paddingLeft: "12px",
                   }}
                 />
               </ListItem>

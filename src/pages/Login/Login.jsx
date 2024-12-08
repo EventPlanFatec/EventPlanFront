@@ -45,11 +45,13 @@ const Login = () => {
 
       if (res) {
         if (userType === 'organizacao') {
-          navigate('/PerfilOrganizacao');
+          navigate('/manage-events');
         } else if (userType === 'usuarioAdm') {
           navigate('/PerfilAdm');
+        } else if (userType === 'usuarioFinal') {
+          navigate('/eventlist');
         } else {
-          navigate('/PerfilUsuario');
+          navigate('/eventlist');
         }
         toast.success('Login realizado com sucesso!');
       }
@@ -119,7 +121,7 @@ const Login = () => {
             >
               <MenuItem value="organizacao">Organização</MenuItem>
               <MenuItem value="usuarioAdm">Administrador</MenuItem>
-              <MenuItem value="usuarioFinal">Usuário Final</MenuItem>
+              <MenuItem value="usuarioFinal">Usuario Final</MenuItem>
             </Select>
           </FormControl>
 
