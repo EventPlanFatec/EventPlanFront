@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { db } from "../../firebase/config"; // Importando a configuração do Firebase
-import { collection, getDocs, doc, getDoc } from "firebase/firestore"; // Importando funções do Firestore
+import { collection, getDocs, doc, getDoc, deleteDoc } from "firebase/firestore"; // Importando funções do Firestore
 import { Button, Card, CardContent, Typography, Box, Snackbar, Alert } from "@mui/material"; 
 import { useNavigate } from "react-router-dom";
 import styles from "./EventosGerenciamento.module.css"; // Importando o módulo CSS
@@ -48,6 +48,22 @@ const EventosGerenciamento = () => {
       setCnpjEvento(orgData.cnpj); // Armazena o CNPJ no estado
     } else {
       console.error("Organização não encontrada para o usuário", userId);
+    }
+  };
+
+  // Função para excluir o evento
+  const deleteEvent = async (eventId) => {
+    try {
+      await deleteDoc(doc(db, "Eventos", eventId)); // Deleta o evento no Firestore
+      setSnackbarMessage('Evento excluído com sucesso!');
+      setSnackbarSeverity('success');
+      setOpenSnackbar(true);
+      fetchEvents(); // Atualiza a lista de eventos
+    } catch (error) {
+      console.error("Erro ao excluir evento", error);
+      setSnackbarMessage('Erro ao excluir evento');
+      setSnackbarSeverity('error');
+      setOpenSnackbar(true);
     }
   };
 
@@ -103,6 +119,15 @@ const EventosGerenciamento = () => {
                       onClick={() => navigate(`/criar-ingresso`)} // Navega para a página de compra de ingresso
                     >
                       Ingresso
+                    </Button>
+                    {/* Botão de Excluir */}
+                    <Button
+                      className={`${styles.actionButton} ${styles.deleteButton}`}
+                      variant="contained"
+                      color="error"
+                      onClick={() => deleteEvent(event.id)} // Chama a função para excluir o evento
+                    >
+                      Excluir Evento
                     </Button>
                   </Box>
                 </CardContent>
