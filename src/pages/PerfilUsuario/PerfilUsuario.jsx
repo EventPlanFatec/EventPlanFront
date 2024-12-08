@@ -23,7 +23,7 @@ const PerfilUsuario = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [isUpdating, setIsUpdating] = useState(false);
-  const [isModified, setIsModified] = useState(false); // Novo estado para verificar alterações
+  const [isModified, setIsModified] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(getAuth(), async (user) => {
@@ -43,6 +43,7 @@ const PerfilUsuario = () => {
           setNumeroCasa(userData.numeroCasa || '');
           setCpf(userData.cpf || '');
           setDataNascimento(userData.dataNascimento || '');
+          setFotoPerfil(userData.fotoPerfil || null); // Carregar foto de perfil do Firestore
           setOriginalData(userData);
         }
       } else {
@@ -58,7 +59,7 @@ const PerfilUsuario = () => {
     const file = e.target.files[0];
     if (file) {
       setFotoPerfil(file);
-      setIsModified(true); // Alterou a foto, marca como modificado
+      setIsModified(true);
     }
   };
 
@@ -71,7 +72,7 @@ const PerfilUsuario = () => {
     try {
       let photoURL = user.photoURL;
 
-      if (fotoPerfil) {
+      if (fotoPerfil && typeof fotoPerfil !== 'string') {
         const storageRef = ref(storage, `perfil/${user.uid}`);
         const uploadTask = uploadBytesResumable(storageRef, fotoPerfil);
 
@@ -99,7 +100,7 @@ const PerfilUsuario = () => {
 
       setSuccess('Perfil atualizado com sucesso!');
       setOriginalData({ nome, sobrenome, estado, cidade, bairro, rua, numeroCasa, cpf, dataNascimento, photoURL });
-      setIsModified(false); // Após salvar, setamos como não modificado
+      setIsModified(false);
     } catch (err) {
       console.error('Erro ao atualizar perfil:', err.message);
       setError('Erro ao atualizar perfil: ' + err.message);
@@ -125,13 +126,19 @@ const PerfilUsuario = () => {
       {/* Exibir imagem de perfil, se existir */}
       <div>
         <label>Foto de Perfil:</label>
-        {user.photoURL ? (
-          <img src={user.photoURL} alt="Foto de Perfil" style={{ width: '100px', height: '100px', borderRadius: '50%' }} />
+        {fotoPerfil ? (
+          <img
+            src={typeof fotoPerfil === 'string' ? fotoPerfil : user.photoURL}
+            alt="Foto de Perfil"
+            style={{ width: '100px', height: '100px', borderRadius: '50%' }}
+          />
         ) : (
           <p>Nenhuma foto de perfil.</p>
         )}
-        {/* Botão de ícone de lápis */}
-        <button onClick={() => document.getElementById('fotoPerfilInput').click()} style={{ border: 'none', background: 'transparent', cursor: 'pointer' }}>
+        <button
+          onClick={() => document.getElementById('fotoPerfilInput').click()}
+          style={{ border: 'none', background: 'transparent', cursor: 'pointer' }}
+        >
           <FaPen size={20} color="gray" />
         </button>
         <input
@@ -145,31 +152,31 @@ const PerfilUsuario = () => {
       <form onSubmit={handleSaveChanges}>
         <div>
           <label>Nome:</label>
-          <input type="text" value={nome} onChange={(e) => { setNome(e.target.value); setIsModified(true); }} placeholder="Digite seu nome" />
+          <input type="text" value={nome} onChange={(e) => { setNome(e.target.value); setIsModified(true); }} />
         </div>
         <div>
           <label>Sobrenome:</label>
-          <input type="text" value={sobrenome} onChange={(e) => { setSobrenome(e.target.value); setIsModified(true); }} placeholder="Digite seu sobrenome" />
+          <input type="text" value={sobrenome} onChange={(e) => { setSobrenome(e.target.value); setIsModified(true); }} />
         </div>
         <div>
           <label>Estado:</label>
-          <input type="text" value={estado} onChange={(e) => { setEstado(e.target.value); setIsModified(true); }} placeholder="Digite seu estado" />
+          <input type="text" value={estado} onChange={(e) => { setEstado(e.target.value); setIsModified(true); }} />
         </div>
         <div>
           <label>Cidade:</label>
-          <input type="text" value={cidade} onChange={(e) => { setCidade(e.target.value); setIsModified(true); }} placeholder="Digite sua cidade" />
+          <input type="text" value={cidade} onChange={(e) => { setCidade(e.target.value); setIsModified(true); }} />
         </div>
         <div>
           <label>Bairro:</label>
-          <input type="text" value={bairro} onChange={(e) => { setBairro(e.target.value); setIsModified(true); }} placeholder="Digite seu bairro" />
+          <input type="text" value={bairro} onChange={(e) => { setBairro(e.target.value); setIsModified(true); }} />
         </div>
         <div>
           <label>Rua:</label>
-          <input type="text" value={rua} onChange={(e) => { setRua(e.target.value); setIsModified(true); }} placeholder="Digite sua rua" />
+          <input type="text" value={rua} onChange={(e) => { setRua(e.target.value); setIsModified(true); }} />
         </div>
         <div>
           <label>Número da Casa:</label>
-          <input type="text" value={numeroCasa} onChange={(e) => { setNumeroCasa(e.target.value); setIsModified(true); }} placeholder="Digite o número da sua casa" />
+          <input type="text" value={numeroCasa} onChange={(e) => { setNumeroCasa(e.target.value); setIsModified(true); }} />
         </div>
 
         <div>
