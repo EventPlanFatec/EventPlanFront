@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { TextField, Button, Box, Typography } from '@mui/material';
 import { db } from '../../firebase/config';
-import { collection, addDoc, getDocs, orderBy, query, limit, doc, getDoc } from 'firebase/firestore';
+import { collection, addDoc, getDocs, orderBy, query, limit, doc, getDoc, setDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import { getAuth } from 'firebase/auth'; // Para pegar o UID do usuário autenticado
 
@@ -68,13 +68,16 @@ const EventoCriacao = () => {
           eventoId: novoEventoId.toString(),  // EventoId incrementado
         };
 
-        // Adicionando o evento na coleção "Eventos" do Firestore
-        const docRef = await addDoc(collection(db, 'Eventos'), eventoComDadosAdicionais);
+        // Criando o nome do documento como "cnpjOrganizacao+eventoId"
+        const documentName = cnpjOrganizacao + novoEventoId;
 
-        console.log('Evento criado com ID: ', docRef.id);
+        // Adicionando o evento na coleção "Eventos" do Firestore com o nome do documento
+        await setDoc(doc(db, 'Eventos', documentName), eventoComDadosAdicionais);
+
+        console.log('Evento criado com ID: ', documentName);
 
         // Redirecionando para a página de gerenciamento de eventos após salvar
-        navigate('/eventos');  // Ou o caminho que você quiser
+        navigate('/manage-events');  // Ou o caminho que você quiser
       } else {
         console.error('Organização não encontrada para o UID fornecido.');
       }
