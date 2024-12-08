@@ -169,34 +169,7 @@ const EventoCriacao = () => {
           rows={4}
         />
 
-        {/* Campos para UID, CNPJ e EventoId (não são visíveis no formulário, mas enviados ao Firestore) */}
-        <TextField
-          label="UID do Usuário"
-          name="userUID"
-          value={evento.userUID}
-          onChange={handleChange}
-          fullWidth
-          margin="normal"
-          disabled
-        />
-        <TextField
-          label="CNPJ da Organização"
-          name="cnpjOrganizacao"
-          value={evento.cnpjOrganizacao}
-          onChange={handleChange}
-          fullWidth
-          margin="normal"
-          disabled
-        />
-        <TextField
-          label="Evento ID"
-          name="eventoId"
-          value={evento.eventoId}
-          onChange={handleChange}
-          fullWidth
-          margin="normal"
-          disabled
-        />
+        
 
         <Box sx={{ marginTop: 2 }}>
           <Button variant="contained" color="primary" type="submit">

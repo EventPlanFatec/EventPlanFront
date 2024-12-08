@@ -86,6 +86,7 @@ const EventosGerenciamento = () => {
                 <CardContent>
                   <Typography className={styles.eventTitle}>{event.nome}</Typography>
                   <Typography className={styles.eventCNPJ}>
+                    {event.cnpjOrganizacao}
                   </Typography>
                   <Box className={styles.actions} mt={2}>
                     <Button
@@ -94,6 +95,14 @@ const EventosGerenciamento = () => {
                       onClick={() => navigate(`/editar-evento/${event.id}`)}
                     >
                       Editar Evento
+                    </Button>
+                    {/* Botão de Ingresso */}
+                    <Button
+                      className={`${styles.actionButton} ${styles.ingressoButton}`}
+                      variant="contained"
+                      onClick={() => navigate(`/criar-ingresso`)} // Navega para a página de compra de ingresso
+                    >
+                      Ingresso
                     </Button>
                   </Box>
                 </CardContent>
@@ -116,4 +125,3 @@ const EventosGerenciamento = () => {
 };
 
 export default EventosGerenciamento;
-
