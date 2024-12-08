@@ -3,7 +3,6 @@ import { Button, Typography, TextField, MenuItem, Select, InputLabel, FormContro
 import { useNavigate } from 'react-router-dom';
 import { getAuth } from 'firebase/auth';
 import { getFirestore, doc, getDoc, updateDoc } from 'firebase/firestore';
-import axios from 'axios';
 
 const PerfilOrganizacao = () => {
   const navigate = useNavigate();
@@ -16,7 +15,7 @@ const PerfilOrganizacao = () => {
   const [tipoLogradouro, setTipoLogradouro] = useState('');
   const [logradouro, setLogradouro] = useState('');
   const [numeroPredial, setNumeroPredial] = useState('');
-  const [estados, setEstados] = useState([]);  // Lista de estados
+  const [estados, setEstados] = useState(['SP', 'RJ', 'MG', 'RS', 'BA']);  // Lista de estados fictícia
   const [cidades, setCidades] = useState([]);  // Lista de cidades por estado
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
@@ -35,31 +34,8 @@ const PerfilOrganizacao = () => {
       navigate('/login');
     }
 
-    // Carregar lista de estados brasileiros
-    fetchEstados();
+    // Carregar lista de estados fictícia (já definida estática)
   }, [navigate]);
-
-  const fetchEstados = async () => {
-    try {
-      const response = await axios.get('https://servicodados.ibge.gov.br/api/v2/censos/nomes/estados');
-      const estadosData = response.data;
-      setEstados(estadosData.map((estado) => estado.sigla));  // Filtra e organiza as siglas dos estados
-    } catch (error) {
-      showSnackbar("Erro ao carregar estados", 'error');
-      console.error("Erro ao carregar estados:", error);
-    }
-  };
-
-  const fetchCidades = async (estadoSigla) => {
-    try {
-      const response = await axios.get(`https://servicodados.ibge.gov.br/api/v2/localidades/estados/${estadoSigla}/municipios`);
-      const cidadesData = response.data;
-      setCidades(cidadesData.map((cidade) => cidade.nome));  // Filtra e organiza os nomes das cidades
-    } catch (error) {
-      showSnackbar("Erro ao carregar cidades", 'error');
-      console.error("Erro ao carregar cidades:", error);
-    }
-  };
 
   const fetchOrganizationData = async (userUid) => {
     const orgDocRef = doc(db, 'organizacao', userUid);
@@ -112,11 +88,15 @@ const PerfilOrganizacao = () => {
     const estadoSelecionado = e.target.value;
     setEstado(estadoSelecionado);
 
-    // Carrega as cidades do estado selecionado
-    const siglaEstado = estados.find((estado) => estado === estadoSelecionado);
-    if (siglaEstado) {
-      fetchCidades(siglaEstado);
-    }
+    // Carregar cidades fictícias dependendo do estado
+    const cidadesPorEstado = {
+      SP: ['São Paulo', 'Campinas', 'Santos'],
+      RJ: ['Rio de Janeiro', 'Niterói', 'Campos'],
+      MG: ['Belo Horizonte', 'Juiz de Fora', 'Uberlândia'],
+      RS: ['Porto Alegre', 'Caxias do Sul', 'Pelotas'],
+      BA: ['Salvador', 'Feira de Santana', 'Vitória da Conquista'],
+    };
+    setCidades(cidadesPorEstado[estadoSelecionado] || []);
   };
 
   const handleSave = async () => {
