@@ -19,7 +19,6 @@ import Admin from './pages/Admin/Admin';
 import Event from './pages/Event/Event';
 import EventosPage from './pages/EventosPage/EventosPage';
 import EventList from './pages/EventList/EventList.jsx';
-import EditarEvento from './pages/EditarEvento/EditarEvento';
 import ConfigPermissoes from './pages/ConfigPermissoes/ConfigPermissoes';
 import GerenciamentoUsuarios from './pages/GerenciamentoUsuarios/GerenciamentoUsuarios';
 import VerificarRegistro from './pages/VerificarRegistro/VerificarRegistro';
@@ -39,6 +38,7 @@ import IngressoGerenciamento from './pages/IngressoGerenciamento/IngressoGerenci
 import SearchBar from './components/SearchBar/SearchBar.jsx';
 import EventosEncontrados from './pages/EventosEncontrados/EventosEncontrados.jsx';
 import UsuarioIngresso from './pages/UsuarioIngresso/UsuarioIngresso.jsx';
+import EditarEvento from './pages/EditarEvento/EditarEvento';
 
 
 function App() {
@@ -95,7 +95,6 @@ function App() {
                     <Route path="/event/:id" element={<Event />} />
                     <Route path="/eventos" element={<EventosPage eventos={eventos} setEventos={setEventos} />} />
                     <Route path="/eventlist" element={<EventList />} />
-                    <Route path="/editar-evento/:id" element={<EditarEvento />} />
                     <Route path="/config-permissoes" element={<ConfigPermissoes />} />
                     <Route path="/gerenciar-usuarios" element={<GerenciamentoUsuarios />} />
                     <Route path="/verificar-registro" element={<VerificarRegistro />} />
@@ -115,6 +114,7 @@ function App() {
                     <Route path="/" element={<SearchBar />} />
                     <Route path="/eventos-encontrados" element={<EventosEncontrados />} />
                     <Route path="/my-tickets" element={<UsuarioIngresso />} />
+                    <Route path="/editar-evento/:id" element={<EditarEvento />} />
                   </Routes>
                 </div>
                 <Footer />
