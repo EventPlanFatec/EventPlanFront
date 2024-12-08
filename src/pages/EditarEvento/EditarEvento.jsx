@@ -1,212 +1,213 @@
-import React, { useState, useEffect } from 'react';
-import { TextField, Button, Typography, Box, Checkbox, IconButton, InputAdornment } from '@mui/material';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
-import { useNavigate, useParams } from 'react-router-dom';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import styles from './EditarEvento.module.css';
+import React, { useEffect, useState } from "react";
+import { db } from "../../firebase/config"; // Importando a configuração do Firebase
+import { doc, getDoc, updateDoc } from "firebase/firestore"; // Funções do Firestore para manipulação de dados
+import { Button, TextField, Box, Typography, Snackbar, Alert } from "@mui/material"; 
+import { useNavigate, useParams } from "react-router-dom";
+import { getAuth } from "firebase/auth";
+import styles from "./EditarEvento.module.css"; // Importando o módulo CSS
 
-const EditarEvento = ({ eventoAtual, onSave }) => {
-    const [formData, setFormData] = useState({
-        nomeEvento: '',
-        data: '',
-        horario: '',
-        local: '',
-        descricao: '',
-        preco: '',
-        imagem: null,
-        emailsConvidados: '',
-        senha: '',
-    });
+const EditarEvento = () => {
+  const [evento, setEvento] = useState({
+    nome: "",
+    cnpjOrganizacao: "",
+    dataInicio: "",
+    dataFim: "",
+    horarioInicio: "",
+    horarioFim: "",
+    lotacaoMaxima: "",
+    tipo: "",
+    imagem01: "",
+    imagem02: "",
+    imagem03: "",
+    video: "",
+    genero: "",
+  });
+  const [loading, setLoading] = useState(true);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const navigate = useNavigate();
+  const { id } = useParams(); // Pegando o ID do evento da URL
 
-    const [isEventoPrivado, setIsEventoPrivado] = useState(false);
-    const [showPassword, setShowPassword] = useState(false);
-    const [errors, setErrors] = useState({});
-    const navigate = useNavigate();
-    const { id } = useParams();
+  // Função para carregar os dados do evento
+  const fetchEvento = async (eventId) => {
+    try {
+      const eventoRef = doc(db, "Eventos", eventId); // Referência para o evento
+      const docSnap = await getDoc(eventoRef);
 
-    useEffect(() => {
-        if (eventoAtual) {
-            setFormData({
-                ...eventoAtual,
-                imagem: null
-            });
-            setIsEventoPrivado(eventoAtual.isEventoPrivado || false);
-        }
-    }, [eventoAtual]);
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-    };
-
-    const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        setFormData({ ...formData, imagem: file });
-    };
-
-    const validateForm = () => {
-        const newErrors = {};
-        if (!formData.nomeEvento) newErrors.nomeEvento = 'Nome do evento é obrigatório.';
-        if (!formData.data) newErrors.data = 'Data é obrigatória.';
-        if (!formData.horario) newErrors.horario = 'Horário é obrigatório.';
-        if (!formData.local) newErrors.local = 'Local é obrigatório.';
-        if (!formData.descricao) newErrors.descricao = 'Descrição é obrigatória.';
-        if (!formData.preco) newErrors.preco = 'Preço é obrigatório.';
-        if (!formData.imagem && !eventoAtual) newErrors.imagem = 'Imagem é obrigatória.';
-        if (isEventoPrivado && !formData.senha) newErrors.senha = 'Senha é obrigatória para eventos privados.';
-
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (!validateForm()) return;
-
-        try {
-            await onSave({ ...formData, id });
-            toast.success('Evento atualizado com sucesso!');
-            navigate('/eventos');
-        } catch (error) {
-            toast.error('Erro ao atualizar o evento. Tente novamente.');
-        }
-    };
-
-    const togglePasswordVisibility = () => setShowPassword(!showPassword);
-
-    if (!eventoAtual) {
-        return <div>Carregando...</div>;
+      if (docSnap.exists()) {
+        setEvento(docSnap.data()); // Preenche os dados do evento no estado
+      } else {
+        console.error("Evento não encontrado!");
+        setSnackbarMessage('Evento não encontrado');
+        setSnackbarSeverity('error');
+        setOpenSnackbar(true);
+        navigate("/manage-events"); // Redireciona caso não encontre o evento
+      }
+    } catch (error) {
+      console.error("Erro ao buscar evento", error);
+      setSnackbarMessage('Erro ao carregar evento');
+      setSnackbarSeverity('error');
+      setOpenSnackbar(true);
+    } finally {
+      setLoading(false); // Finaliza o carregamento
     }
+  };
 
-    return (
-        <div className={styles.container}>
-            <ToastContainer />
-            <div className={styles.register}>
-                <form onSubmit={handleSubmit} style={{ textAlign: 'center' }}>
-                    <h2 className={styles.title}>Editar Evento</h2>
-                    <TextField
-                        label="Nome do Evento"
-                        variant="outlined"
-                        required
-                        value={formData.nomeEvento}
-                        onChange={handleChange}
-                        fullWidth
-                        margin="normal"
-                    />
-                    <TextField
-                        label="Data"
-                        type="date"
-                        variant="outlined"
-                        required
-                        value={formData.data}
-                        onChange={handleChange}
-                        fullWidth
-                        margin="normal"
-                        InputLabelProps={{ shrink: true }}
-                    />
-                    <TextField
-                        label="Horário"
-                        type="time"
-                        variant="outlined"
-                        required
-                        value={formData.horario}
-                        onChange={handleChange}
-                        fullWidth
-                        margin="normal"
-                        InputLabelProps={{ shrink: true }}
-                    />
-                    <TextField
-                        label="Local"
-                        variant="outlined"
-                        required
-                        value={formData.local}
-                        onChange={handleChange}
-                        fullWidth
-                        margin="normal"
-                    />
-                    <TextField
-                        label="Descrição"
-                        variant="outlined"
-                        required
-                        multiline
-                        rows={4}
-                        value={formData.descricao}
-                        onChange={handleChange}
-                        fullWidth
-                        margin="normal"
-                    />
-                    <TextField
-                        label="Preço"
-                        type="number"
-                        variant="outlined"
-                        required
-                        value={formData.preco}
-                        onChange={handleChange}
-                        fullWidth
-                        margin="normal"
-                    />
-                    <Box marginTop={2} marginBottom={1}> 
-                        <Button variant="contained" component="label" sx={{ width: '100%', textAlign: 'center' }}>
-                            Escolher Imagem
-                            <input
-                                type="file"
-                                accept="image/jpeg,image/png"
-                                onChange={handleFileChange}
-                                hidden
-                            />
-                        </Button>
-                        {errors.imagem && <Typography color="error">{errors.imagem}</Typography>}
-                    </Box>
-                    <TextField
-                        label="E-mails dos Convidados (separados por vírgula)"
-                        variant="outlined"
-                        value={formData.emailsConvidados}
-                        onChange={handleChange}
-                        fullWidth
-                        margin="normal"
-                    />
-                    <Box display="flex" alignItems="center" justifyContent="flex-start" marginBottom={2}>
-                        <Checkbox
-                            checked={isEventoPrivado}
-                            onChange={(e) => setIsEventoPrivado(e.target.checked)}
-                            color="primary"
-                        />
-                        <Typography>Evento Privado</Typography>
-                    </Box>
-                    {isEventoPrivado && (
-                        <TextField
-                            label="Senha do Evento"
-                            type={showPassword ? 'text' : 'password'}
-                            variant="outlined"
-                            value={formData.senha}
-                            onChange={handleChange}
-                            fullWidth
-                            margin="normal"
-                            InputProps={{
-                                endAdornment: (
-                                    <InputAdornment position="end">
-                                        <IconButton onClick={togglePasswordVisibility}>
-                                            <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
-                                        </IconButton>
-                                    </InputAdornment>
-                                ),
-                            }}
-                        />
-                    )}
-                    <Box display="flex" flexDirection="column" alignItems="center" gap={2} marginTop={2}>
-                        <Button type="submit" variant="contained" color="success" fullWidth sx={{ minWidth: '200px' }}>
-                            Atualizar Evento
-                        </Button>
-                        <Button type="button" variant="contained" color="error" fullWidth sx={{ minWidth: '200px' }} onClick={() => navigate('/eventos')}>
-                            Cancelar
-                        </Button>
-                    </Box>
-                </form>
-            </div>
-        </div>
-    );
+  // Função para salvar as alterações do evento
+  const saveEvento = async () => {
+    try {
+      const eventoRef = doc(db, "Eventos", id); // Referência para o evento
+      await updateDoc(eventoRef, evento); // Atualiza o evento no Firestore
+
+      setSnackbarMessage('Evento atualizado com sucesso!');
+      setSnackbarSeverity('success');
+      setOpenSnackbar(true);
+      navigate("/manage-events"); // Redireciona para a página de gerenciamento de eventos
+    } catch (error) {
+      console.error("Erro ao atualizar evento", error);
+      setSnackbarMessage('Erro ao atualizar evento');
+      setSnackbarSeverity('error');
+      setOpenSnackbar(true);
+    }
+  };
+
+  // Carregar os dados do evento quando o componente for montado
+  useEffect(() => {
+    fetchEvento(id); // Chama a função para carregar os dados do evento
+  }, [id]); // Recarrega caso o ID do evento mude
+
+  // Exibir mensagem de carregamento enquanto os dados estão sendo carregados
+  if (loading) {
+    return <Typography>Carregando dados do evento...</Typography>;
+  }
+
+  return (
+    <Box className={styles.container}>
+      <Typography className={styles.title} variant="h4" gutterBottom>
+        Editar Evento
+      </Typography>
+
+      <Box mt={3}>
+        <TextField
+          label="Nome do Evento"
+          fullWidth
+          margin="normal"
+          value={evento.nome}
+          onChange={(e) => setEvento({ ...evento, nome: e.target.value })}
+        />
+        <TextField
+          label="CNPJ da Organização"
+          fullWidth
+          margin="normal"
+          value={evento.cnpjOrganizacao}
+          onChange={(e) => setEvento({ ...evento, cnpjOrganizacao: e.target.value })}
+        />
+        <TextField
+          label="Data de Início"
+          type="date"
+          fullWidth
+          margin="normal"
+          value={evento.dataInicio}
+          onChange={(e) => setEvento({ ...evento, dataInicio: e.target.value })}
+        />
+        <TextField
+          label="Data de Fim"
+          type="date"
+          fullWidth
+          margin="normal"
+          value={evento.dataFim}
+          onChange={(e) => setEvento({ ...evento, dataFim: e.target.value })}
+        />
+        <TextField
+          label="Horário de Início"
+          type="time"
+          fullWidth
+          margin="normal"
+          value={evento.horarioInicio}
+          onChange={(e) => setEvento({ ...evento, horarioInicio: e.target.value })}
+        />
+        <TextField
+          label="Horário de Fim"
+          type="time"
+          fullWidth
+          margin="normal"
+          value={evento.horarioFim}
+          onChange={(e) => setEvento({ ...evento, horarioFim: e.target.value })}
+        />
+        <TextField
+          label="Lotação Máxima"
+          type="number"
+          fullWidth
+          margin="normal"
+          value={evento.lotacaoMaxima}
+          onChange={(e) => setEvento({ ...evento, lotacaoMaxima: e.target.value })}
+        />
+        <TextField
+          label="Tipo de Evento"
+          fullWidth
+          margin="normal"
+          value={evento.tipo}
+          onChange={(e) => setEvento({ ...evento, tipo: e.target.value })}
+        />
+        <TextField
+          label="Imagem 01 (URL)"
+          fullWidth
+          margin="normal"
+          value={evento.imagem01}
+          onChange={(e) => setEvento({ ...evento, imagem01: e.target.value })}
+        />
+        <TextField
+          label="Imagem 02 (URL)"
+          fullWidth
+          margin="normal"
+          value={evento.imagem02}
+          onChange={(e) => setEvento({ ...evento, imagem02: e.target.value })}
+        />
+        <TextField
+          label="Imagem 03 (URL)"
+          fullWidth
+          margin="normal"
+          value={evento.imagem03}
+          onChange={(e) => setEvento({ ...evento, imagem03: e.target.value })}
+        />
+        <TextField
+          label="Vídeo (URL)"
+          fullWidth
+          margin="normal"
+          value={evento.video}
+          onChange={(e) => setEvento({ ...evento, video: e.target.value })}
+        />
+        <TextField
+          label="Gênero"
+          fullWidth
+          margin="normal"
+          value={evento.genero}
+          onChange={(e) => setEvento({ ...evento, genero: e.target.value })}
+        />
+      </Box>
+
+      <Box mt={3}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={saveEvento}
+        >
+          Salvar Alterações
+        </Button>
+      </Box>
+
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={() => setOpenSnackbar(false)}
+      >
+        <Alert onClose={() => setOpenSnackbar(false)} severity={snackbarSeverity}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
+    </Box>
+  );
 };
 
 export default EditarEvento;
