@@ -1,55 +1,66 @@
-// src/pages/EventosGerenciamento.js
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { Button, Card, CardContent, Typography, Box } from "@mui/material";
+import { db } from "../../firebase/config"; // Importando a configuração do Firebase
+import { collection, getDocs, doc, getDoc } from "firebase/firestore"; // Importando funções do Firestore
+import { Button, Card, CardContent, Typography, Box, Snackbar, Alert } from "@mui/material"; 
 import { useNavigate } from "react-router-dom";
-import styles from "./EventosGerenciamento.module.css";  // Importando o módulo CSS
+import styles from "./EventosGerenciamento.module.css"; // Importando o módulo CSS
+import { getAuth } from "firebase/auth";
 
 const EventosGerenciamento = () => {
-  const [events, setEvents] = useState([]);
+  const [events, setEvents] = useState([]); // Estado para armazenar os eventos
   const [loading, setLoading] = useState(true);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [userIdEvento, setUserIdEvento] = useState(null); // Variável para armazenar o UID do usuário
+  const [cnpjEvento, setCnpjEvento] = useState(null); // Variável para armazenar o CNPJ da organização
   const navigate = useNavigate();
 
-  const organizationId = "id-da-organizacao"; // Substitua com o ID real da organização
-
-  // Função para buscar eventos da organização
+  // Função para buscar todos os eventos
   const fetchEvents = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/events/organization/${organizationId}`);
-      setEvents(response.data);
+      console.log("Buscando todos os eventos...");
+
+      const eventosRef = collection(db, "Eventos"); // Referência para a coleção "Eventos"
+      const querySnapshot = await getDocs(eventosRef); // Obter todos os documentos na coleção
+
+      const eventosData = querySnapshot.docs.map((doc) => ({
+        id: doc.id, // Incluindo o ID do documento
+        ...doc.data(), // Incluindo os dados do documento
+      }));
+
+      console.log("Eventos encontrados:", eventosData);
+      setEvents(eventosData); // Atualiza o estado com os eventos encontrados
     } catch (error) {
       console.error("Erro ao carregar eventos", error);
     } finally {
-      setLoading(false);
+      setLoading(false); // Finaliza o carregamento
     }
   };
 
-  // Carregar eventos quando o componente for montado
+  // Função para buscar o CNPJ da organização usando o UID do usuário
+  const fetchCNPJ = async (userId) => {
+    const orgDocRef = doc(db, "organizacao", userId);
+    const docSnap = await getDoc(orgDocRef);
+
+    if (docSnap.exists()) {
+      const orgData = docSnap.data();
+      setCnpjEvento(orgData.cnpj); // Armazena o CNPJ no estado
+    } else {
+      console.error("Organização não encontrada para o usuário", userId);
+    }
+  };
+
+  // Carregar dados ao montar o componente
   useEffect(() => {
-    fetchEvents();
-  }, []);
-
-  // Função para editar evento
-  const handleEdit = (eventId) => {
-    navigate(`/editar-evento/${eventId}`);
-  };
-
-  // Função para editar ingresso
-  const handleEditIngresso = (eventId) => {
-    navigate(`/editar-ingresso/${eventId}`); // Navega para a página de edição do ingresso
-  };
-
-  // Função para excluir evento
-  const handleDelete = async (eventId) => {
-    try {
-      const response = await axios.delete(`http://localhost:5000/api/events/${eventId}`);
-      if (response.status === 200) {
-        fetchEvents(); // Recarregar a lista após a exclusão
-      }
-    } catch (error) {
-      console.error("Erro ao excluir evento", error);
+    const user = getAuth().currentUser; // Obtendo o usuário logado
+    if (user) {
+      const userUid = user.uid;
+      setUserIdEvento(userUid); // Armazena o UID do usuário
+      fetchCNPJ(userUid); // Busca o CNPJ da organização
     }
-  };
+    fetchEvents(); // Carrega os eventos quando o componente for montado
+  }, []); // Recarrega apenas uma vez quando o componente for montado
 
   // Exibir mensagem de carregamento enquanto os dados estão sendo carregados
   if (loading) {
@@ -68,41 +79,41 @@ const EventosGerenciamento = () => {
             Nenhum evento encontrado.
           </Typography>
         ) : (
-          events.map((event) => (
-            <Card key={event.eventoId} className={styles.eventCard} variant="outlined">
-              <CardContent>
-                <Typography className={styles.eventTitle}>{event.nomeEvento}</Typography>
-                <Typography className={styles.eventDate}>{event.dataInicio} - {event.dataFim}</Typography>
-                <Box className={styles.actions} mt={2}>
-                  <Button
-                    className={`${styles.actionButton} ${styles.editButton}`}
-                    variant="contained"
-                    onClick={() => handleEdit(event.eventoId)}
-                  >
-                    Editar Evento
-                  </Button>
-                  <Button
-                    className={`${styles.actionButton} ${styles.editButton}`}
-                    variant="contained"
-                    onClick={() => handleEditIngresso(event.eventoId)} // Botão "Editar Ingresso"
-                  >
-                    Editar Ingresso
-                  </Button>
-                  <Button
-                    className={`${styles.actionButton} ${styles.deleteButton}`}
-                    variant="contained"
-                    onClick={() => handleDelete(event.eventoId)}
-                  >
-                    Excluir
-                  </Button>
-                </Box>
-              </CardContent>
-            </Card>
-          ))
+          events
+            .filter((event) => event.cnpjOrganizacao === cnpjEvento) // Filtra os eventos que correspondem ao CNPJ da organização
+            .map((event) => (
+              <Card key={event.id} className={styles.eventCard} variant="outlined">
+                <CardContent>
+                  <Typography className={styles.eventTitle}>{event.nome}</Typography>
+                  <Typography className={styles.eventCNPJ}>
+                  </Typography>
+                  <Box className={styles.actions} mt={2}>
+                    <Button
+                      className={`${styles.actionButton} ${styles.editButton}`}
+                      variant="contained"
+                      onClick={() => navigate(`/editar-evento/${event.id}`)}
+                    >
+                      Editar Evento
+                    </Button>
+                  </Box>
+                </CardContent>
+              </Card>
+            ))
         )}
       </Box>
+
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={() => setOpenSnackbar(false)}
+      >
+        <Alert onClose={() => setOpenSnackbar(false)} severity={snackbarSeverity}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
 
 export default EventosGerenciamento;
+

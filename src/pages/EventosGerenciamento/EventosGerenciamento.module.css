@@ -2,95 +2,132 @@
 
 /* Container principal */
 .container {
-    padding: 20px;
-    max-width: 1200px;
-    margin: 0 auto;
+  padding: 20px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Título principal */
+.title {
+  font-size: 32px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* CNPJ da organização */
+.organizationCnpj {
+  font-size: 18px;
+  color: #555;
+  margin-bottom: 20px;
+  font-weight: normal;
+}
+
+/* Mensagem quando não há eventos */
+.noEventsMessage {
+  font-size: 18px;
+  color: #888;
+  text-align: center;
+  margin-top: 20px;
+}
+
+/* Cartão de evento */
+.eventCard {
+  margin-bottom: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+}
+
+.eventCard:hover {
+  transform: scale(1.05);
+}
+
+/* Conteúdo do cartão de evento */
+.eventTitle {
+  font-size: 24px;
+  font-weight: bold;
+  color: #00796b; /* cor de destaque */
+}
+
+.eventDate {
+  font-size: 16px;
+  color: #444;
+  margin-top: 10px;
+}
+
+.eventCnpj {
+  font-size: 14px;
+  color: #999;
+  margin-top: 5px;
+}
+
+/* Ações do evento (botões) */
+.actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-start;
+  margin-top: 20px;
+}
+
+.actionButton {
+  font-size: 14px;
+  padding: 8px 16px;
+  border-radius: 4px;
+  text-transform: none;
+}
+
+.editButton {
+  background-color: #4caf50;
+  color: white;
+  &:hover {
+    background-color: #388e3c;
   }
-  
-  /* Título principal */
+}
+
+.deleteButton {
+  background-color: #f44336;
+  color: white;
+  &:hover {
+    background-color: #d32f2f;
+  }
+}
+
+/* Snackbar (mensagem de erro ou sucesso) */
+.MuiSnackbar-root {
+  z-index: 1300;
+}
+
+.MuiAlert-root {
+  font-size: 16px;
+}
+
+/* Estilo responsivo */
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+  }
+
   .title {
-    font-size: 2rem;
-    font-weight: bold;
-    margin-bottom: 20px;
+    font-size: 28px;
   }
-  
-  /* Botão de "Criar Novo Evento" */
-  .createButton {
-    margin-bottom: 20px;
-    padding: 10px 20px;
-    font-size: 1.2rem;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+
+  .organizationCnpj {
+    font-size: 16px;
   }
-  
-  .createButton:hover {
-    background-color: #0056b3;
-  }
-  
-  /* Mensagem quando não há eventos */
-  .noEventsMessage {
-    font-size: 1.2rem;
-    color: #888;
-    text-align: center;
-  }
-  
-  /* Cartão de evento */
-  .eventCard {
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  /* Título do evento */
+
   .eventTitle {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #333;
+    font-size: 20px;
   }
-  
-  /* Data do evento */
+
   .eventDate {
-    font-size: 1rem;
-    color: #555;
+    font-size: 14px;
   }
-  
-  /* Botões de ação (editar e excluir) */
+
   .actions {
-    display: flex;
-    gap: 10px;
+    flex-direction: column;
+    gap: 8px;
   }
-  
-  .actionButton {
-    padding: 8px 16px;
-    font-size: 1rem;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .editButton {
-    background-color: #28a745;
-    color: white;
-  }
-  
-  .editButton:hover {
-    background-color: #218838;
-  }
-  
-  .deleteButton {
-    background-color: #dc3545;
-    color: white;
-  }
-  
-  .deleteButton:hover {
-    background-color: #c82333;
-  }
-  
+}
