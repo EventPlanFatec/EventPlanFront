@@ -68,24 +68,31 @@ const PerfilUsuario = () => {
     setIsUpdating(true);
     setError('');
     setSuccess('');
-
+  
     try {
-      let photoURL = user.photoURL;
-
+      let updatedPhotoURL = user.photoURL;
+  
       if (fotoPerfil && typeof fotoPerfil !== 'string') {
         const storageRef = ref(storage, `perfil/${user.uid}`);
         const uploadTask = uploadBytesResumable(storageRef, fotoPerfil);
-
+  
         await uploadTask;
-        photoURL = await getDownloadURL(uploadTask.snapshot.ref);
+        updatedPhotoURL = await getDownloadURL(uploadTask.snapshot.ref);
       }
-
+  
       await updateProfile(user, {
         displayName: `${nome} ${sobrenome}`,
-        photoURL,
+        photoURL: updatedPhotoURL,
       });
-
-      await setDoc(doc(db, 'usuarios', user.uid), {
+  
+      const userDocRef = doc(db, 'usuarios', user.uid);
+      const userDocSnap = await getDoc(userDocRef);
+      const existingData = userDocSnap.exists() ? userDocSnap.data() : {};
+  
+      const finalPhotoURL = updatedPhotoURL || existingData.photoURL || null;
+  
+      await setDoc(userDocRef, {
+        ...existingData,
         nome,
         sobrenome,
         estado,
@@ -95,11 +102,24 @@ const PerfilUsuario = () => {
         numeroCasa,
         cpf,
         dataNascimento,
-        photoURL, // Salvar a URL da foto no Firestore
+        photoURL: finalPhotoURL,
+        email: user.email,
       });
-
+  
       setSuccess('Perfil atualizado com sucesso!');
-      setOriginalData({ nome, sobrenome, estado, cidade, bairro, rua, numeroCasa, cpf, dataNascimento, photoURL });
+      setOriginalData({
+        ...existingData,
+        nome,
+        sobrenome,
+        estado,
+        cidade,
+        bairro,
+        rua,
+        numeroCasa,
+        cpf,
+        dataNascimento,
+        photoURL: finalPhotoURL,
+      });
       setIsModified(false);
     } catch (err) {
       console.error('Erro ao atualizar perfil:', err.message);
@@ -108,6 +128,7 @@ const PerfilUsuario = () => {
       setIsUpdating(false);
     }
   };
+  
 
   if (loading) {
     return <p>Carregando...</p>;
