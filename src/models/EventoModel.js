@@ -48,7 +48,7 @@ class EventoModel {
     toFirestore() {
       return {
         nome: this.nome,
-        date: this.date,
+        date: this.date instanceof Date ? this.date.toISOString() : null,
         description: this.description,
         local: this.local,
         type: this.type,
@@ -56,6 +56,7 @@ class EventoModel {
         price: this.price
       };
     }
+    
   
     getDataFormatada() {
       return this.date.toLocaleDateString('pt-BR', {
@@ -73,9 +74,10 @@ class EventoModel {
       return new EventoModel({
         id,
         ...data,
-        date: data.date instanceof Date ? data.date : new Date(data.date)
+        date: data.date ? new Date(data.date) : new Date(), // Garantir uma instância válida de Date
       });
     }
+    
   }
   
   export default EventoModel;
