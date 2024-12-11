@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { getAuth } from 'firebase/auth';
 import { getFirestore, doc, getDoc, updateDoc } from 'firebase/firestore';
 import axios from 'axios';
+import styles from './PerfilOrganizacao.module.css';
 
 const PerfilOrganizacao = () => {
   const navigate = useNavigate();  // Inicializa o hook de navegação
@@ -154,7 +155,7 @@ const PerfilOrganizacao = () => {
       )}
 
       {uid && (
-        <Typography variant="body1" paragraph>
+        <Typography variant="body5" paragraph className={styles.typographyBody5}>
           UID do usuário logado: {uid}
         </Typography>
       )}
