@@ -5,6 +5,7 @@ import { Button, Card, CardContent, Typography, Box, Snackbar, Alert } from "@mu
 import { useNavigate } from "react-router-dom";
 import styles from "../EventosGerenciamento/EventosGerenciamento.module.css";
 import { getAuth } from "firebase/auth";
+import TicketManagementModal from "../IngressoGerenciamento/IngressoGerenciamento";
 
 const EventosGerenciamento = () => {
   const [events, setEvents] = useState([]);
@@ -14,6 +15,8 @@ const EventosGerenciamento = () => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [userIdEvento, setUserIdEvento] = useState(null);
   const [cnpjEvento, setCnpjEvento] = useState(null);
+  const [openTicketModal, setOpenTicketModal] = useState(false);
+  const [selectedEventId, setSelectedEventId] = useState(null);
   const navigate = useNavigate();
 
   const fetchEvents = async () => {
@@ -58,6 +61,16 @@ const EventosGerenciamento = () => {
       setSnackbarSeverity('error');
       setOpenSnackbar(true);
     }
+  };
+
+  const handleOpenTicketModal = (eventoId) => {
+    setSelectedEventId(eventoId);
+    setOpenTicketModal(true);
+  };
+
+  const handleCloseTicketModal = () => {
+    setOpenTicketModal(false);
+    setSelectedEventId(null);
   };
 
   useEffect(() => {
@@ -116,7 +129,7 @@ const EventosGerenciamento = () => {
                     <Button
                       className={`${styles.actionButton} ${styles.ingressoButton}`}
                       variant="contained"
-                      onClick={() => navigate(`/ingresso-form`)}
+                      onClick={() => handleOpenTicketModal(event.id)}
                     >
                       Ingresso
                     </Button>
@@ -144,6 +157,15 @@ const EventosGerenciamento = () => {
           {snackbarMessage}
         </Alert>
       </Snackbar>
+
+      {/* Modal de gerenciamento de ingressos */}
+      {openTicketModal && (
+        <TicketManagementModal
+          open={openTicketModal}
+          onClose={handleCloseTicketModal}
+          eventoId={selectedEventId}
+        />
+      )}
     </Box>
   );
 };

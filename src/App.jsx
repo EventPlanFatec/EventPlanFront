@@ -77,7 +77,6 @@ function App() {
     });
   };
 
-  // Exemplo de notificação de sucesso
   const notifySuccess = () => toast.success("Evento criado com sucesso!");
 
   return (
