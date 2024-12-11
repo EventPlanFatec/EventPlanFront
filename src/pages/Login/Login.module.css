@@ -6,12 +6,12 @@
 }
 
 .login {
-    padding: 20px;
+    padding: 30px; /* Aumentando o padding para dar mais espaçamento interno */
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     background-color: #ffffff;
     width: 100%;
-    max-width: 400px;
+    max-width: 600px; /* Aumentando a largura máxima do formulário */
     margin: 0 20px;
 }
 
@@ -19,12 +19,14 @@
     text-align: center;
     margin-bottom: 20px;
     font-weight: 600;
+    color: #003366; /* Azul escuro */
 }
 
 .terms {
     display: block;
     text-align: right;
     margin-top: -5px;
+    color: #FF6600; /* Laranja */
 }
 
 .socialLogin {
@@ -38,11 +40,63 @@
     color: red;
     text-align: center;
     margin-top: 10px;
+    
 }
 
 .ou {
     text-align: center;
     margin: 20px 0;
+}
+
+button {
+    background-color: #0d0013; /* Cor do botão de login */
+    color: #ffffff; /* Texto branco */
+}
+
+button:disabled {
+    background-color: #0d0013; /* Mantém a cor personalizada quando desabilitado */
+    opacity: 0.5; /* Diminui a opacidade quando o botão estiver desabilitado */
+}
+
+button.outlined {
+    border-color: #0d0013; /* Cor da borda personalizada para o Register */
+    color: #0d0013; /* Texto da cor personalizada para o Register */
+}
+
+button.outlined:hover {
+    background-color: #FF6600; /* Laranja para o hover */
+    color: #ffffff; /* Texto branco no hover */
+}
+
+/* Estilos para o FormControl */
+.MuiFormControl-root {
+    width: 100%; /* Garante que o FormControl ocupe toda a largura disponível */
+    margin: 16px 0; /* Espaçamento superior e inferior */
+}
+
+/* Estilos específicos para o campo "Tipo de Usuário" */
+.MuiInputLabel-root {
+    color: #0d0013; /* Cor do texto do label */
+    font-weight: bold; /* Deixar o texto em negrito */
+    
+}
+
+.MuiSelect-root {
+    color: #0d0013; /* Cor do texto no select */
+    border-color: #0d0013; /* Cor da borda do select */
+    text-align: center; /* Centralizar o texto dentro do dropdown */
+}
+
+.MuiOutlinedInput-root {
+    border-color: #0d0013; /* Cor da borda do input */
+}
+
+.MuiOutlinedInput-notchedOutline {
+    border-color: #0d0013; /* Cor da borda do select */
+}
+
+.MuiSelect-icon {
+    color: #0d0013; /* Cor do ícone do select */
 }
 
 @media (max-width: 500px) {
@@ -62,6 +116,6 @@
 @media (min-width: 769px) {
     .login {
         width: 100%;
-        max-width: 400px;
+        max-width: 600px; /* Aumentando o tamanho no desktop */
     }
 }
