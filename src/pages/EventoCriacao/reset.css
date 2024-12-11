@@ -1,0 +1,20 @@
+/* Reset global de estilos */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  font-family: Arial, sans-serif;
+  line-height: 1.5;
+  background-color: #fff;
+  color: #333;
+}
+
+/* Opcional: Ajuste para remover a borda de foco nos inputs e botões */
+input:focus, button:focus {
+  outline: none;
+}

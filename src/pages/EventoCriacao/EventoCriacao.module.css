@@ -1,107 +1,24 @@
 /* src/pages/EventoCriacao.module.css */
-
 .container {
-  max-width: 800px; /* Aumentando a largura máxima do contêiner */
+  max-width: 600px;
   margin: 0 auto;
   padding: 20px;
-  background-color: #f5f5f5; /* cor de fundo suave */
-  border-radius: 8px; /* bordas arredondadas para suavizar */
 }
 
 .title {
   text-align: center;
   margin-bottom: 20px;
-  font-size: 2rem;
-  color: #1e3a8a; /* Azul escuro */
 }
 
 .form {
   display: flex;
   flex-direction: column;
-  gap: 16px; /* Espaçamento entre os campos */
-  width: 100%; /* Garantir que o formulário ocupe toda a largura disponível */
 }
 
 .form .MuiTextField-root {
   margin-bottom: 16px;
-  width: 100%; /* Garantir que os campos de texto ocupem toda a largura do formulário */
 }
 
 button {
   margin-top: 20px;
-  padding: 10px 20px;
-  border-radius: 5px;
-  border: none;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-button:hover {
-  background-color: #f59e42; /* Laranja */
-  color: white;
-}
-
-button:focus {
-  outline: none;
-  box-shadow: 0 0 5px rgba(255, 165, 0, 0.7); /* Sombra laranja para foco */
-}
-
-button:first-of-type {
-  background-color: #1f012e; /* Azul escuro */
-  color: white;
-}
-
-button:first-of-type:hover {
-  background-color: #4f6f97; /* Azul mais suave no hover */
-}
-
-button:nth-of-type(2) {
-  background-color: #FF6600; /* Laranja */
-  color: white;
-}
-
-button:nth-of-type(2):hover {
-  background-color:#FF6600; /* Laranja mais forte no hover */
-}
-
-button:nth-of-type(3) {
-  background-color: #38b000; /* Verde */
-  color: white;
-}
-
-button:nth-of-type(3):hover {
-  background-color: #2c8a00; /* Verde mais escuro no hover */
-}
-
-.criarIngressoButton {
-  background-color: #902808; /* Cor personalizada para o botão */
-  color: white; /* Cor do texto */
-  padding: 10px 20px; /* Adiciona padding ao botão */
-  border-radius: 8px; /* Borda arredondada */
-  transition: background-color 0.3s ease; /* Adiciona transição suave na cor de fundo */
-}
-
-.criarIngressoButton:hover {
-  background-color: #e64a19; /* Cor personalizada para o hover */
-}
-
-.salvarEventoButton {
-  background-color: #2a003d; /* Cor personalizada para o botão */
-  color: white; /* Cor do texto */
-  padding: 10px 20px; /* Adiciona padding ao botão */
-  border-radius: 8px; /* Borda arredondada */
-  transition: background-color 0.3s ease; /* Adiciona transição suave na cor de fundo */
-}
-
-.salvarEventoButton:hover {
-  background-color: #e64a19; /* Cor personalizada para o hover */
-}
-
-.criarEventoButton {
-  background-color: white; /* Cor personalizada para o botão */
-  color: #FF6600; /* Cor do texto */
-  padding: 10px 20px; /* Adiciona padding ao botão */
-  border-radius: 8px; /* Borda arredondada */
-  transition: background-color 0.3s ease; /* Adiciona transição suave na cor de fundo */
 }

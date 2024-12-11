@@ -1,104 +1,133 @@
 /* Estilo base */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #0d0013;
-    color: white;
-    margin: 0;
-    padding: 0;
-  }
-  
-  h1 {
-    text-align: center;
-    color: rgb(228, 108, 10);
-    margin-top: 20px;
-  }
-  
+  font-family: Arial, sans-serif;
+  background-color: #0d0013;
+  color: white;
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  text-align: center;
+  color: rgb(228, 108, 10);
+  margin-top: 20px;
+}
+
+form {
+  max-width: 600px;
+  margin: 20px auto;
+  background-color:white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+form div {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+input, select, button {
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+input[type="file"] {
+  padding: 5px;
+}
+
+button {
+  background-color: rgb(228, 108, 10);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #d36d08;
+}
+
+button:disabled {
+  background-color: #150020;
+  cursor: not-allowed;
+}
+
+p {
+  text-align: center;
+  color: white;
+}
+
+/* Estilo responsivo */
+@media (max-width: 768px) {
   form {
-    max-width: 600px;
-    margin: 20px auto;
-    background-color:white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    max-width: 90%;
+    padding: 15px;
   }
-  
-  form div {
-    margin-bottom: 15px;
+
+  h1 {
+    font-size: 1.8rem;
   }
-  
-  label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 5px;
-  }
-  
+
   input, select, button {
-    width: 100%;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.5rem;
+    margin-top: 15px;
+  }
+
+  form {
     padding: 10px;
-    font-size: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
   }
-  
-  input[type="file"] {
-    padding: 5px;
+
+  input, select, button {
+    font-size: 0.8rem;
   }
-  
-  button {
-    background-color: rgb(228, 108, 10);
-    color: white;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+
+  label {
+    font-size: 0.9rem;
   }
-  
-  button:hover {
-    background-color: #d36d08;
-  }
-  
-  button:disabled {
-    background-color: #aaa;
-    cursor: not-allowed;
-  }
-  
-  p {
-    text-align: center;
-    color: white;
-  }
-  
-  /* Estilo responsivo */
-  @media (max-width: 768px) {
-    form {
-      max-width: 90%;
-      padding: 15px;
-    }
-  
-    h1 {
-      font-size: 1.8rem;
-    }
-  
-    input, select, button {
-      font-size: 0.9rem;
-    }
-  }
-  
-  @media (max-width: 480px) {
-    h1 {
-      font-size: 1.5rem;
-      margin-top: 15px;
-    }
-  
-    form {
-      padding: 10px;
-    }
-  
-    input, select, button {
-      font-size: 0.8rem;
-    }
-  
-    label {
-      font-size: 0.9rem;
-    }
-  }
-  
+}
+
+/* Estilo para o botão botaoregistro */
+.botaoregistro {
+  padding: 10px 20px;  /* Tamanho do botão */
+  font-size: 1rem;     /* Tamanho da fonte */
+  font-weight: bold;   /* Negrito para o texto */
+  border-radius: 8px;  /* Bordas arredondadas */
+  border: none;        /* Remover borda */
+  cursor: pointer;     /* Mudar o cursor para pointer */
+  transition: background-color 0.3s ease, opacity 0.3s ease; /* Transições suaves */
+  background-color: #FF6600; /* Cor de fundo do botão */
+  color: white;        /* Cor do texto */
+}
+
+.botaoregistro:hover {
+  background-color: #FF6600; /* Cor mais escura no hover */
+}
+
+.botaoregistro:focus {
+  outline: none; /* Remover o contorno do foco */
+  box-shadow: 0 0 5px rgba(255, 165, 0, 0.7); /* Adicionar sombra laranja no foco */
+}
+
+/* Estilo para o botão desabilitado */
+.botaoregistro:disabled {
+  background-color: #cccccc; /* Cor de fundo mais suave */
+  color: #666666;             /* Cor do texto mais suave */
+  cursor: not-allowed;        /* Mostrar cursor de "não permitido" */
+  opacity: 0.7;               /* Tornar o botão um pouco transparente */
+}

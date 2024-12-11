@@ -83,15 +83,15 @@
   background-color: #FF6F00; /* Laranja */
   color: white;
   &:hover {
-    background-color:#FF6F00; /* Laranja mais escuro */
+    background-color: #e65100; /* Laranja mais escuro */
   }
 }
 
 .deleteButton {
-  background-color: #490c08;
+  background-color: #f44336;
   color: white;
   &:hover {
-    background-color: #490c08;
+    background-color: #d32f2f;
   }
 }
 
