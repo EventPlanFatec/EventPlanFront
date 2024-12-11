@@ -41,6 +41,8 @@ import EditarEvento from './pages/EditarEvento/EditarEvento';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import UploadAnuncio from './components/Anuncios/UploadAnuncio.jsx';
+import IngressoForm from './components/IngressoForm/IngressoForm.jsx';
+
 
 function App() {
   const [eventos, setEventos] = useState([
@@ -119,6 +121,7 @@ function App() {
                     <Route path="/my-tickets" element={<UsuarioIngresso />} />
                     <Route path="/editar-evento/:id" element={<EditarEvento />} />
                     <Route path="/upload-anuncio" element={<UploadAnuncio />} />
+                    <Route path="/ingresso-form" element={<IngressoForm />} />
                   </Routes>
                 </div>
                 <Footer />

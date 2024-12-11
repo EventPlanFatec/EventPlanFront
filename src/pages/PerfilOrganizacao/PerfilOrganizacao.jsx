@@ -6,7 +6,7 @@ import { getFirestore, doc, getDoc, updateDoc } from 'firebase/firestore';
 import axios from 'axios';
 
 const PerfilOrganizacao = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate();  // Inicializa o hook de navegação
   const [cnpj, setCnpj] = useState(null);
   const [uid, setUid] = useState(null);
   const [nome, setNome] = useState('');
@@ -133,6 +133,11 @@ const PerfilOrganizacao = () => {
     setOpenSnackbar(true);
   };
 
+  const handleAnnounce = () => {
+    // Redireciona para a página de upload de anúncio
+    navigate('/upload-anuncio');
+  };
+
   return (
     <div style={{ padding: '20px' }}>
       <Typography variant="h4" gutterBottom>
@@ -240,6 +245,15 @@ const PerfilOrganizacao = () => {
         style={{ marginTop: '20px', marginLeft: '10px' }}
       >
         Logout
+      </Button>
+
+      <Button 
+        variant="contained" 
+        color="secondary" 
+        onClick={handleAnnounce} 
+        style={{ marginTop: '20px', marginLeft: '10px' }}
+      >
+        Anunciar no site
       </Button>
 
       <Snackbar
