@@ -132,7 +132,7 @@ const Login = () => {
             variant="contained"
             fullWidth
             disabled={loading}
-            style={{ marginTop: '10px', backgroundColor: '#1976d2' }}
+            style={{ marginTop: '10px', backgroundColor: '#FF6600' }}
           >
             {loading ? 'Carregando...' : 'ENTRAR'}
           </Button>
