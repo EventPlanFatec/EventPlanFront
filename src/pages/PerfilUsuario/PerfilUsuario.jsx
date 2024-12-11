@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { getAuth, onAuthStateChanged, updateProfile } from 'firebase/auth';
-import { db, storage } from '../../firebase/config'; // Adicionando o storage
+import { db, storage } from '../../firebase/config';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage'; // Para upload e obter URL
-import { FaPen } from 'react-icons/fa'; // Ícone de lápis do React Icons
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { FaPen } from 'react-icons/fa';
+import { toast } from 'react-toastify'; // Importando o Toastify
+import 'react-toastify/dist/ReactToastify.css'; // Importando o CSS do Toastify
 import styles from "../PerfilUsuario/PerfilUsuario.module.css";
 
 const PerfilUsuario = () => {
@@ -18,10 +20,8 @@ const PerfilUsuario = () => {
   const [numeroCasa, setNumeroCasa] = useState('');
   const [cpf, setCpf] = useState('');
   const [dataNascimento, setDataNascimento] = useState('');
-  const [fotoPerfil, setFotoPerfil] = useState(null); // Estado para armazenar a imagem
+  const [fotoPerfil, setFotoPerfil] = useState(null);
   const [originalData, setOriginalData] = useState({});
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
   const [isUpdating, setIsUpdating] = useState(false);
   const [isModified, setIsModified] = useState(false);
 
@@ -66,31 +66,29 @@ const PerfilUsuario = () => {
   const handleSaveChanges = async (e) => {
     e.preventDefault();
     setIsUpdating(true);
-    setError('');
-    setSuccess('');
   
     try {
       let updatedPhotoURL = user.photoURL;
-  
+
       if (fotoPerfil && typeof fotoPerfil !== 'string') {
         const storageRef = ref(storage, `perfil/${user.uid}`);
         const uploadTask = uploadBytesResumable(storageRef, fotoPerfil);
-  
+
         await uploadTask;
         updatedPhotoURL = await getDownloadURL(uploadTask.snapshot.ref);
       }
-  
+
       await updateProfile(user, {
         displayName: `${nome} ${sobrenome}`,
         photoURL: updatedPhotoURL,
       });
-  
+
       const userDocRef = doc(db, 'usuarios', user.uid);
       const userDocSnap = await getDoc(userDocRef);
       const existingData = userDocSnap.exists() ? userDocSnap.data() : {};
-  
+
       const finalPhotoURL = updatedPhotoURL || existingData.photoURL || null;
-  
+
       await setDoc(userDocRef, {
         ...existingData,
         nome,
@@ -105,8 +103,10 @@ const PerfilUsuario = () => {
         photoURL: finalPhotoURL,
         email: user.email,
       });
-  
-      setSuccess('Perfil atualizado com sucesso!');
+
+      // Exibe mensagem de sucesso com Toastify
+      toast.success('Perfil atualizado com sucesso!');
+      
       setOriginalData({
         ...existingData,
         nome,
@@ -122,13 +122,12 @@ const PerfilUsuario = () => {
       });
       setIsModified(false);
     } catch (err) {
-      console.error('Erro ao atualizar perfil:', err.message);
-      setError('Erro ao atualizar perfil: ' + err.message);
+      // Exibe mensagem de erro com Toastify
+      toast.error(`Erro ao atualizar perfil: ${err.message}`);
     } finally {
       setIsUpdating(false);
     }
   };
-  
 
   if (loading) {
     return <p>Carregando...</p>;
@@ -141,10 +140,8 @@ const PerfilUsuario = () => {
   return (
     <div>
       <h1>Perfil do Usuário</h1>
-      <p><strong>UID:</strong> {user.uid}</p>
       <p><strong>Email:</strong> {user.email}</p>
 
-      {/* Exibir imagem de perfil, se existir */}
       <div>
         <label>Foto de Perfil:</label>
         {fotoPerfil ? (
@@ -206,9 +203,6 @@ const PerfilUsuario = () => {
           </button>
         </div>
       </form>
-
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {success && <p style={{ color: 'green' }}>{success}</p>}
     </div>
   );
 };

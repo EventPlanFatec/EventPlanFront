@@ -57,7 +57,7 @@ const Home = ({ preferences }) => {
     <Box>
       <Carousel items={carouselItems} />
       <Box className={styles.cardContainer}>
-        {filteredEventos.slice(0, 6).map(event => (
+        {filteredEventos.slice(0, 9).map(event => (
           <CardEvento key={event.id} event={event} />
         ))}
       </Box>

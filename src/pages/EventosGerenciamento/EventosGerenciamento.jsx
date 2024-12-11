@@ -30,8 +30,6 @@ const EventosGerenciamento = () => {
       }));
       console.log("Eventos encontrados:", eventosData);
       setEvents(eventosData);
-    } catch (error) {
-      console.error("Erro ao carregar eventos", error);
     } finally {
       setLoading(false);
     }
@@ -43,8 +41,6 @@ const EventosGerenciamento = () => {
     if (docSnap.exists()) {
       const orgData = docSnap.data();
       setCnpjEvento(orgData.cnpj);
-    } else {
-      console.error("Organização não encontrada para o usuário", userId);
     }
   };
 
@@ -56,7 +52,6 @@ const EventosGerenciamento = () => {
       setOpenSnackbar(true);
       fetchEvents();
     } catch (error) {
-      console.error("Erro ao excluir evento", error);
       setSnackbarMessage('Erro ao excluir evento');
       setSnackbarSeverity('error');
       setOpenSnackbar(true);

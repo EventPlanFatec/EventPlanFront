@@ -1,9 +1,11 @@
 .card {
-  border-radius: 25px;
+  border-radius: 15px; /* Diminui o arredondamento */
   width: 100%;
-  max-width: 560px;
+  width: 400px; /* Reduz a largura máxima */
+  height: 170px; /* Altura fixa do card */
   margin: 1rem;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden; /* Garante que a imagem não ultrapasse os limites */
 }
 
 .card:hover {
@@ -17,36 +19,38 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  border-radius: 25px 0 0 25px;
-  padding: 1rem;
+  border-radius: 15px 0 0 15px; /* Diminui o arredondamento */
+  padding: 0.5rem;
 }
 
 .cardRight {
   background-color: #e0e7f3;
-  border-radius: 0 25px 25px 0;
-  padding: 1rem;
+  border-radius: 0 15px 15px 0; /* Diminui o arredondamento */
+  padding: 0.5rem;
 }
 
 .cardInfo {
-  margin-top: 20px;
+  margin-top: 15px; /* Reduz o espaçamento */
 }
 
 .cardInfo p {
-  margin: 10px 0;
-  font-size: 16px;
+  margin: 8px 0; /* Reduz o espaçamento entre as linhas */
+  font-size: 14px; /* Reduz o tamanho da fonte */
   display: flex;
   align-items: center;
 }
 
 .image img {
   width: 100%;
-  height: auto;
-  border-radius: 25px;
+  height: 100%; /* Faz a imagem ter a mesma altura do card */
+  object-fit: cover; /* Garante que a imagem cubra toda a área sem distorcer */
+  border-radius: 15px; /* Diminui o arredondamento da imagem */
 }
 
 @media (max-width: 1024px) {
   .card {
     max-width: 100%;
+    margin: 0.5rem;
   }
 }
 
@@ -54,6 +58,7 @@
   .card {
     flex: 1 1 calc(50% - 2rem);
     margin: 0.5rem;
+    max-width: 100%;
   }
 }
 
@@ -61,10 +66,11 @@
   .card {
     flex: 1 1 calc(100% - 2rem);
     margin: 0.5rem;
+    max-width: 100%;
   }
 
   .cardInfo p {
-    font-size: 14px;
+    font-size: 12px; /* Reduz ainda mais o tamanho da fonte em dispositivos pequenos */
   }
 }
 
@@ -73,3 +79,4 @@
     flex: 1 1 calc(33.33% - 2rem);
   }
 }
+  

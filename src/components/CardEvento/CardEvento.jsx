@@ -21,7 +21,7 @@ const CardEvento = ({ event }) => {
           </Grid>
           <Grid item xs={12} md={7} className={styles.cardContentContainer}>
             <CardContent>
-              <Typography variant="h6" className={styles.cardTitle}>
+              <Typography variant="h7" className={styles.cardTitle}>
                 {event.nome}
               </Typography>
               <div className={styles.cardInfo}>

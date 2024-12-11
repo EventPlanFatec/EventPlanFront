@@ -8,18 +8,18 @@ export const salvarIngresso = async (ingressoData) => {
     const response = await axios.post(INGRESSOS_ENDPOINT, ingressoData);
     return response.data;
   } catch (error) {
-    console.error('Erro ao salvar ingresso:', error);
-    throw new Error('Falha ao salvar ingresso');
+    console.log('Erro ao salvar ingresso:', error); // Apenas loga o erro sem lançar
+    return null; // Retorna null em caso de erro
   }
 };
 
 export const listarIngressosPorEvento = async (eventoId) => {
   try {
     const response = await axios.get(`${INGRESSOS_ENDPOINT}/evento/${eventoId}`);
-    return response.data;
+    return response.data; // Se não houver ingressos, retornará um array vazio
   } catch (error) {
-    console.error('Erro ao listar ingressos:', error);
-    throw new Error('Falha ao listar ingressos');
+    console.log('Erro ao listar ingressos:', error); // Apenas loga o erro sem lançar
+    return []; // Retorna um array vazio em vez de lançar um erro
   }
 };
 
@@ -27,8 +27,8 @@ export const cancelarIngresso = async (id) => {
   try {
     await axios.delete(`${INGRESSOS_ENDPOINT}/${id}`);
   } catch (error) {
-    console.error('Erro ao cancelar ingresso:', error);
-    throw new Error('Falha ao cancelar ingresso');
+    console.log('Erro ao cancelar ingresso:', error); // Apenas loga o erro sem lançar
+    return false; // Retorna false para indicar falha sem lançar um erro
   }
 };
 
@@ -37,8 +37,8 @@ export const editarIngresso = async (id, ingressoData) => {
     const response = await axios.put(`${INGRESSOS_ENDPOINT}/${id}`, ingressoData);
     return response.data;
   } catch (error) {
-    console.error('Erro ao editar ingresso:', error);
-    throw new Error('Falha ao editar ingresso');
+    console.log('Erro ao editar ingresso:', error); // Apenas loga o erro sem lançar
+    return null; // Retorna null em caso de erro
   }
 };
 
@@ -47,8 +47,7 @@ export const listarTiposIngressosPorEvento = async (eventoId) => {
     const response = await axios.get(`${INGRESSOS_ENDPOINT}/tipos/${eventoId}`);
     return response.data;
   } catch (error) {
-    console.error('Erro ao listar tipos de ingressos:', error);
-    throw new Error('Falha ao listar tipos de ingressos');
+    console.log('Erro ao listar tipos de ingressos:', error); // Apenas loga o erro sem lançar
+    return []; // Retorna um array vazio em vez de lançar um erro
   }
 };
-

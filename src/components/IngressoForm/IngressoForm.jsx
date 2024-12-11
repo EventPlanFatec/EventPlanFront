@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { TextField, Button } from '@mui/material';
 import { toast } from 'react-toastify';
-import { salvarIngresso, editarIngresso } from '../../services/IngressosService'; 
+import { salvarIngresso, editarIngresso, listarIngressosPorEvento } from '../../services/IngressosService'; 
 
 const IngressoForm = ({ eventoId, initialData, onClose, setIngressos }) => {
   const [formData, setFormData] = useState({
@@ -61,10 +61,22 @@ const IngressoForm = ({ eventoId, initialData, onClose, setIngressos }) => {
         setIngressos(prev => [...prev, novoIngresso]); // Atualiza a lista de ingressos
       }
 
+      // Após salvar, faz a busca para atualizar a lista de ingressos
+      await fetchTickets(); // Chama a função para atualizar a lista de ingressos
       onClose();
     } catch (error) {
       console.error('Erro ao salvar ingresso:', error);
       toast.error('Falha ao salvar ingresso. Tente novamente.');
+    }
+  };
+
+  const fetchTickets = async () => {
+    try {
+      const ingressos = await listarIngressosPorEvento(eventoId);
+      setIngressos(ingressos); // Atualiza a lista de ingressos
+    } catch (error) {
+      console.error('Erro ao buscar ingressos:', error);
+      toast.error('Falha ao carregar ingressos.');
     }
   };
 

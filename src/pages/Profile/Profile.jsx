@@ -12,6 +12,8 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { usePreferences } from '../../context/PreferencesContext';
+import { toast, ToastContainer } from 'react-toastify'; // Importando o Toastify
+import 'react-toastify/dist/ReactToastify.css'; // Estilo do Toastify
 
 const Profile = () => {
   const { user, logout } = useAuth();
@@ -25,8 +27,10 @@ const Profile = () => {
     try {
       await logout();
       navigate('/');
+      toast.success('Logout realizado com sucesso!'); // Mensagem de sucesso no logout
     } catch (error) {
       console.error('Erro ao fazer logout:', error.message);
+      toast.error(`Erro ao fazer logout: ${error.message}`); // Mensagem de erro no logout
     }
   };
 
@@ -137,6 +141,7 @@ const Profile = () => {
           </NavLink>
         )}
       </div>
+
     </main>
   );
 };
