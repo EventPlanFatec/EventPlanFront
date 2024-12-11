@@ -16,10 +16,7 @@ const EditarEvento = () => {
     horarioFim: "",
     lotacaoMaxima: "",
     tipo: "",
-    imagem01: "",
-    imagem02: "",
-    imagem03: "",
-    video: "",
+    imagem: "", 
     genero: "",
   });
   const [loading, setLoading] = useState(true);
@@ -101,7 +98,9 @@ const EditarEvento = () => {
           fullWidth
           margin="normal"
           value={evento.cnpjOrganizacao}
-          onChange={(e) => setEvento({ ...evento, cnpjOrganizacao: e.target.value })}
+          InputProps={{
+            readOnly: true, // Torna o campo somente leitura
+          }}
         />
         <TextField
           label="Data de Início"
@@ -150,34 +149,7 @@ const EditarEvento = () => {
           value={evento.tipo}
           onChange={(e) => setEvento({ ...evento, tipo: e.target.value })}
         />
-        <TextField
-          label="Imagem 01 (URL)"
-          fullWidth
-          margin="normal"
-          value={evento.imagem01}
-          onChange={(e) => setEvento({ ...evento, imagem01: e.target.value })}
-        />
-        <TextField
-          label="Imagem 02 (URL)"
-          fullWidth
-          margin="normal"
-          value={evento.imagem02}
-          onChange={(e) => setEvento({ ...evento, imagem02: e.target.value })}
-        />
-        <TextField
-          label="Imagem 03 (URL)"
-          fullWidth
-          margin="normal"
-          value={evento.imagem03}
-          onChange={(e) => setEvento({ ...evento, imagem03: e.target.value })}
-        />
-        <TextField
-          label="Vídeo (URL)"
-          fullWidth
-          margin="normal"
-          value={evento.video}
-          onChange={(e) => setEvento({ ...evento, video: e.target.value })}
-        />
+
         <TextField
           label="Gênero"
           fullWidth

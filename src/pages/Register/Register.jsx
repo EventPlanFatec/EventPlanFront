@@ -293,7 +293,7 @@ const Register = () => {
         )}
 
         <div>
-          <button type="submit" disabled={loading}>Registrar</button>
+          <button type="submit" class="botaoregistro" disabled={loading}>Registrar</button>
         </div>
       </form>
     </div>

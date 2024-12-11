@@ -3,6 +3,7 @@ import { Button, Typography, TextField, MenuItem, Select, InputLabel, FormContro
 import { useNavigate } from 'react-router-dom';
 import { getAuth } from 'firebase/auth';
 import { getFirestore, doc, getDoc, updateDoc } from 'firebase/firestore';
+import axios from 'axios';
 
 const PerfilOrganizacao = () => {
   const navigate = useNavigate();
@@ -45,12 +46,15 @@ const PerfilOrganizacao = () => {
       const orgData = docSnap.data();
       setCnpj(orgData.cnpj);
       setNome(orgData.nome);
-      setEstado(orgData.estado);
-      setCidade(orgData.cidade);
+      setEstado(orgData.estado);  // Recebe o estado do Firestore
+      setCidade(orgData.cidade);  // Recebe a cidade do Firestore
       setCep(orgData.cep);
       setTipoLogradouro(orgData.tipoLogradouro);
       setLogradouro(orgData.logradouro);
       setNumeroPredial(orgData.numeroPredial);
+
+      // Caso o estado seja alterado pelo Firestore, carregar as cidades correspondentes
+      handleEstadoChange({ target: { value: orgData.estado } });
     } else {
       showSnackbar("Nenhuma organização encontrada para o usuário.", 'error');
     }
@@ -235,18 +239,15 @@ const PerfilOrganizacao = () => {
         onClick={handleLogout} 
         style={{ marginTop: '20px', marginLeft: '10px' }}
       >
-        Sair
+        Logout
       </Button>
 
-      <Snackbar 
-        open={openSnackbar} 
-        autoHideDuration={6000} 
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
         onClose={() => setOpenSnackbar(false)}
       >
-        <Alert 
-          severity={snackbarSeverity} 
-          onClose={() => setOpenSnackbar(false)}
-        >
+        <Alert onClose={() => setOpenSnackbar(false)} severity={snackbarSeverity} sx={{ width: '100%' }}>
           {snackbarMessage}
         </Alert>
       </Snackbar>

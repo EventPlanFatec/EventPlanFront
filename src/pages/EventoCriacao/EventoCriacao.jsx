@@ -280,7 +280,7 @@ const EventoCriacao = () => {
         />
 
         <Box sx={{ marginTop: 0, display: 'flex', justifyContent: 'space-between' }}>
-          <Button variant="contained"  type="submit" className={styles.salvarEventoButton}>
+          <Button variant="contained"  type="submit" className={styles.salvarEventoButton2}>
             Salvar Evento
           </Button>
           <Button variant="contained"  className={styles.criarIngressoButton}>
