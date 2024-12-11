@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth, db, storage } from '../../firebase/config'; // Importando storage para o Firebase Storage
+import { auth, db, storage } from '../../firebase/config';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import styles from '../Register/Register.module.css';
+import ReactInputMask from 'react-input-mask';
 
 const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState(''); // Para confirmar a senha
   const [nome, setNome] = useState('');
   const [cnpj, setCnpj] = useState('');
   const [cpf, setCpf] = useState('');
@@ -20,18 +23,21 @@ const Register = () => {
   const [numeroPredial, setNumeroPredial] = useState('');
   const [complemento, setComplemento] = useState('');
   const [tipoUsuario, setTipoUsuario] = useState('usuariofinal');
-  const [fotoPerfil, setFotoPerfil] = useState(null); // Para armazenar a foto de perfil
+  const [fotoPerfil, setFotoPerfil] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  const passwordValidation = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!email || !password || (tipoUsuario === 'usuariofinal' && (!nome || !cpf || !sobrenome || !dataNascimento)) || 
+    if (!email || !password || !confirmPassword || password !== confirmPassword || !passwordValidation.test(password) || 
+        (tipoUsuario === 'usuariofinal' && (!nome || !cpf || !sobrenome || !dataNascimento)) || 
         (tipoUsuario === 'organizacao' && (!nome || !cnpj)) || 
         (tipoUsuario === 'adm' && (!nome || !cpf || !sobrenome || !dataNascimento))) {
-      setError('Por favor, preencha todos os campos obrigatórios');
+      setError('Por favor, preencha todos os campos obrigatórios corretamente.');
       return;
     }
 
@@ -39,19 +45,16 @@ const Register = () => {
     setError('');
 
     try {
-      // Criando o usuário no Firebase Authentication
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
       let userDocRef;
-      let fotoURL = ''; // URL da foto de perfil
+      let fotoURL = '';
 
       if (fotoPerfil) {
-        // Upload da foto de perfil para o Firebase Storage
         const storageRef = ref(storage, `perfil/${user.uid}`);
         const uploadTask = uploadBytesResumable(storageRef, fotoPerfil);
 
-        // Esperando o upload da imagem ser concluído
         await uploadTask.then(() => {
           return getDownloadURL(uploadTask.snapshot.ref);
         }).then((downloadURL) => {
@@ -77,7 +80,7 @@ const Register = () => {
             logradouro: logradouro,
             numeroPredial: numeroPredial,
             complemento: complemento,
-            fotoPerfil: fotoURL, // Salvando a URL da foto
+            fotoPerfil: fotoURL,
             createdAt: new Date(),
           });
         }
@@ -98,7 +101,7 @@ const Register = () => {
             logradouro: logradouro,
             numeroPredial: numeroPredial,
             complemento: complemento,
-            fotoPerfil: fotoURL, // Salvando a URL da foto
+            fotoPerfil: fotoURL,
             createdAt: new Date(),
           });
         }
@@ -119,7 +122,7 @@ const Register = () => {
             logradouro: logradouro,
             numeroPredial: numeroPredial,
             complemento: complemento,
-            fotoPerfil: fotoURL, // Salvando a URL da foto
+            fotoPerfil: fotoURL,
             createdAt: new Date(),
           });
         }
@@ -159,11 +162,19 @@ const Register = () => {
           />
         </div>
         <div>
+          <label>Confirme sua Senha:</label>
+          <input
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            placeholder="Confirme sua senha"
+          />
+        </div>
+        <div>
           <label>Tipo de Usuário:</label>
           <select onChange={(e) => setTipoUsuario(e.target.value)} value={tipoUsuario}>
             <option value="usuariofinal">Usuário Final</option>
             <option value="organizacao">Organização</option>
-            <option value="adm">Administrador</option>
           </select>
         </div>
 
@@ -181,7 +192,8 @@ const Register = () => {
             </div>
             <div>
               <label>CNPJ:</label>
-              <input
+              <ReactInputMask
+                mask="99.999.999/9999-99"
                 type="text"
                 value={cnpj}
                 onChange={(e) => setCnpj(e.target.value)}
@@ -204,7 +216,8 @@ const Register = () => {
             </div>
             <div>
               <label>CPF:</label>
-              <input
+              <ReactInputMask
+                mask="999.999.999-99"
                 type="text"
                 value={cpf}
                 onChange={(e) => setCpf(e.target.value)}
@@ -251,7 +264,8 @@ const Register = () => {
             </div>
             <div>
               <label>CPF:</label>
-              <input
+              <ReactInputMask
+                mask="999.999.999-99"
                 type="text"
                 value={cpf}
                 onChange={(e) => setCpf(e.target.value)}
@@ -275,19 +289,12 @@ const Register = () => {
                 onChange={(e) => setDataNascimento(e.target.value)}
               />
             </div>
-            <div>
-              <label>Foto de Perfil:</label>
-              <input
-                type="file"
-                onChange={(e) => setFotoPerfil(e.target.files[0])}
-              />
-            </div>
           </>
         )}
 
-        <button type="submit" disabled={loading}>
-          {loading ? 'Registrando...' : 'Registrar'}
-        </button>
+        <div>
+          <button type="submit" disabled={loading}>Registrar</button>
+        </div>
       </form>
     </div>
   );
