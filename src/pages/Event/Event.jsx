@@ -1,22 +1,87 @@
-import { useParams } from 'react-router-dom';
-import { Container, Grid, Typography, Button, Box, TextField, Tooltip, MenuItem } from '@mui/material';
-import EventRating from '../../components/Avaliacao/Avaliacao';
-import FavoriteEvents from '../../components/Favoritos/Favoritos';
-import { useEventData, useTicketSelection } from '../../hooks/useEventData';
-import styles from './Event.module.css';
+import { useParams } from "react-router-dom";
+import {
+  Container,
+  Grid,
+  Typography,
+  Button,
+  Box,
+  TextField,
+  MenuItem,
+} from "@mui/material";
+import EventRating from "../../components/Avaliacao/Avaliacao";
+import { useEventData, useTicketSelection } from "../../hooks/useEventData";
+import { listarIngressosPorEvento } from "../../services/IngressosService";
+import { useEffect, useState } from "react";
+import { useCart } from "../../context/CartContext";
+import { toast } from "react-toastify";
+import styles from "./Event.module.css";
 
 const Event = () => {
   const { id } = useParams();
-  const { eventData, ratings, averageRating } = useEventData(id);
+  const { eventData } = useEventData(id);
   const {
     ticketType,
     ticketQuantity,
     showConfirmation,
     handleTicketTypeChange,
     handleTicketQuantityChange,
-    handleAddToCart,
-    getCartSummary,
   } = useTicketSelection();
+
+  const { addToCart } = useCart();
+
+  const [tickets, setTickets] = useState([]);
+  const [ticketPrice, setTicketPrice] = useState(0); 
+
+  useEffect(() => {
+    const fetchTickets = async () => {
+      try {
+        const ticketsData = await listarIngressosPorEvento(id);
+        setTickets(ticketsData);
+      } catch (error) {
+        console.error("Erro ao buscar ingressos:", error);
+      }
+    };
+
+    if (id) {
+      fetchTickets();
+    }
+  }, [id]);
+
+  const calculateTotalPrice = () => {
+    if (ticketType && ticketPrice > 0 && ticketQuantity > 0) {
+      return ticketPrice * ticketQuantity;
+    }
+    return 0;
+  };
+
+  const handleTicketTypeChangeWithPrice = async (event) => {
+    handleTicketTypeChange(event);
+    const selectedType = event.target.value;
+
+    const selectedTicket = tickets.find(
+      (ticket) => ticket.tipoIngresso === selectedType
+    );
+    setTicketPrice(selectedTicket ? selectedTicket.valor : 0);
+  };
+
+  const handleAddToCartWithPrice = () => {
+    if (ticketType && ticketQuantity > 0 && ticketPrice) {
+      const totalPrice = calculateTotalPrice();
+
+      const cartItem = {
+        id: `${id}-${ticketType}`,
+        nome: eventData.nome,
+        tipoIngresso: ticketType,
+        quantidade: ticketQuantity,
+        preco: ticketPrice,
+        total: totalPrice,
+      };
+
+      addToCart(cartItem);
+      toast.success("Ingresso adicionado ao carrinho!");
+
+    }
+  };
 
   if (!eventData) return <div>Carregando...</div>;
 
@@ -41,32 +106,33 @@ const Event = () => {
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <div className={styles.imageContainer}>
-            <img src={eventData.imgBanner} alt={eventData.nome} className={styles.eventImage} />
+            <img
+              src={eventData.imgBanner}
+              alt={eventData.nome}
+              className={styles.eventImage}
+            />
           </div>
         </Grid>
 
-        <Grid item xs={12} container alignItems="center" justifyContent="space-between">
+        <Grid
+          item
+          xs={12}
+          container
+          alignItems="center"
+          justifyContent="space-between"
+        >
           <Grid item>
             <Typography variant="h5" gutterBottom className={styles.eventTitle}>
               {eventData.nome}
             </Typography>
           </Grid>
-          <Grid item>
-            <Tooltip title="Adicionar aos Favoritos" arrow>
-              <div>
-                <FavoriteEvents
-                  userId="user-id"
-                  eventId={id}
-                  eventName={eventData.nome}
-                  size="small" // Reduzido para tamanho pequeno
-                />
-              </div>
-            </Tooltip>
-          </Grid>
         </Grid>
 
         <Grid item xs={12}>
-          <Typography variant="body1" className={`${styles.description} ${styles.marginTop20}`}>
+          <Typography
+            variant="body1"
+            className={`${styles.description} ${styles.marginTop20}`}
+          >
             {eventData.descricao}
           </Typography>
         </Grid>
@@ -82,60 +148,96 @@ const Event = () => {
           </Box>
         </Grid>
 
-        <Grid item xs={12} md={10}>
-          <Box display="flex" flexDirection="column" alignItems="flex-start" width="100%">
-            <Typography variant="h6" gutterBottom>
-              Ingressos
-            </Typography>
-            <Typography variant="body1" style={{ marginBottom: 16 }}>
-              A partir de <strong>R$ {eventData.valorMin}</strong>
-            </Typography>
-            <TextField
-              select
-              label="Tipo de Ingresso"
-              value={ticketType}
-              onChange={handleTicketTypeChange}
-              fullWidth
-              variant="outlined"
-              margin="normal"
-            >
-              <MenuItem value="normal">Normal</MenuItem>
-              <MenuItem value="VIP">VIP</MenuItem>
-              <MenuItem value="estudante">Estudante</MenuItem>
-            </TextField>
-            <TextField
-              type="number"
-              label="Quantidade"
-              value={ticketQuantity}
-              onChange={handleTicketQuantityChange}
-              fullWidth
-              variant="outlined"
-              margin="normal"
-              inputProps={{ min: 1 }}
-            />
-          </Box>
-        </Grid>
+        <Grid item xs={12}>
+          <Typography variant="h6" gutterBottom>
+            Ingressos
+          </Typography>
+          <Typography variant="body1" style={{ marginBottom: 16 }}>
+            A partir de <strong>R$ {eventData.valorMin}</strong>
+          </Typography>
 
-        <Grid item xs={12} md={2}>
-          <Box
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            justifyContent="center"
-            style={{ marginTop: '4rem' }}
-          >
-            <Typography variant="body2" style={{ marginBottom: 16 }}>
-              {getCartSummary()}
-            </Typography>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => handleAddToCart(eventData.valorMin)}
-              style={{ width: '100%' }}
-            >
-              Adicionar ao Carrinho
-            </Button>
-          </Box>
+          <Grid container spacing={2}>
+            {/* Ticket Selection Section */}
+            <Grid item xs={12} md={6}>
+              <Box 
+                className={styles.ticketsContainer}
+              >
+                <Typography variant="h6" style={{ marginBottom: 16 }}>
+                  Selecionar Ingressos
+                </Typography>
+                
+                {/* Ticket Quantity */}
+                <TextField
+                  type="number"
+                  label="Quantidade"
+                  value={ticketQuantity || 1}
+                  onChange={handleTicketQuantityChange}
+                  fullWidth
+                  variant="outlined"
+                  margin="normal"
+                  inputProps={{ min: 1 }}
+                />
+
+                {/* Ticket Type */}
+                <TextField
+                  select
+                  label="Tipo de Ingresso"
+                  value={ticketType}
+                  onChange={handleTicketTypeChangeWithPrice}
+                  fullWidth
+                  variant="outlined"
+                  margin="normal"
+                >
+                  {tickets.length > 0 ? (
+                    tickets.map((ticket) => (
+                      <MenuItem
+                        key={ticket.tipoIngresso}
+                        value={ticket.tipoIngresso}
+                      >
+                        {ticket.tipoIngresso} - R${" "}
+                        {ticket.valor
+                          ? ticket.valor.toFixed(2)
+                          : "Preço indisponível"}
+                      </MenuItem>
+                    ))
+                  ) : (
+                    <MenuItem value="">Nenhum tipo de ingresso disponível</MenuItem>
+                  )}
+                </TextField>
+              </Box>
+            </Grid>
+
+            {/* Cart and Total Section */}
+            <Grid item xs={12} md={6}>
+              <Box 
+                className={styles.ticketsContainer}
+              >
+                <Typography variant="h6" style={{ marginBottom: 16 }}>
+                  Resumo da Compra
+                </Typography>
+                
+                {ticketType && (
+                  <>
+                    <Typography variant="body1" style={{ marginBottom: 8 }}>
+                      Preço por ingresso: R$ {ticketPrice.toFixed(2)}
+                    </Typography>
+                    <Typography variant="body1" style={{ marginBottom: 16 }}>
+                      Total: R$ {calculateTotalPrice().toFixed(2)}
+                    </Typography>
+                  </>
+                )}
+
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleAddToCartWithPrice}
+                  disabled={!ticketType || ticketQuantity === 0}
+                >
+                  Adicionar ao Carrinho
+                </Button>
+              </Box>
+            </Grid>
+          </Grid>
         </Grid>
 
         <Grid item xs={12}>

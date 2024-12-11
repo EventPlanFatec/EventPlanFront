@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { db } from "../../firebase/config";
-import { getDocs, setDoc, doc, collection } from "firebase/firestore";
+import { getDocs, setDoc, deleteDoc, doc, collection } from "firebase/firestore";
 import { useAuth } from "../../context/AuthContext";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { IconButton, List, ListItemText, Tooltip, Typography, Box, Card, CardContent, Container } from "@mui/material";
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
-const FavoriteEvents = ({ userId, eventId, eventName }) => {
+const FavoriteEvents = ({ userId }) => {
     const [favorites, setFavorites] = useState([]);
     const { user } = useAuth();
 
+    // Fetch the user's favorite events from Firestore
     const fetchFavorites = async () => {
         try {
             const querySnapshot = await getDocs(collection(db, `users/${userId}/favorites`));
@@ -27,19 +29,30 @@ const FavoriteEvents = ({ userId, eventId, eventName }) => {
         }
     }, [user]);
 
-    const handleFavorite = async () => {
+    // Add or remove event from favorites
+    const handleFavorite = async (eventId, eventName) => {
         if (!user) {
             console.error("Usuário não autenticado.");
             return;
         }
 
+        const isFavorited = favorites.some(fav => fav.eventId === eventId);
+
         try {
-            await setDoc(doc(db, `users/${user.uid}/favorites/${eventId}`), { eventId, eventName });
-            fetchFavorites();
-            toast.success("Evento adicionado aos favoritos!");
+            if (isFavorited) {
+                // Remove from favorites
+                await deleteDoc(doc(db, `users/${user.uid}/favorites/${eventId}`));
+                setFavorites(prevFavorites => prevFavorites.filter(fav => fav.eventId !== eventId));
+                toast.success("Evento removido dos favoritos!");
+            } else {
+                // Add to favorites
+                await setDoc(doc(db, `users/${user.uid}/favorites/${eventId}`), { eventId, eventName });
+                setFavorites(prevFavorites => [...prevFavorites, { eventId, eventName }]);
+                toast.success("Evento adicionado aos favoritos!");
+            }
         } catch (error) {
-            console.error("Falha ao adicionar evento como Favorito.", error);
-            toast.error("Falha ao adicionar evento como Favorito.");
+            console.error("Falha ao atualizar favoritos.", error);
+            toast.error("Falha ao atualizar favoritos.");
         }
     };
 
@@ -59,7 +72,7 @@ const FavoriteEvents = ({ userId, eventId, eventName }) => {
                                 />
                                 <Tooltip title="Remover dos Favoritos">
                                     <IconButton
-                                        onClick={() => handleFavorite(favorite.eventId)}
+                                        onClick={() => handleFavorite(favorite.eventId, favorite.eventName)}
                                         color="error"
                                         sx={{
                                             fontSize: '1.5rem',
@@ -99,7 +112,7 @@ const FavoriteEvents = ({ userId, eventId, eventName }) => {
                         }}
                     >
                         <IconButton
-                            onClick={handleFavorite}
+                            onClick={() => handleFavorite(eventId, eventName)}
                             sx={{
                                 fontSize: '2rem',
                                 color: '#fff',
@@ -108,7 +121,7 @@ const FavoriteEvents = ({ userId, eventId, eventName }) => {
                                 },
                             }}
                         >
-                            <FavoriteIcon />
+                            <FavoriteBorderIcon />
                         </IconButton>
                     </Box>
                 </Tooltip>

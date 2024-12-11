@@ -27,12 +27,13 @@ const EventoForm = ({
   const [formData, setFormData] = useState({
     nome: '',
     date: new Date().toISOString().split('T')[0],
-    description: '',
-    location: '',
-    type: '',
-    capacity: '',
-    price: '',
-    imageUrl: null
+    descricao: '',
+    local: '',
+    tipo: '',
+    capacidade: '',
+    valorMin: '',
+    img: '',
+    imgBanner: ''
   });
   const [formErrors, setFormErrors] = useState([]);
   const [imageUpload, setImageUpload] = useState(null);
@@ -46,28 +47,29 @@ const EventoForm = ({
         date: initialData.date instanceof Date 
           ? initialData.date.toISOString().split('T')[0] 
           : new Date(initialData.date).toISOString().split('T')[0],
-        description: initialData.description || '',
-        location: initialData.location || '',
-        type: initialData.type || '',
-        capacity: initialData.capacity || '',
-        price: initialData.price || '',
-        imageUrl: initialData.imageUrl || null
+        descricao: initialData.descricao || '',
+        local: initialData.local || '',
+        tipo: initialData.tipo || '',
+        capacidade: initialData.capacidade || '',
+        valorMin: initialData.valorMin || '',
+        img: initialData.img || '',
+        imgBanner: initialData.imgBanner || '',
       });
     } else {
       // Reset to default values when no initial data
       setFormData({
         nome: '',
         date: new Date().toISOString().split('T')[0],
-        description: '',
-        location: '',
-        type: '',
-        capacity: '',
-        price: '',
-        imageUrl: null
+        descricao: '',
+        local: '',
+        tipo: '',
+        capacidade: '',
+        valorMin: '',
+        img: '',
+        imgBanner: ''
       });
     }
     
-    // Reset other states
     setFormErrors([]);
     setImageUpload(null);
     setImageUploadProgress(0);
@@ -78,7 +80,8 @@ const EventoForm = ({
     { value: 'workshop', label: 'Workshop' },
     { value: 'palestra', label: 'Palestra' },
     { value: 'curso', label: 'Curso' },
-    { value: 'outro', label: 'Outro' }
+    { value: 'outro', label: 'Outro' },
+    { value: 'show', label: 'show' }
   ];
 
   const handleImageUpload = () => {
@@ -103,7 +106,7 @@ const EventoForm = ({
           const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
           setFormData(prev => ({
             ...prev,
-            imageUrl: downloadURL
+            img: downloadURL
           }));
           setImageUploadProgress(0);
           toast.success('Imagem carregada com sucesso');
@@ -131,12 +134,11 @@ const EventoForm = ({
 
   const handleSubmit = () => {
     try {
-      // Converter campos numéricos
       const eventoData = {
         ...formData,
         date: new Date(formData.date),
-        capacity: formData.capacity ? parseInt(formData.capacity) : null,
-        price: formData.price ? parseFloat(formData.price) : null
+        capacidade: formData.capacidade ? parseInt(formData.capacidade) : null,
+        valorMin: formData.valorMin ? parseFloat(formData.valorMin) : null
       };
 
       const eventoModel = new EventoModel(eventoData);
@@ -194,19 +196,19 @@ const EventoForm = ({
         />
         <TextField
           margin="dense"
-          name="location"
+          name="local"
           label="Local"
           fullWidth
-          value={formData.location}
+          value={formData.local}
           onChange={handleInputChange}
         />
         <TextField
           margin="dense"
-          name="type"
+          name="tipo"
           label="Tipo de Evento"
           fullWidth
           select
-          value={formData.type}
+          value={formData.tipo}
           onChange={handleInputChange}
         >
           {tiposEvento.map((option) => (
@@ -217,32 +219,32 @@ const EventoForm = ({
         </TextField>
         <TextField
           margin="dense"
-          name="description"
+          name="descricao"
           label="Descrição"
           multiline
           rows={4}
           fullWidth
-          value={formData.description}
+          value={formData.descricao}
           onChange={handleInputChange}
           required
         />
         <TextField
           margin="dense"
-          name="capacity"
+          name="capacidade"
           label="Capacidade"
           type="number"
           fullWidth
-          value={formData.capacity}
+          value={formData.capacidade}
           onChange={handleInputChange}
           InputProps={{ inputProps: { min: 0 } }}
         />
         <TextField
           margin="dense"
-          name="price"
+          name="valorMin"
           label="Preço"
-          type="number"
+          type="string"
           fullWidth
-          value={formData.price}
+          value={formData.valorMin}
           onChange={handleInputChange}
           InputProps={{ 
             inputProps: { min: 0, step: 0.01 },
@@ -295,11 +297,11 @@ const EventoForm = ({
             </Box>
           )}
 
-          {formData.imageUrl && (
+          {formData.img && (
             <Box sx={{ mt: 2, maxWidth: 300 }}>
               <Typography variant="subtitle2">Imagem Carregada:</Typography>
               <img 
-                src={formData.imageUrl} 
+                src={formData.img} 
                 alt="Evento" 
                 style={{ 
                   maxWidth: '100%', 
@@ -312,15 +314,13 @@ const EventoForm = ({
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="secondary">
-          Cancelar
-        </Button>
+        <Button onClick={onClose}>Cancelar</Button>
         <Button onClick={handleSubmit} color="primary">
-          Salvar
+          {initialData ? 'Salvar' : 'Criar'}
         </Button>
       </DialogActions>
     </Dialog>
   );
-};
+  };
 
 export default EventoForm;

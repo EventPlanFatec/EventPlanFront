@@ -15,20 +15,11 @@ export const salvarIngresso = async (ingressoData) => {
 
 export const listarIngressosPorEvento = async (eventoId) => {
   try {
-    const response = await axios.get(`${INGRESSOS_ENDPOINT}/${eventoId}`);
+    const response = await axios.get(`${INGRESSOS_ENDPOINT}/evento/${eventoId}`);
     return response.data;
   } catch (error) {
     console.error('Erro ao listar ingressos:', error);
     throw new Error('Falha ao listar ingressos');
-  }
-};
-
-export const editarIngresso = async (id, ingressoData) => {
-  try {
-    await axios.put(`${INGRESSOS_ENDPOINT}/${id}`, ingressoData);
-  } catch (error) {
-    console.error('Erro ao editar ingresso:', error);
-    throw new Error('Falha ao editar ingresso');
   }
 };
 
@@ -40,3 +31,24 @@ export const cancelarIngresso = async (id) => {
     throw new Error('Falha ao cancelar ingresso');
   }
 };
+
+export const editarIngresso = async (id, ingressoData) => {
+  try {
+    const response = await axios.put(`${INGRESSOS_ENDPOINT}/${id}`, ingressoData);
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao editar ingresso:', error);
+    throw new Error('Falha ao editar ingresso');
+  }
+};
+
+export const listarTiposIngressosPorEvento = async (eventoId) => {
+  try {
+    const response = await axios.get(`${INGRESSOS_ENDPOINT}/tipos/${eventoId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao listar tipos de ingressos:', error);
+    throw new Error('Falha ao listar tipos de ingressos');
+  }
+};
+
