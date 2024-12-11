@@ -1,7 +1,8 @@
 .carousel {
   position: relative;
   overflow: hidden;
-  width: 100%;
+  width: 75%;
+  margin: 0 auto; /* Centraliza o carrossel horizontalmente */
 }
 
 .carouselContainer {
@@ -78,6 +79,9 @@
 }
 
 @media (max-width: 600px) {
+  .carousel {
+    width: 90%; /* Ajusta para telas menores */
+  }
   .carouselButton {
     padding: 10px;
   }
