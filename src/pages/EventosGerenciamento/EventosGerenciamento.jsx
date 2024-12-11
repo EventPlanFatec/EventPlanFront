@@ -1,64 +1,57 @@
 import React, { useEffect, useState } from "react";
-import { db } from "../../firebase/config"; // Importando a configuração do Firebase
-import { collection, getDocs, doc, getDoc, deleteDoc } from "firebase/firestore"; // Importando funções do Firestore
-import { Button, Card, CardContent, Typography, Box, Snackbar, Alert } from "@mui/material"; 
+import { db } from "../../firebase/config";
+import { collection, getDocs, doc, getDoc, deleteDoc } from "firebase/firestore";
+import { Button, Card, CardContent, Typography, Box, Snackbar, Alert } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import styles from "./EventosGerenciamento.module.css"; // Importando o módulo CSS
+import styles from "./EventosGerenciamento.module.css";
 import { getAuth } from "firebase/auth";
 
 const EventosGerenciamento = () => {
-  const [events, setEvents] = useState([]); // Estado para armazenar os eventos
+  const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
   const [openSnackbar, setOpenSnackbar] = useState(false);
-  const [userIdEvento, setUserIdEvento] = useState(null); // Variável para armazenar o UID do usuário
-  const [cnpjEvento, setCnpjEvento] = useState(null); // Variável para armazenar o CNPJ da organização
+  const [userIdEvento, setUserIdEvento] = useState(null);
+  const [cnpjEvento, setCnpjEvento] = useState(null);
   const navigate = useNavigate();
 
-  // Função para buscar todos os eventos
   const fetchEvents = async () => {
     try {
       console.log("Buscando todos os eventos...");
-
-      const eventosRef = collection(db, "Eventos"); // Referência para a coleção "Eventos"
-      const querySnapshot = await getDocs(eventosRef); // Obter todos os documentos na coleção
-
+      const eventosRef = collection(db, "Eventos");
+      const querySnapshot = await getDocs(eventosRef);
       const eventosData = querySnapshot.docs.map((doc) => ({
-        id: doc.id, // Incluindo o ID do documento
-        ...doc.data(), // Incluindo os dados do documento
+        id: doc.id,
+        ...doc.data(),
       }));
-
       console.log("Eventos encontrados:", eventosData);
-      setEvents(eventosData); // Atualiza o estado com os eventos encontrados
+      setEvents(eventosData);
     } catch (error) {
       console.error("Erro ao carregar eventos", error);
     } finally {
-      setLoading(false); // Finaliza o carregamento
+      setLoading(false);
     }
   };
 
-  // Função para buscar o CNPJ da organização usando o UID do usuário
   const fetchCNPJ = async (userId) => {
     const orgDocRef = doc(db, "organizacao", userId);
     const docSnap = await getDoc(orgDocRef);
-
     if (docSnap.exists()) {
       const orgData = docSnap.data();
-      setCnpjEvento(orgData.cnpj); // Armazena o CNPJ no estado
+      setCnpjEvento(orgData.cnpj);
     } else {
       console.error("Organização não encontrada para o usuário", userId);
     }
   };
 
-  // Função para excluir o evento
   const deleteEvent = async (eventId) => {
     try {
-      await deleteDoc(doc(db, "Eventos", eventId)); // Deleta o evento no Firestore
+      await deleteDoc(doc(db, "Eventos", eventId));
       setSnackbarMessage('Evento excluído com sucesso!');
       setSnackbarSeverity('success');
       setOpenSnackbar(true);
-      fetchEvents(); // Atualiza a lista de eventos
+      fetchEvents();
     } catch (error) {
       console.error("Erro ao excluir evento", error);
       setSnackbarMessage('Erro ao excluir evento');
@@ -67,18 +60,16 @@ const EventosGerenciamento = () => {
     }
   };
 
-  // Carregar dados ao montar o componente
   useEffect(() => {
-    const user = getAuth().currentUser; // Obtendo o usuário logado
+    const user = getAuth().currentUser;
     if (user) {
       const userUid = user.uid;
-      setUserIdEvento(userUid); // Armazena o UID do usuário
-      fetchCNPJ(userUid); // Busca o CNPJ da organização
+      setUserIdEvento(userUid);
+      fetchCNPJ(userUid);
     }
-    fetchEvents(); // Carrega os eventos quando o componente for montado
-  }, []); // Recarrega apenas uma vez quando o componente for montado
+    fetchEvents();
+  }, []);
 
-  // Exibir mensagem de carregamento enquanto os dados estão sendo carregados
   if (loading) {
     return <Typography>Carregando eventos...</Typography>;
   }
@@ -89,6 +80,16 @@ const EventosGerenciamento = () => {
         Gerenciamento de Eventos
       </Typography>
 
+      {/* Botão para Criar Evento */}
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={() => navigate('/create-event')} // Navega para a página de criação de evento
+        style={{ marginBottom: '20px' }} // Adiciona espaçamento abaixo do botão
+      >
+        Criar Evento
+      </Button>
+
       <Box mt={3}>
         {events.length === 0 ? (
           <Typography className={styles.noEventsMessage}>
@@ -96,7 +97,7 @@ const EventosGerenciamento = () => {
           </Typography>
         ) : (
           events
-            .filter((event) => event.cnpjOrganizacao === cnpjEvento) // Filtra os eventos que correspondem ao CNPJ da organização
+            .filter((event) => event.cnpjOrganizacao === cnpjEvento)
             .map((event) => (
               <Card key={event.id} className={styles.eventCard} variant="outlined">
                 <CardContent>
@@ -112,20 +113,18 @@ const EventosGerenciamento = () => {
                     >
                       Editar Evento
                     </Button>
-                    {/* Botão de Ingresso */}
                     <Button
                       className={`${styles.actionButton} ${styles.ingressoButton}`}
                       variant="contained"
-                      onClick={() => navigate(`/criar-ingresso`)} // Navega para a página de compra de ingresso
+                      onClick={() => navigate(`/criar-ingresso`)}
                     >
                       Ingresso
                     </Button>
-                    {/* Botão de Excluir */}
                     <Button
                       className={`${styles.actionButton} ${styles.deleteButton}`}
                       variant="contained"
                       color="error"
-                      onClick={() => deleteEvent(event.id)} // Chama a função para excluir o evento
+                      onClick={() => deleteEvent(event.id)}
                     >
                       Excluir Evento
                     </Button>

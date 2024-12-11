@@ -12,7 +12,7 @@
 .title {
   font-size: 32px;
   font-weight: bold;
-  color: #333;
+  color: #003366; /* Azul escuro */
   margin-bottom: 20px;
 }
 
@@ -49,7 +49,7 @@
 .eventTitle {
   font-size: 24px;
   font-weight: bold;
-  color: #00796b; /* cor de destaque */
+  color: #003366; /* Azul escuro */
 }
 
 .eventDate {
@@ -80,10 +80,10 @@
 }
 
 .editButton {
-  background-color: #4caf50;
+  background-color: #FF6F00; /* Laranja */
   color: white;
   &:hover {
-    background-color: #388e3c;
+    background-color: #e65100; /* Laranja mais escuro */
   }
 }
 
