@@ -283,9 +283,14 @@ const EventoCriacao = () => {
           <Button variant="contained"  type="submit" className={styles.salvarEventoButton2}>
             Salvar Evento
           </Button>
-          <Button variant="contained"  className={styles.criarIngressoButton}>
+          <Button 
+            variant="contained"  
+            className={styles.criarIngressoButton} 
+            onClick={() => navigate('/ingresso-form')}
+          >
             Criar Ingresso
           </Button>
+
           
         </Box>
       </form>

@@ -84,7 +84,7 @@ const EventosGerenciamento = () => {
       <Button
         variant="contained"
         color="primary"
-        onClick={() => navigate('/ingresso-form')} // Navega para a página de criação de evento
+        onClick={() => navigate('/create-event')} // Navega para a página de criação de evento
         style={{ marginBottom: '20px' }} // Adiciona espaçamento abaixo do botão
       >
         Criar Evento
@@ -116,7 +116,7 @@ const EventosGerenciamento = () => {
                     <Button
                       className={`${styles.actionButton} ${styles.ingressoButton}`}
                       variant="contained"
-                      onClick={() => navigate(`/criar-ingresso`)}
+                      onClick={() => navigate(`/ingresso-form`)}
                     >
                       Ingresso
                     </Button>
