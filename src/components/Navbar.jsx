@@ -111,7 +111,7 @@ const Navbar = () => {
     );
   } else if (userType === "Organizacao") {
     navLinks.push(
-      { text: "Criar Evento", icon: faPlusCircle, path: "/create-event" },
+      { text: "Criar Evento", icon: faPlusCircle, path: "/ingresso-form" },
       { text: "Gerenciar Eventos", icon: faBox, path: "/manage-events" },
       { text: "Perfil da Organização", icon: faBox, path: "/PerfilOrganizacao" }
     );
