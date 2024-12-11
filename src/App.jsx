@@ -34,12 +34,12 @@ import PerfilOrganizacao from './pages/PerfilOrganizacao/PerfilOrganizacao';
 import PerfilAdm from './pages/PerfilAdm/PerfilAdm';
 import EventosGerenciamento from "./pages/EventosGerenciamento/EventosGerenciamento.jsx";
 import IngressoCriacao from './pages/IngressoCriacao/IngressoCriacao.jsx';
-import IngressoGerenciamento from './pages/IngressoGerenciamento/IngressoGerenciamento.jsx';
 import SearchBar from './components/SearchBar/SearchBar.jsx';
 import EventosEncontrados from './pages/EventosEncontrados/EventosEncontrados.jsx';
 import UsuarioIngresso from './pages/UsuarioIngresso/UsuarioIngresso.jsx';
 import EditarEvento from './pages/EditarEvento/EditarEvento';
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   const [eventos, setEventos] = useState([
@@ -73,6 +73,9 @@ function App() {
       );
     });
   };
+
+  // Exemplo de notificação de sucesso
+  const notifySuccess = () => toast.success("Evento criado com sucesso!");
 
   return (
     <AuthProvider>
@@ -110,7 +113,6 @@ function App() {
                     <Route path="/PerfilAdm" element={<PerfilAdm />} />
                     <Route path="/manage-events" element={<EventosGerenciamento />} />
                     <Route path="/criar-ingresso" element={<IngressoCriacao />} />
-                    <Route path="/editar-ingresso" element={<IngressoGerenciamento />} />
                     <Route path="/" element={<SearchBar />} />
                     <Route path="/eventos-encontrados" element={<EventosEncontrados />} />
                     <Route path="/my-tickets" element={<UsuarioIngresso />} />
@@ -119,6 +121,17 @@ function App() {
                 </div>
                 <Footer />
               </Router>
+              {/* Toastify Container */}
+              <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                closeOnClick
+                pauseOnHover
+                draggable
+                pauseOnFocusLoss
+                newestOnTop
+              />
             </CartProvider>
           </PreferencesProvider>
         </ThemeProvider>

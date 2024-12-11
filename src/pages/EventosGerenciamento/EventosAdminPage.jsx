@@ -1,42 +1,47 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  Container, 
-  Typography, 
-  Button, 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableContainer, 
-  TableHead, 
-  TableRow, 
-  Paper, 
+import React, { useState, useEffect } from "react";
+import {
+  Container,
+  Typography,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
   CircularProgress,
   IconButton,
-  Box
-} from '@mui/material';
-import { 
-  Add as AddIcon, 
-  Edit as EditIcon, 
-  Delete as DeleteIcon
-} from '@mui/icons-material';
-import { useEventosFirebase } from '../../hooks/useEventosFirebase'; 
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import EventoForm from '../../components/CriarEvento/EventoForm';
+  Box,
+  Tooltip,
+} from "@mui/material";
+import {
+  Add as AddIcon,
+  Edit as EditIcon,
+  Delete as DeleteIcon,
+  ConfirmationNumber as TicketIcon,
+} from "@mui/icons-material";
+import { useEventosFirebase } from "../../hooks/useEventosFirebase";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import EventoForm from "../../components/CriarEvento/EventoForm";
+import TicketManagementModal from "../IngressoGerenciamento/IngressoGerenciamento";
 
 const EventosAdminPage = () => {
-  const { 
-    eventos, 
-    carregando, 
-    erro, 
-    buscarEventos, 
-    criarEvento, 
-    atualizarEvento, 
-    deletarEvento 
+  const {
+    eventos,
+    carregando,
+    erro,
+    buscarEventos,
+    criarEvento,
+    atualizarEvento,
+    deletarEvento,
   } = useEventosFirebase();
 
   const [openModal, setOpenModal] = useState(false);
   const [eventoSelecionado, setEventoSelecionado] = useState(null);
+  const [openTicketModal, setOpenTicketModal] = useState(false);
+  const [selectedEventId, setSelectedEventId] = useState(null);
 
   useEffect(() => {
     buscarEventos();
@@ -53,6 +58,11 @@ const EventosAdminPage = () => {
     setOpenModal(true);
   };
 
+  const handleOpenTicketModal = (eventoId) => {
+    setSelectedEventId(eventoId);
+    setOpenTicketModal(true);
+  };
+
   const handleCloseModal = () => {
     setOpenModal(false);
     setEventoSelecionado(null);
@@ -63,25 +73,27 @@ const EventosAdminPage = () => {
       if (eventoSelecionado) {
         // Atualizar evento existente
         await atualizarEvento(eventoSelecionado.id, eventoModel.toFirestore());
-        toast.success('Evento atualizado com sucesso');
+        toast.success("Evento atualizado com sucesso");
       } else {
         // Criar novo evento
         await criarEvento(eventoModel);
-        toast.success('Evento criado com sucesso');
+        toast.success("Evento criado com sucesso");
       }
       handleCloseModal();
     } catch (error) {
-      console.error('Erro ao salvar evento:', error);
-      toast.error('Erro ao salvar evento. Tente novamente.');
+      console.error("Erro ao salvar evento:", error);
+      toast.error("Erro ao salvar evento. Tente novamente.");
     }
   };
 
   const handleDelete = async (id) => {
     try {
-      const confirmDelete = window.confirm('Tem certeza que deseja excluir este evento?');
+      const confirmDelete = window.confirm(
+        "Tem certeza que deseja excluir este evento?"
+      );
       if (confirmDelete) {
         await deletarEvento(id);
-        toast.success('Evento excluído com sucesso', {
+        toast.success("Evento excluído com sucesso", {
           position: "top-right",
           autoClose: 3000,
           hideProgressBar: false,
@@ -91,8 +103,8 @@ const EventosAdminPage = () => {
         });
       }
     } catch (error) {
-      console.error('Erro ao deletar evento:', error);
-      toast.error('Erro ao deletar evento. Tente novamente.', {
+      console.error("Erro ao deletar evento:", error);
+      toast.error("Erro ao deletar evento. Tente novamente.", {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -106,7 +118,12 @@ const EventosAdminPage = () => {
   if (carregando) {
     return (
       <Container>
-        <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          height="100vh"
+        >
           <CircularProgress />
         </Box>
       </Container>
@@ -115,25 +132,25 @@ const EventosAdminPage = () => {
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4 }}>
-      <ToastContainer 
-        position="top-right" 
-        autoClose={3000} 
-        hideProgressBar={false} 
-        newestOnTop={false} 
-        closeOnClick 
-        rtl={false} 
-        pauseOnFocusLoss 
-        draggable 
-        pauseOnHover 
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
       />
-      
+
       <Typography variant="h4" gutterBottom>
         Gerenciamento de Eventos
       </Typography>
 
-      <Button 
-        variant="contained" 
-        color="primary" 
+      <Button
+        variant="contained"
+        color="primary"
         startIcon={<AddIcon />}
         onClick={() => handleOpenModal()}
         sx={{ mb: 2 }}
@@ -160,14 +177,22 @@ const EventosAdminPage = () => {
                 <TableCell>{evento.location}</TableCell>
                 <TableCell>{evento.type}</TableCell>
                 <TableCell align="right">
-                  <IconButton 
-                    color="primary" 
+                  <IconButton
+                    color="primary"
                     onClick={() => handleOpenModal(evento)}
                   >
                     <EditIcon />
                   </IconButton>
-                  <IconButton 
-                    color="error" 
+                  <Tooltip title="Gerenciar Ingressos">
+                    <IconButton
+                      color="secondary"
+                      onClick={() => handleOpenTicketModal(evento.id)}
+                    >
+                      <TicketIcon />
+                    </IconButton>
+                  </Tooltip>
+                  <IconButton
+                    color="error"
                     onClick={() => handleDelete(evento.id)}
                   >
                     <DeleteIcon />
@@ -179,12 +204,24 @@ const EventosAdminPage = () => {
         </Table>
       </TableContainer>
 
-      <EventoForm 
+      <EventoForm
         open={openModal}
         onClose={handleCloseModal}
         onSubmit={handleSubmit}
         initialData={eventoSelecionado}
       />
+
+      {/* O modal de gerenciamento de ingressos agora está fora do loop de renderização da tabela */}
+      {openTicketModal && (
+        <TicketManagementModal
+          open={openTicketModal}
+          onClose={() => {
+            setOpenTicketModal(false);
+            setSelectedEventId(null);
+          }}
+          eventoId={selectedEventId}
+        />
+      )}
     </Container>
   );
 };
