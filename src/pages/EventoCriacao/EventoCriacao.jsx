@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import { TextField, Button, Box, Typography, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
-import { db } from '../../firebase/config';
+import React, { useState, useEffect } from 'react';
+import { TextField, Button, Box, Typography, MenuItem, Select, InputLabel, FormControl, CircularProgress, Input } from '@mui/material';
+import { db, storage } from '../../firebase/config';
 import { collection, addDoc, getDocs, orderBy, query, limit, doc, getDoc, setDoc } from 'firebase/firestore';
+import { ref, uploadBytesResumable, getDownloadURL, listAll } from 'firebase/storage';
 import { useNavigate } from 'react-router-dom';
-import { getAuth } from 'firebase/auth'; // Para pegar o UID do usuário autenticado
+import { getAuth } from 'firebase/auth';
 import styles from '../EventoCriacao/EventoCriacao.module.css';
 
 const EventoCriacao = () => {
@@ -15,46 +16,127 @@ const EventoCriacao = () => {
     estado: '',
     cidade: '',
     tipoDeLogradouro: '',
-    logradouro: '',
+    local: '',
     numeroPredial: '',
     completo: '',
     lotacaoMaxima: '',
-    dataInicio: '',
+    data: '',
     dataFim: '',
     horarioInicio: '',
     horarioFim: '',
     descricao: '',
-    userUID: '',  // Novo campo para UID do usuário
-    cnpjOrganizacao: '', // Novo campo para CNPJ da organização
-    eventoId: '' // Novo campo para EventoId
+    userUID: '',
+    cnpjOrganizacao: '',
+    eventoId: '',
+    img: '',
+    imgBanner: ''
   });
+
+  const [image, setImage] = useState(null);
+  const [progress, setProgress] = useState(0);
+  const [imgBanner, setImgBanner] = useState(null); // Estado para o banner
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setEvento({ ...evento, [name]: value });
   };
 
+  
+
+  const handleBannerUpload = async () => {
+    if (!imgBanner) return;
+  
+    const storageRef = ref(storage, `eventos/banner_${imgBanner.name}`);
+    const uploadTask = uploadBytesResumable(storageRef, imgBanner);
+  
+    return new Promise((resolve, reject) => {
+      uploadTask.on(
+        'state_changed',
+        (snapshot) => {
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          setProgress(progress);
+        },
+        (error) => {
+          console.error('Erro no upload da imagem do banner: ', error);
+          reject(error);
+        },
+        async () => {
+          try {
+            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+            setEvento((prev) => ({ ...prev, imgBanner: downloadURL }));
+            resolve(downloadURL);
+          } catch (error) {
+            console.error('Erro ao obter a URL do banner: ', error);
+            reject(error);
+          }
+        }
+      );
+    });
+  };
+  
+
+  const handleBannerChange = (e) => {
+    if (e.target.files[0]) {
+      setImgBanner(e.target.files[0]);
+    }
+  };
+  
+
+  const handleImageChange = (e) => {
+    if (e.target.files[0]) {
+      setImage(e.target.files[0]);
+    }
+  };
+
+  const handleImageUpload = async () => {
+    if (!image) return;
+
+    const storageRef = ref(storage, `eventos/${image.name}`);
+    const uploadTask = uploadBytesResumable(storageRef, image);
+
+    return new Promise((resolve, reject) => {
+      uploadTask.on(
+        'state_changed',
+        (snapshot) => {
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          setProgress(progress);
+        },
+        (error) => {
+          console.error('Erro no upload da imagem: ', error);
+          reject(error);
+        },
+        async () => {
+          try {
+            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+            setEvento((prev) => ({ ...prev, img: downloadURL }));
+            resolve(downloadURL);
+          } catch (error) {
+            console.error('Erro ao obter a URL da imagem: ', error);
+            reject(error);
+          }
+        }
+      );
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Obtendo o UID do usuário autenticado
     const user = getAuth().currentUser;
     if (!user) {
-      console.error("Usuário não autenticado.");
+      console.error('Usuário não autenticado.');
       return;
     }
-    const userUID = user.uid; // UID do usuário
+    const userUID = user.uid;
 
     try {
-      // Buscando o CNPJ da organização usando o UID
-      const orgRef = doc(db, 'organizacao', userUID); // Documento da organização com o UID do usuário
+      const orgRef = doc(db, 'organizacao', userUID);
       const orgDoc = await getDoc(orgRef);
 
       if (orgDoc.exists()) {
-        const cnpjOrganizacao = orgDoc.data().cnpj; // Recuperando o CNPJ da organização
-        console.log('CNPJ da Organização: ', cnpjOrganizacao);  // Verifique o CNPJ aqui
+        const cnpjOrganizacao = orgDoc.data().cnpj;
 
-        // Buscando o último evento para incrementar o EventoId
         const eventosRef = collection(db, 'Eventos');
         const eventosQuery = query(eventosRef, orderBy('eventoId', 'desc'), limit(1));
         const querySnapshot = await getDocs(eventosQuery);
@@ -63,40 +145,38 @@ const EventoCriacao = () => {
         if (!querySnapshot.empty) {
           const ultimoEvento = querySnapshot.docs[0].data();
           ultimoEventoId = parseInt(ultimoEvento.eventoId) || 0;
-          console.log('Último EventoId encontrado: ', ultimoEventoId); // Verifique o EventoId aqui
         }
 
         const novoEventoId = ultimoEventoId + 1;
-        console.log('Novo EventoId: ', novoEventoId); // Verifique o novo EventoId aqui
 
-        // Adicionando o evento no Firestore com UID, CNPJ e EventoId
+        if (image) {
+          await handleImageUpload();
+        }
+
         const eventoComDadosAdicionais = {
           ...evento,
-          userUID: userUID,         // UID do usuário
-          cnpjOrganizacao: cnpjOrganizacao, // CNPJ da organização
-          eventoId: novoEventoId.toString(),  // EventoId incrementado
+          userUID,
+          cnpjOrganizacao,
+          eventoId: novoEventoId.toString()
         };
 
-        // Criando o nome do documento como "cnpjOrganizacao+eventoId"
         const documentName = cnpjOrganizacao + novoEventoId;
 
-        // Adicionando o evento na coleção "Eventos" do Firestore com o nome do documento
         await setDoc(doc(db, 'Eventos', documentName), eventoComDadosAdicionais);
 
         console.log('Evento criado com ID: ', documentName);
 
-        // Redirecionando para a página de gerenciamento de eventos após salvar
-        navigate('/manage-events');  // Ou o caminho que você quiser
+        navigate('/manage-events');
       } else {
         console.error('Organização não encontrada para o UID fornecido.');
       }
     } catch (e) {
-      console.error('Erro ao buscar CNPJ da organização ou evento: ', e);
+      console.error('Erro ao criar o evento: ', e);
     }
   };
 
   return (
-    <Box sx={{ width: '50%',maxWidth: 2000, margin: '0 auto', padding: 3 }}>
+    <Box sx={{ width: '50%', maxWidth: 2000, margin: '0 auto', padding: 3 }}>
       <Typography variant="h4" gutterBottom align="center" className={styles.criarEventoButton}>
         Criar Evento
       </Typography>
@@ -140,47 +220,12 @@ const EventoCriacao = () => {
           required
           margin="normal"
         />
-        
-        <TextField
-          label="Estado"
-          name="estado"
-          value={evento.estado}
-          onChange={handleChange}
-          fullWidth
-          required
-          margin="normal"
-        />
-        
-        <TextField
-          label="Cidade"
-          name="cidade"
-          value={evento.cidade}
-          onChange={handleChange}
-          fullWidth
-          required
-          margin="normal"
-        />
 
-        <FormControl fullWidth margin="normal">
-          <InputLabel>Tipo de Logradouro</InputLabel>
-          <Select
-            name="tipoDeLogradouro"
-            value={evento.tipoDeLogradouro}
-            onChange={handleChange}
-            required
-          >
-            <MenuItem value="avenida">Avenida</MenuItem>
-            <MenuItem value="rua">Rua</MenuItem>
-            <MenuItem value="via">Via</MenuItem>
-            <MenuItem value="vielas">Viela</MenuItem>
-            <MenuItem value="outro">Outro</MenuItem>
-          </Select>
-        </FormControl>
-
+        {/* Outros campos do formulário */}
         <TextField
           label="Logradouro"
-          name="logradouro"
-          value={evento.logradouro}
+          name="local"
+          value={evento.local}
           onChange={handleChange}
           fullWidth
           required
@@ -219,9 +264,9 @@ const EventoCriacao = () => {
 
         <TextField
           label="Data de Início"
-          name="dataInicio"
+          name="data"
           type="date"
-          value={evento.dataInicio}
+          value={evento.data}
           onChange={handleChange}
           fullWidth
           required
@@ -279,20 +324,53 @@ const EventoCriacao = () => {
           rows={4}
         />
 
-        <Box sx={{ marginTop: 0, display: 'flex', justifyContent: 'space-between' }}>
-          <Button variant="contained"  type="submit" className={styles.salvarEventoButton2}>
-            Salvar Evento
-          </Button>
-          <Button 
-            variant="contained"  
-            className={styles.criarIngressoButton} 
-            onClick={() => navigate('/ingresso-form')}
-          >
-            Criar Ingresso
-          </Button>
 
-          
+
+        <Box>
+          <Typography variant="h6">Upload de Imagem</Typography>
+          <Input type="file" onChange={handleImageChange} />
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleImageUpload}
+            disabled={!image}
+          >
+            Upload
+          </Button>
+          {progress > 0 && (
+            <Box>
+              <CircularProgress variant="determinate" value={progress} />
+              <Typography variant="body2" sx={{ mt: 1 }}>
+                {`${Math.round(progress)}%`}
+              </Typography>
+            </Box>
+          )}
         </Box>
+        <Box>
+  <Typography variant="h6">Upload de Banner</Typography>
+  <Input type="file" onChange={handleBannerChange} />
+  <Button
+    variant="contained"
+    color="primary"
+    onClick={handleBannerUpload}
+    disabled={!imgBanner}
+  >
+    Upload Banner
+  </Button>
+  {progress > 0 && (
+    <Box>
+      <CircularProgress variant="determinate" value={progress} />
+      <Typography variant="body2" sx={{ mt: 1 }}>
+        {`${Math.round(progress)}%`}
+      </Typography>
+    </Box>
+  )}
+</Box>
+
+
+        <Button variant="contained" type="submit" className={styles.salvarEventoButton2}>
+          Salvar Evento
+        </Button>
       </form>
     </Box>
   );

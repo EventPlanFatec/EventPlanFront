@@ -125,7 +125,6 @@ function App() {
                 </div>
                 <Footer />
               </Router>
-              {/* Toastify Container */}
               <ToastContainer
                 position="top-right"
                 autoClose={3000}
