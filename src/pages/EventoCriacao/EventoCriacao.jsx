@@ -1,19 +1,28 @@
 import React, { useState } from 'react';
-import { TextField, Button, Box, Typography } from '@mui/material';
+import { TextField, Button, Box, Typography, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
 import { db } from '../../firebase/config';
 import { collection, addDoc, getDocs, orderBy, query, limit, doc, getDoc, setDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import { getAuth } from 'firebase/auth'; // Para pegar o UID do usuário autenticado
+import styles from '../EventoCriacao/EventoCriacao.module.css';
 
 const EventoCriacao = () => {
   const navigate = useNavigate();
   const [evento, setEvento] = useState({
     nome: '',
+    tipo: '',
+    genero: '',
+    estado: '',
+    cidade: '',
+    tipoDeLogradouro: '',
+    logradouro: '',
+    numeroPredial: '',
+    completo: '',
+    lotacaoMaxima: '',
     dataInicio: '',
     dataFim: '',
     horarioInicio: '',
     horarioFim: '',
-    local: '',
     descricao: '',
     userUID: '',  // Novo campo para UID do usuário
     cnpjOrganizacao: '', // Novo campo para CNPJ da organização
@@ -87,8 +96,8 @@ const EventoCriacao = () => {
   };
 
   return (
-    <Box sx={{ maxWidth: 600, margin: '0 auto', padding: 3 }}>
-      <Typography variant="h4" gutterBottom>
+    <Box sx={{ width: '50%',maxWidth: 2000, margin: '0 auto', padding: 3 }}>
+      <Typography variant="h4" gutterBottom align="center" className={styles.criarEventoButton}>
         Criar Evento
       </Typography>
 
@@ -102,6 +111,112 @@ const EventoCriacao = () => {
           required
           margin="normal"
         />
+
+        <FormControl fullWidth margin="normal">
+          <InputLabel>Tipo</InputLabel>
+          <Select
+            name="tipo"
+            value={evento.tipo}
+            onChange={handleChange}
+            required
+          >
+            <MenuItem value="Musica">Música</MenuItem>
+            <MenuItem value="Festa">Festa</MenuItem>
+            <MenuItem value="Teatro">Teatro</MenuItem>
+            <MenuItem value="Esporte">Esporte</MenuItem>
+            <MenuItem value="Literatura">Literatura</MenuItem>
+            <MenuItem value="Religioso">Religioso</MenuItem>
+            <MenuItem value="+18">+18</MenuItem>
+            <MenuItem value="Outros">Outros</MenuItem>
+          </Select>
+        </FormControl>
+
+        <TextField
+          label="Gênero"
+          name="genero"
+          value={evento.genero}
+          onChange={handleChange}
+          fullWidth
+          required
+          margin="normal"
+        />
+        
+        <TextField
+          label="Estado"
+          name="estado"
+          value={evento.estado}
+          onChange={handleChange}
+          fullWidth
+          required
+          margin="normal"
+        />
+        
+        <TextField
+          label="Cidade"
+          name="cidade"
+          value={evento.cidade}
+          onChange={handleChange}
+          fullWidth
+          required
+          margin="normal"
+        />
+
+        <FormControl fullWidth margin="normal">
+          <InputLabel>Tipo de Logradouro</InputLabel>
+          <Select
+            name="tipoDeLogradouro"
+            value={evento.tipoDeLogradouro}
+            onChange={handleChange}
+            required
+          >
+            <MenuItem value="avenida">Avenida</MenuItem>
+            <MenuItem value="rua">Rua</MenuItem>
+            <MenuItem value="via">Via</MenuItem>
+            <MenuItem value="vielas">Viela</MenuItem>
+            <MenuItem value="outro">Outro</MenuItem>
+          </Select>
+        </FormControl>
+
+        <TextField
+          label="Logradouro"
+          name="logradouro"
+          value={evento.logradouro}
+          onChange={handleChange}
+          fullWidth
+          required
+          margin="normal"
+        />
+        
+        <TextField
+          label="Número Predial"
+          name="numeroPredial"
+          value={evento.numeroPredial}
+          onChange={handleChange}
+          fullWidth
+          required
+          margin="normal"
+        />
+
+        <TextField
+          label="Complemento"
+          name="completo"
+          value={evento.completo}
+          onChange={handleChange}
+          fullWidth
+          margin="normal"
+        />
+
+        <TextField
+          label="Lotação Máxima"
+          name="lotacaoMaxima"
+          value={evento.lotacaoMaxima}
+          onChange={handleChange}
+          fullWidth
+          required
+          margin="normal"
+          type="number"
+        />
+
         <TextField
           label="Data de Início"
           name="dataInicio"
@@ -115,6 +230,7 @@ const EventoCriacao = () => {
             shrink: true
           }}
         />
+        
         <TextField
           label="Data de Fim"
           name="dataFim"
@@ -128,6 +244,7 @@ const EventoCriacao = () => {
             shrink: true
           }}
         />
+
         <TextField
           label="Horário de Início"
           name="horarioInicio"
@@ -138,6 +255,7 @@ const EventoCriacao = () => {
           required
           margin="normal"
         />
+
         <TextField
           label="Horário de Fim"
           name="horarioFim"
@@ -148,15 +266,7 @@ const EventoCriacao = () => {
           required
           margin="normal"
         />
-        <TextField
-          label="Local"
-          name="local"
-          value={evento.local}
-          onChange={handleChange}
-          fullWidth
-          required
-          margin="normal"
-        />
+
         <TextField
           label="Descrição"
           name="descricao"
@@ -169,12 +279,14 @@ const EventoCriacao = () => {
           rows={4}
         />
 
-        
-
-        <Box sx={{ marginTop: 2 }}>
-          <Button variant="contained" color="primary" type="submit">
-            Criar Evento
+        <Box sx={{ marginTop: 0, display: 'flex', justifyContent: 'space-between' }}>
+          <Button variant="contained"  type="submit" className={styles.salvarEventoButton}>
+            Salvar Evento
           </Button>
+          <Button variant="contained"  className={styles.criarIngressoButton}>
+            Criar Ingresso
+          </Button>
+          
         </Box>
       </form>
     </Box>

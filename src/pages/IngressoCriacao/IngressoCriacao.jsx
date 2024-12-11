@@ -66,8 +66,8 @@ const IngressoCriacao = () => {
   };
 
   return (
-    <Box className={styles.container}>
-      <Typography className={styles.title} variant="h4" gutterBottom>
+    <Box sx={{ width: '50%',maxWidth: 2000, margin: '0 auto', padding: 3 }}>
+      <Typography className={styles.title} variant="h4" gutterBottom >
         Criar Ingresso
       </Typography>
 
@@ -110,18 +110,7 @@ const IngressoCriacao = () => {
           />
         )}
 
-        {/* Nome do Evento (preenchido automaticamente) */}
-        <TextField
-          label="Nome do Evento"
-          name="nomeEvento"
-          value={ingressoData.nomeEvento}
-          onChange={handleInputChange}
-          fullWidth
-          required
-          margin="normal"
-          disabled
-        />
-
+       
         {/* Data do Ingresso */}
         <TextField
           label="Data do Ingresso"
@@ -134,16 +123,7 @@ const IngressoCriacao = () => {
           margin="normal"
         />
 
-        {/* QR Code */}
-        <TextField
-          label="QR Code"
-          name="qrCode"
-          value={ingressoData.qrCode}
-          onChange={handleInputChange}
-          fullWidth
-          margin="normal"
-        />
-
+       
         {/* Checkbox para Ingresso VIP */}
         <FormControlLabel
           control={
