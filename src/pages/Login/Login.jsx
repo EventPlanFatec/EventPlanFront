@@ -145,7 +145,7 @@ const Login = () => {
         <Button
           variant="outlined"
           fullWidth
-          style={{ marginTop: '20px', borderColor: '#1976d2', color: '#1976d2' }}
+          style={{ marginTop: '20px', borderColor: '#FFFFFF', color: '#FFFFFF' }}
           onClick={() => navigate('/register')} // Redireciona para a página de registro
         >
           REGISTRAR

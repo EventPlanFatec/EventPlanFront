@@ -3,7 +3,7 @@ import { db } from "../../firebase/config";
 import { collection, getDocs, doc, getDoc, deleteDoc } from "firebase/firestore";
 import { Button, Card, CardContent, Typography, Box, Snackbar, Alert } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import styles from "./EventosGerenciamento.module.css";
+import styles from "../EventosGerenciamento/EventosGerenciamento.module.css";
 import { getAuth } from "firebase/auth";
 
 const EventosGerenciamento = () => {
@@ -121,7 +121,7 @@ const EventosGerenciamento = () => {
                       Ingresso
                     </Button>
                     <Button
-                      className={`${styles.actionButton} ${styles.deleteButton}`}
+                      className={styles.deleteButton}
                       variant="contained"
                       color="error"
                       onClick={() => deleteEvent(event.id)}
