@@ -35,7 +35,9 @@ const Carousel = () => {
       audioRef.current.currentTime = 0;
       if (items[currentIndex]?.audioUrl) {
         audioRef.current.src = items[currentIndex].audioUrl;
-        audioRef.current.play().catch((err) => console.error('Erro ao reproduzir áudio:', err));
+        audioRef.current.play().catch((err) =>
+          console.error('Erro ao reproduzir áudio:', err)
+        );
       }
     }
   }, [currentIndex, items]);
@@ -48,6 +50,10 @@ const Carousel = () => {
     setCurrentIndex((prevIndex) => (prevIndex - 1 + items.length) % items.length);
   };
 
+  const goToSlide = (index) => {
+    setCurrentIndex(index);
+  };
+
   if (items.length === 0) {
     return <div className={styles.carousel}>Nenhum anúncio disponível no momento.</div>;
   }
@@ -55,22 +61,35 @@ const Carousel = () => {
   return (
     <div className={styles.carousel}>
       <audio ref={audioRef} />
-      <button className={styles.carouselButton} onClick={prevSlide}>❮</button>
-      <div
-        className={styles.carouselSlide}
-        style={{ transform: `translateX(-${currentIndex * 100}%)` }}
-      >
-        {items.map((item, index) => (
-          <div className={styles.slide} key={item.id}>
-            <img
-              src={item.imageUrl}
-              alt={`Anúncio ${index + 1}`}
-              className={styles.carouselImage}
-            />
-          </div>
+      <div className={styles.carouselContainer}>
+        <button className={styles.carouselButton} onClick={prevSlide}>❮</button>
+        <div
+          className={styles.carouselSlide}
+          style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+        >
+          {items.map((item, index) => (
+            <div className={styles.slide} key={item.id}>
+              <img
+                src={item.imageUrl}
+                alt={`Anúncio ${index + 1}`}
+                className={styles.carouselImage}
+              />
+            </div>
+          ))}
+        </div>
+        <button className={styles.carouselButton} onClick={nextSlide}>❯</button>
+      </div>
+      <div className={styles.indicators}>
+        {items.map((_, index) => (
+          <div
+            key={index}
+            className={`${styles.indicator} ${
+              index === currentIndex ? styles.active : ''
+            }`}
+            onClick={() => goToSlide(index)}
+          ></div>
         ))}
       </div>
-      <button className={styles.carouselButton} onClick={nextSlide}>❯</button>
     </div>
   );
 };
